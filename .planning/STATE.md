@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 2 - Data Pipeline (COMPLETE)
+**Current focus:** Phase 3 - Message Rendering (In progress)
 
 ## Current Position
 
-Phase: 2 of 10 (Data Pipeline) -- PHASE COMPLETE
-Plan: 4 of 4 in current phase
-Status: Phase complete
-Last activity: 2026-02-21 - Completed 02-04-PLAN.md (Builder session browse UI, end-to-end pipeline verification)
+Phase: 3 of 10 (Message Rendering)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-21 - Completed 03-01-PLAN.md (Markdown rendering infrastructure)
 
-Progress: [██████████████████░░░░░░░░░░░░░░░░░] 6/34 plans (~18%)
+Progress: [████████████████████░░░░░░░░░░░░░░░] 7/34 plans (~21%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 5.3min
-- Total execution time: 0.53 hours
+- Total plans completed: 7
+- Average duration: 5.1min
+- Total execution time: 0.60 hours
 
 **By Phase:**
 
@@ -29,9 +29,10 @@ Progress: [██████████████████░░░░░
 |-------|-------|-------|----------|
 | 1. App Shell | 2/2 | 14min | 7min |
 | 2. Data Pipeline | 4/4 | 18min | 4.5min |
+| 3. Message Rendering | 1/4 | 4min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 6min, 2min, 2min, 8min
+- Last 5 plans: 6min, 2min, 2min, 8min, 4min
 - Trend: stable
 
 *Updated after each plan completion*
@@ -66,6 +67,9 @@ Recent decisions affecting current work:
 - 02-04: Boring commands (/clear, /help, /compact, /init) skipped in snippet extraction
 - 02-04: Project groups sorted by most recent session, not alphabetically
 - 02-04: Metadata scan increased from 50 to 150 lines for better coverage
+- 03-01: MarkdownHooks (not sync Markdown) for async @shikijs/rehype plugin compatibility
+- 03-01: Module-level stable refs for plugin/component config to avoid re-creation
+- 03-01: MutationObserver in CodeBlock for overflow detection after async shiki DOM mutation
 
 ### Pending Todos
 
@@ -80,9 +84,10 @@ None yet.
 - npm audit reports 10 high severity vulnerabilities in eslint dependency chain -- review before packaging
 - ~~Stitcher orphan count always equals message count~~ PARTIALLY FIXED: root-finding fixed (76841f6), filteredUuidRedirects added (8fc0ece) to resolve through system/progress lines. Orphans reduced but not to 0 -- chain resolution still incomplete. The childOf map may be losing entries when multiple messages share the same parentUuid (Map overwrites). Investigate in next session.
 - Metadata scan message count differs from full parse count (expected: scan approximates, full parse does assistant turn reassembly). Not a bug, but worth documenting for users.
+- Renderer bundle at 810KB includes all shiki grammars -- consider fine-grained bundling if size becomes a concern
 
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Phase 2 complete and verified. Post-verification bug fix in progress -- stitcher orphan chain resolution partially working but not fully resolved. Fix committed (8fc0ece) but orphan count still high (84/97 in one test session). Suspect childOf Map overwriting when multiple messages share same parentUuid after redirect resolution. Resume with /gsd:debug or manual investigation of stitcher.ts chain walking.
+Stopped at: Completed 03-01-PLAN.md. Markdown rendering infrastructure in place (MarkdownRenderer, CodeBlock, presentation CSS, shiki dual-theme CSS). Ready for 03-02-PLAN.md (message display components).
 Resume file: None
