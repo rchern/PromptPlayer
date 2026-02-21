@@ -41,23 +41,22 @@ Plans:
 - [x] 01-02-PLAN.md -- Home screen with Builder/Player mode cards, custom titlebar, recent files
 
 ### Phase 2: Data Pipeline
-**Goal**: Raw JSONL conversation files are parsed into structured, ordered, classified message sequences stored in app-local storage
+**Goal**: Raw JSONL conversation files are discovered, parsed into structured ordered message sequences with tool call classification, and browsable in Builder mode. Sessions added to presentations persist in app-local storage.
 **Depends on**: Phase 1
 **Requirements**: DATA-01, DATA-02, DATA-03, DATA-04, DATA-05, DATA-06, DATA-07, SHELL-04
 **Success Criteria** (what must be TRUE):
-  1. User can select a .claude/projects/ directory and import JSONL conversation files into the app
+  1. User can browse sessions discovered from ~/.claude/projects/ (or a custom directory)
   2. Imported conversations persist between app launches (stored in app-local storage)
   3. Messages appear in correct conversational order (parentUuid chain resolved), with sidechain messages excluded
   4. Malformed or incomplete JSONL lines are skipped without crashing the app
   5. Each parsed message has its content blocks (text, thinking, tool_use, tool_result) and timestamp extracted
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 02-01: JSONL file discovery and import (filesystem access via Electron IPC)
-- [ ] 02-02: JSONL line parser with content block extraction and error handling
-- [ ] 02-03: parentUuid chain stitcher with sidechain filtering
-- [ ] 02-04: App-local storage layer (persist imported sessions between launches)
-- [ ] 02-05: Message classifier (narrative vs plumbing tool call categorization)
+- [ ] 02-01-PLAN.md -- Pipeline types, JSONL parser with assistant turn reassembly, stitcher, and classifier
+- [ ] 02-02-PLAN.md -- Session discovery with fast metadata scan and app-local storage layer
+- [ ] 02-03-PLAN.md -- IPC bridge (main handlers, preload, renderer types) and Zustand session store
+- [ ] 02-04-PLAN.md -- Builder session browse UI with end-to-end pipeline verification
 
 ### Phase 3: Message Rendering
 **Goal**: Parsed messages render as a readable, visually distinct conversation optimized for screen sharing
@@ -200,7 +199,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. App Shell | 2/2 | Complete | 2026-02-20 |
-| 2. Data Pipeline | 0/5 | Not started | - |
+| 2. Data Pipeline | 0/4 | Planned | - |
 | 3. Message Rendering | 0/5 | Not started | - |
 | 4. Single-Session Navigation | 0/3 | Not started | - |
 | 5. Builder Session Management | 0/3 | Not started | - |
@@ -212,4 +211,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-20 — Phase 1 complete*
+*Last updated: 2026-02-21 -- Phase 2 planned (4 plans in 3 waves)*
