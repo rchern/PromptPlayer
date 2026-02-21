@@ -111,7 +111,7 @@ function createWindow(): void {
 
   ipcMain.handle('pipeline:parseSession', async (_event, filePath: string) => {
     const result = await parseJSONLFile(filePath)
-    return stitchConversation(result.messages)
+    return stitchConversation(result.messages, result.filteredUuidRedirects)
   })
 
   ipcMain.handle('pipeline:browseDirectory', async () => {

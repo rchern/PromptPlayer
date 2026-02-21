@@ -20,24 +20,45 @@ import { classifyMessage, pairToolResults } from './classifier'
  *
  * If no root is found, falls back to ordering all messages by timestamp.
  */
-export function stitchConversation(messages: ParsedMessage[]): StitchedSession {
+export function stitchConversation(
+  messages: ParsedMessage[],
+  filteredUuidRedirects?: Map<string, string | null>
+): StitchedSession {
   if (messages.length === 0) {
     return { messages: [], orphanedCount: 0, sidechainCount: 0 }
   }
 
-  // Build lookup maps
+  // Build uuid lookup for parsed messages
   const byUuid = new Map<string, ParsedMessage>()
-  const childOf = new Map<string, ParsedMessage>() // parentUuid -> child message
-
   for (const msg of messages) {
     byUuid.set(msg.uuid, msg)
+  }
+
+  // Resolve parentUuids through filtered-out lines (system, progress, etc.)
+  // Chain: user → assistant → [system] → user  — the system line is filtered,
+  // so the second user's parentUuid points to a UUID not in our set.
+  // Walk the redirect chain until we find a UUID that IS in our set (or null).
+  if (filteredUuidRedirects && filteredUuidRedirects.size > 0) {
+    for (const msg of messages) {
+      let parent = msg.parentUuid
+      let hops = 0
+      while (parent !== null && !byUuid.has(parent) && filteredUuidRedirects.has(parent) && hops < 20) {
+        parent = filteredUuidRedirects.get(parent) ?? null
+        hops++
+      }
+      msg.parentUuid = parent
+    }
+  }
+
+  // Build child lookup (parentUuid -> child message)
+  const childOf = new Map<string, ParsedMessage>()
+  for (const msg of messages) {
     if (msg.parentUuid !== null) {
       childOf.set(msg.parentUuid, msg)
     }
   }
 
   // Find root: null parentUuid, or parentUuid references a message not in our set
-  // (e.g., first user message points to a filtered-out progress line)
   const root = messages.find(
     (m) => m.parentUuid === null || !byUuid.has(m.parentUuid as string)
   )

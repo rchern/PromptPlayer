@@ -114,6 +114,7 @@ export async function parseJSONLFile(filePath: string): Promise<ParseResult> {
   const errors: ParseError[] = []
   const userMessages: ParsedMessage[] = []
   const assistantLines: JsonlLine[] = []
+  const filteredUuidRedirects = new Map<string, string | null>()
 
   const rl = createInterface({
     input: createReadStream(filePath, { encoding: 'utf-8' }),
@@ -137,8 +138,13 @@ export async function parseJSONLFile(filePath: string): Promise<ParseResult> {
       continue
     }
 
-    // Skip non-message line types
-    if (SKIP_TYPES.has(parsed.type)) continue
+    // Skip non-message line types but record their uuid→parentUuid for chain resolution
+    if (SKIP_TYPES.has(parsed.type)) {
+      if (parsed.uuid) {
+        filteredUuidRedirects.set(parsed.uuid, parsed.parentUuid)
+      }
+      continue
+    }
 
     // Only process user and assistant lines
     if (!MESSAGE_TYPES.has(parsed.type)) continue
@@ -169,5 +175,5 @@ export async function parseJSONLFile(filePath: string): Promise<ParseResult> {
   // Combine all messages (unordered -- stitcher will order them)
   const messages = [...userMessages, ...assistantTurns]
 
-  return { messages, errors, totalLines: lineNumber }
+  return { messages, errors, totalLines: lineNumber, filteredUuidRedirects }
 }

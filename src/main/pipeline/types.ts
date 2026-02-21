@@ -127,6 +127,8 @@ export interface ParseResult {
   messages: ParsedMessage[]
   errors: ParseError[]
   totalLines: number
+  /** Maps filtered-out line UUIDs to their parentUuids, so the stitcher can resolve through gaps */
+  filteredUuidRedirects: Map<string, string | null>
 }
 
 // ---------------------------------------------------------------------------
