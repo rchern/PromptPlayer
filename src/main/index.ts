@@ -1,7 +1,15 @@
-import { app, BrowserWindow, ipcMain, nativeTheme, screen } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, nativeTheme, screen } from 'electron'
 import { join } from 'path'
 import { readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { is } from '@electron-toolkit/utils'
+import { discoverSessions } from './pipeline/discovery'
+import { parseJSONLFile } from './pipeline/parser'
+import { stitchConversation } from './pipeline/stitcher'
+import {
+  getStoredSessions,
+  saveStoredSession,
+  removeStoredSession
+} from './storage/sessionStore'
 
 // ---------- Window bounds persistence (JSON file fallback) ----------
 // electron-store v11+ is ESM-only and electron-vite 3.x compiles main to CJS,
@@ -94,6 +102,38 @@ function createWindow(): void {
   ipcMain.handle('theme:get', () => nativeTheme.shouldUseDarkColors)
   nativeTheme.on('updated', () => {
     mainWindow.webContents.send('theme:changed', nativeTheme.shouldUseDarkColors)
+  })
+
+  // ---------- IPC: Pipeline ----------
+  ipcMain.handle('pipeline:discoverSessions', async (_event, baseDir?: string) => {
+    return discoverSessions(baseDir)
+  })
+
+  ipcMain.handle('pipeline:parseSession', async (_event, filePath: string) => {
+    const result = await parseJSONLFile(filePath)
+    return stitchConversation(result.messages)
+  })
+
+  ipcMain.handle('pipeline:browseDirectory', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+      title: 'Select Claude Projects Directory'
+    })
+    if (result.canceled || result.filePaths.length === 0) return null
+    return result.filePaths[0]
+  })
+
+  // ---------- IPC: Session Storage ----------
+  ipcMain.handle('pipeline:getStoredSessions', async () => {
+    return getStoredSessions()
+  })
+
+  ipcMain.handle('pipeline:saveStoredSession', async (_event, session) => {
+    saveStoredSession(session)
+  })
+
+  ipcMain.handle('pipeline:removeStoredSession', async (_event, sessionId: string) => {
+    removeStoredSession(sessionId)
   })
 
   // ---------- Load renderer ----------
