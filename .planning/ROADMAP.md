@@ -38,7 +38,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md -- Electron + React + TypeScript scaffold with electron-vite, frameless window, IPC, theme system, routing
-- [ ] 01-02-PLAN.md -- Home screen with Builder/Player mode cards, custom titlebar, recent files
+- [x] 01-02-PLAN.md -- Home screen with Builder/Player mode cards, custom titlebar, recent files
 
 ### Phase 2: Data Pipeline
 **Goal**: Raw JSONL conversation files are parsed into structured, ordered, classified message sequences stored in app-local storage
@@ -199,7 +199,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. App Shell | 1/2 | In progress | - |
+| 1. App Shell | 2/2 | Verifying | - |
 | 2. Data Pipeline | 0/5 | Not started | - |
 | 3. Message Rendering | 0/5 | Not started | - |
 | 4. Single-Session Navigation | 0/3 | Not started | - |

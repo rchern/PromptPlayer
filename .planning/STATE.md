@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 1 of 10 (App Shell)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-20 - Completed 01-01-PLAN.md (Electron scaffold)
+Plan: 2 of 2 in current phase
+Status: Phase complete — awaiting verification
+Last activity: 2026-02-20 - Completed 01-02-PLAN.md (Home screen with mode cards)
 
-Progress: [███░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 1/34 plans (~3%)
+Progress: [██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 2/34 plans (~6%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 11min
-- Total execution time: 0.18 hours
+- Total plans completed: 2
+- Average duration: 7min
+- Total execution time: 0.23 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. App Shell | 1/2 | 11min | 11min |
+| 1. App Shell | 2/2 | 14min | 7min |
 
 **Recent Trend:**
-- Last 5 plans: 11min
-- Trend: baseline (first plan)
+- Last 5 plans: 11min, 3min
+- Trend: improving
 
 *Updated after each plan completion*
 
@@ -49,6 +49,8 @@ Recent decisions affecting current work:
 - 01-01: JSON file persistence instead of electron-store (ESM/CJS incompatibility)
 - 01-01: React.JSX.Element return types for React 19 compatibility
 - 01-01: moduleResolution: bundler in tsconfig.node.json for @tailwindcss/vite
+- 01-02: RootLayout with Outlet for nested routing (Titlebar shared across all routes)
+- 01-02: WindowControls extracted as separate component from Titlebar
 
 ### Pending Todos
 
@@ -65,5 +67,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Completed 01-01-PLAN.md
+Stopped at: Phase 1 complete — running verification
 Resume file: None
