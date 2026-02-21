@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "./theme.css";
+@import "./message.css";
+@import "./code-highlight.css";
 
 /* Base styles */
 *,
