@@ -5,32 +5,33 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 1 - App Shell
+**Current focus:** Phase 2 - Data Pipeline
 
 ## Current Position
 
-Phase: 1 of 10 (App Shell)
-Plan: 2 of 2 in current phase
-Status: Phase complete ✓
-Last activity: 2026-02-20 - Completed 01-02-PLAN.md (Home screen with mode cards)
+Phase: 2 of 10 (Data Pipeline)
+Plan: 2 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-21 - Completed 02-02-PLAN.md (Session discovery and storage)
 
-Progress: [██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 2/34 plans (~6%)
+Progress: [████████████░░░░░░░░░░░░░░░░░░░░░░] 4/34 plans (~12%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 7min
-- Total execution time: 0.23 hours
+- Total plans completed: 4
+- Average duration: 5.5min
+- Total execution time: 0.37 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. App Shell | 2/2 | 14min | 7min |
+| 2. Data Pipeline | 2/4 | 8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 11min, 3min
+- Last 5 plans: 11min, 3min, 6min, 2min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -51,6 +52,9 @@ Recent decisions affecting current work:
 - 01-01: moduleResolution: bundler in tsconfig.node.json for @tailwindcss/vite
 - 01-02: RootLayout with Outlet for nested routing (Titlebar shared across all routes)
 - 01-02: WindowControls extracted as separate component from Titlebar
+- 02-02: Deferred app.getPath('userData') resolution via function instead of module-level constant (avoids crash before app.whenReady)
+- 02-02: 50-line scan limit for fast metadata extraction
+- 02-02: Error-as-data pattern (parseError field) instead of thrown exceptions for unreadable files
 
 ### Pending Todos
 
@@ -58,7 +62,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Claude Code JSONL schema must be verified against real files before finalizing Parser (Phase 2)
+- ~~Claude Code JSONL schema must be verified against real files before finalizing Parser (Phase 2)~~ RESOLVED: schema verified in 02-RESEARCH.md against 64 real files
 - ~~npm package versions need verification before project scaffold (Phase 1)~~ RESOLVED: versions verified during 01-01 execution
 - AskUserQuestion tool call schema assumed but unverified (Phase 9)
 - electron-store v11 ESM-only incompatible with electron-vite 3.x CJS output -- using JSON file fallback
@@ -66,6 +70,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-20
-Stopped at: Phase 1 complete, verified
+Last session: 2026-02-21
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
