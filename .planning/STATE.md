@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 2 of 10 (Data Pipeline)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-21 - Completed 02-01-PLAN.md (Core data pipeline logic)
+Last activity: 2026-02-21 - Completed 02-03-PLAN.md (IPC bridge and session store)
 
-Progress: [████████████░░░░░░░░░░░░░░░░░░░░░░] 4/34 plans (~12%)
+Progress: [███████████████░░░░░░░░░░░░░░░░░░░] 5/34 plans (~15%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 5.5min
-- Total execution time: 0.37 hours
+- Total plans completed: 5
+- Average duration: 4.8min
+- Total execution time: 0.40 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. App Shell | 2/2 | 14min | 7min |
-| 2. Data Pipeline | 2/4 | 8min | 4min |
+| 2. Data Pipeline | 3/4 | 10min | 3.3min |
 
 **Recent Trend:**
-- Last 5 plans: 11min, 3min, 4min, 6min, 2min
+- Last 5 plans: 3min, 4min, 6min, 2min, 2min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -59,6 +59,9 @@ Recent decisions affecting current work:
 - 02-02: Deferred app.getPath('userData') resolution via function instead of module-level constant (avoids crash before app.whenReady)
 - 02-02: 50-line scan limit for fast metadata extraction
 - 02-02: Error-as-data pattern (parseError field) instead of thrown exceptions for unreadable files
+- 02-03: Preload uses unknown return types -- thin bridge, renderer types provide actual typing
+- 02-03: pipeline:parseSession runs full pipeline in one IPC call (parse -> stitch+classify -> return)
+- 02-03: Zustand store refreshes storedSessions after save/remove for consistency
 
 ### Pending Todos
 
@@ -75,5 +78,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 02-01-PLAN.md
+Stopped at: Completed 02-03-PLAN.md
 Resume file: None
