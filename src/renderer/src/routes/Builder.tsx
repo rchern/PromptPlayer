@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { RefreshCw, FolderOpen } from 'lucide-react'
 import { useSessionStore } from '../stores/sessionStore'
 import { SessionList } from '../components/builder/SessionList'
+import { MessageList } from '../components/message'
 
 export function Builder(): React.JSX.Element {
   const {
@@ -155,7 +156,7 @@ export function Builder(): React.JSX.Element {
               borderRadius: 'var(--radius-md)',
               padding: 'var(--space-4)',
               gap: 'var(--space-3)',
-              overflowY: 'auto'
+              overflow: 'hidden'
             }}
           >
             {/* Detail header */}
@@ -225,45 +226,68 @@ export function Builder(): React.JSX.Element {
 
             {/* Session details */}
             {activeSession && !isParsing && (
-              <div className="flex flex-col" style={{ gap: 'var(--space-3)' }}>
-                {/* Session ID */}
-                <div className="flex flex-col" style={{ gap: 'var(--space-1)' }}>
-                  <span
+              <>
+                {/* Fixed header area: Session ID + Stats */}
+                <div className="flex flex-col" style={{ gap: 'var(--space-3)', flexShrink: 0 }}>
+                  {/* Session ID */}
+                  <div className="flex flex-col" style={{ gap: 'var(--space-1)' }}>
+                    <span
+                      style={{
+                        fontSize: 'var(--text-xs)',
+                        fontWeight: 600,
+                        color: 'var(--color-text-muted)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                      }}
+                    >
+                      Session ID
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 'var(--text-sm)',
+                        color: 'var(--color-text-primary)',
+                        fontFamily: 'var(--font-mono)',
+                        wordBreak: 'break-all'
+                      }}
+                    >
+                      {activeSessionId}
+                    </span>
+                  </div>
+
+                  {/* Stats */}
+                  <div
+                    className="grid"
                     style={{
-                      fontSize: 'var(--text-xs)',
-                      fontWeight: 600,
-                      color: 'var(--color-text-muted)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em'
+                      gridTemplateColumns: 'repeat(3, 1fr)',
+                      gap: 'var(--space-3)'
                     }}
                   >
-                    Session ID
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 'var(--text-sm)',
-                      color: 'var(--color-text-primary)',
-                      fontFamily: 'var(--font-mono)',
-                      wordBreak: 'break-all'
-                    }}
-                  >
-                    {activeSessionId}
-                  </span>
+                    <StatCard label="Messages" value={activeSession.messages.length} />
+                    <StatCard label="Orphaned" value={activeSession.orphanedCount} />
+                    <StatCard label="Sidechains" value={activeSession.sidechainCount} />
+                  </div>
                 </div>
 
-                {/* Stats */}
-                <div
-                  className="grid"
+                {/* Conversation Preview label */}
+                <span
                   style={{
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: 'var(--space-3)'
+                    fontSize: 'var(--text-sm)',
+                    fontWeight: 600,
+                    color: 'var(--color-text-muted)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    marginTop: 'var(--space-4)',
+                    flexShrink: 0
                   }}
                 >
-                  <StatCard label="Messages" value={activeSession.messages.length} />
-                  <StatCard label="Orphaned" value={activeSession.orphanedCount} />
-                  <StatCard label="Sidechains" value={activeSession.sidechainCount} />
+                  Conversation Preview
+                </span>
+
+                {/* MessageList fills remaining space with its own scroll */}
+                <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                  <MessageList messages={activeSession.messages} />
                 </div>
-              </div>
+              </>
             )}
           </div>
         )}
