@@ -36,8 +36,11 @@ export function stitchConversation(messages: ParsedMessage[]): StitchedSession {
     }
   }
 
-  // Find root (the message with parentUuid === null)
-  const root = messages.find((m) => m.parentUuid === null)
+  // Find root: null parentUuid, or parentUuid references a message not in our set
+  // (e.g., first user message points to a filtered-out progress line)
+  const root = messages.find(
+    (m) => m.parentUuid === null || !byUuid.has(m.parentUuid as string)
+  )
 
   let sidechainCount = 0
   const visited = new Set<string>()
