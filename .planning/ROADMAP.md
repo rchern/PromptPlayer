@@ -34,11 +34,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User sees a home screen with clear options to enter Builder mode or Player mode
   3. Selecting Builder or Player navigates to the respective mode (placeholder content is fine)
   4. App window is resizable and has standard window controls (minimize, maximize, close)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: Electron + React + TypeScript project scaffold with electron-vite
-- [ ] 01-02: Home screen with Builder/Player mode routing
+- [ ] 01-01-PLAN.md -- Electron + React + TypeScript scaffold with electron-vite, frameless window, IPC, theme system, routing
+- [ ] 01-02-PLAN.md -- Home screen with Builder/Player mode cards, custom titlebar, recent files
 
 ### Phase 2: Data Pipeline
 **Goal**: Raw JSONL conversation files are parsed into structured, ordered, classified message sequences stored in app-local storage
@@ -199,7 +199,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. App Shell | 0/2 | Not started | - |
+| 1. App Shell | 0/2 | Planning complete | - |
 | 2. Data Pipeline | 0/5 | Not started | - |
 | 3. Message Rendering | 0/5 | Not started | - |
 | 4. Single-Session Navigation | 0/3 | Not started | - |
