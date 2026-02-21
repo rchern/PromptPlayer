@@ -1,40 +1,50 @@
-import React, { useEffect, useState } from 'react'
-import { Minus, Square, X, Copy } from 'lucide-react'
+import React from 'react'
+import { useLocation, useNavigate } from 'react-router'
+import { Home } from 'lucide-react'
+import { WindowControls } from './WindowControls'
 
 export function Titlebar(): React.JSX.Element {
-  const [isMaximized, setIsMaximized] = useState(false)
-
-  useEffect(() => {
-    window.electronAPI.isMaximized().then(setIsMaximized)
-    const cleanup = window.electronAPI.onMaximizeChange(setIsMaximized)
-    return cleanup
-  }, [])
+  const location = useLocation()
+  const navigate = useNavigate()
+  const isHome = location.pathname === '/'
 
   return (
     <div
-      className="titlebar"
+      className="titlebar flex items-center justify-between shrink-0 select-none"
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
         height: 'var(--titlebar-height)',
         backgroundColor: 'var(--color-titlebar-bg)',
         color: 'var(--color-titlebar-text)',
-        borderBottom: '1px solid var(--color-border)',
-        padding: '0 var(--space-2)',
-        userSelect: 'none',
-        flexShrink: 0
+        borderBottom: '1px solid var(--color-border-subtle)',
+        padding: '0 var(--space-2)'
       }}
     >
-      {/* Left: App brand */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-2)',
-          paddingLeft: 'var(--space-2)'
-        }}
-      >
+      {/* Left: Brand + optional home button */}
+      <div className="flex items-center" style={{ gap: 'var(--space-2)', paddingLeft: 'var(--space-2)' }}>
+        {!isHome && (
+          <button
+            onClick={() => navigate('/')}
+            className="inline-flex items-center justify-center transition-colors duration-150"
+            style={{
+              width: 28,
+              height: 24,
+              border: 'none',
+              background: 'transparent',
+              color: 'var(--color-titlebar-text)',
+              cursor: 'pointer',
+              borderRadius: 'var(--radius-sm)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--color-titlebar-btn-hover)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+            }}
+            title="Home"
+          >
+            <Home size={14} />
+          </button>
+        )}
         <span
           style={{
             fontSize: 'var(--text-sm)',
@@ -48,82 +58,10 @@ export function Titlebar(): React.JSX.Element {
       </div>
 
       {/* Center: drag region spacer */}
-      <div style={{ flex: 1 }} />
+      <div className="flex-1" />
 
       {/* Right: window controls */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <button
-          onClick={() => window.electronAPI.minimize()}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 46,
-            height: 'var(--titlebar-height)',
-            border: 'none',
-            background: 'transparent',
-            color: 'var(--color-titlebar-text)',
-            cursor: 'pointer'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-titlebar-btn-hover)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent'
-          }}
-          title="Minimize"
-        >
-          <Minus size={14} />
-        </button>
-        <button
-          onClick={() => window.electronAPI.maximize()}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 46,
-            height: 'var(--titlebar-height)',
-            border: 'none',
-            background: 'transparent',
-            color: 'var(--color-titlebar-text)',
-            cursor: 'pointer'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-titlebar-btn-hover)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent'
-          }}
-          title={isMaximized ? 'Restore' : 'Maximize'}
-        >
-          {isMaximized ? <Copy size={14} /> : <Square size={14} />}
-        </button>
-        <button
-          onClick={() => window.electronAPI.close()}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 46,
-            height: 'var(--titlebar-height)',
-            border: 'none',
-            background: 'transparent',
-            color: 'var(--color-titlebar-text)',
-            cursor: 'pointer'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--color-titlebar-close-hover)'
-            e.currentTarget.style.color = 'var(--color-titlebar-close-text)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent'
-            e.currentTarget.style.color = 'var(--color-titlebar-text)'
-          }}
-          title="Close"
-        >
-          <X size={14} />
-        </button>
-      </div>
+      <WindowControls />
     </div>
   )
 }
