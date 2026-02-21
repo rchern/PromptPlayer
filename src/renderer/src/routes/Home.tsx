@@ -1,56 +1,47 @@
 import React from 'react'
-import { useNavigate } from 'react-router'
+import { Wrench, Play } from 'lucide-react'
+import { ModeCard } from '../components/home/ModeCard'
+import { RecentFiles } from '../components/home/RecentFiles'
 
 export function Home(): React.JSX.Element {
-  const navigate = useNavigate()
-
   return (
     <div
+      className="flex flex-col items-center"
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-        gap: 'var(--space-8)',
-        padding: 'var(--space-8)'
+        paddingTop: 'var(--space-16)',
+        paddingBottom: 'var(--space-8)',
+        paddingLeft: 'var(--space-8)',
+        paddingRight: 'var(--space-8)',
+        height: '100%'
       }}
     >
-      <h1 style={{ fontSize: 'var(--text-3xl)', color: 'var(--color-text-primary)' }}>
-        PromptPlayer
-      </h1>
-      <p style={{ fontSize: 'var(--text-base)', color: 'var(--color-text-secondary)' }}>
-        Walk your team through real Claude Code workflows step by step
-      </p>
-      <div style={{ display: 'flex', gap: 'var(--space-6)' }}>
-        <button
-          onClick={() => navigate('/builder')}
-          style={{
-            padding: 'var(--space-4) var(--space-8)',
-            backgroundColor: 'var(--color-accent)',
-            color: '#ffffff',
-            border: 'none',
-            borderRadius: 'var(--radius-lg)',
-            fontSize: 'var(--text-lg)',
-            cursor: 'pointer'
-          }}
-        >
-          Builder
-        </button>
-        <button
-          onClick={() => navigate('/player')}
-          style={{
-            padding: 'var(--space-4) var(--space-8)',
-            backgroundColor: 'var(--color-bg-tertiary)',
-            color: 'var(--color-text-primary)',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-lg)',
-            fontSize: 'var(--text-lg)',
-            cursor: 'pointer'
-          }}
-        >
-          Player
-        </button>
+      {/* Mode cards - side by side */}
+      <div
+        className="flex"
+        style={{
+          gap: 'var(--space-8)',
+          width: '100%',
+          maxWidth: 700,
+          justifyContent: 'center'
+        }}
+      >
+        <ModeCard
+          icon={Wrench}
+          title="Builder"
+          description="Import and curate Claude Code sessions into presentations"
+          to="/builder"
+        />
+        <ModeCard
+          icon={Play}
+          title="Player"
+          description="Step through presentations in a clean, focused view"
+          to="/player"
+        />
+      </div>
+
+      {/* Recent files */}
+      <div style={{ width: '100%', maxWidth: 700 }}>
+        <RecentFiles />
       </div>
     </div>
   )
