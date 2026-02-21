@@ -68,14 +68,12 @@ Plans:
   3. Code blocks render with syntax highlighting appropriate to the language specified
   4. Plumbing tool calls (Read, Grep, Glob, Write, Edit, Bash) are hidden by default in the rendered output
   5. Text is readable at screen-sharing distance (large base font, high contrast, clean layout)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: Message component with user/Claude visual distinction
-- [ ] 03-02: Markdown rendering pipeline (react-markdown + remark-gfm)
-- [ ] 03-03: Code block syntax highlighting (shiki integration)
-- [ ] 03-04: Tool call visibility filtering (hide plumbing by default)
-- [ ] 03-05: Presentation typography (projector-first font sizing and contrast)
+- [ ] 03-01-PLAN.md -- Rendering infrastructure: install deps, MarkdownRenderer, CodeBlock, presentation CSS, shiki dual-theme CSS
+- [ ] 03-02-PLAN.md -- Message components: ThinkingBlock, ToolCallBlock, ContentBlockRenderer, MessageBubble, MessageList, visibility filtering
+- [ ] 03-03-PLAN.md -- Builder integration: wire MessageList into session detail panel, visual verification checkpoint
 
 ### Phase 4: Single-Session Navigation
 **Goal**: User can step forward and backward through a single conversation using keyboard or mouse
@@ -200,7 +198,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 |-------|----------------|--------|-----------|
 | 1. App Shell | 2/2 | Complete | 2026-02-20 |
 | 2. Data Pipeline | 4/4 | Complete | 2026-02-21 |
-| 3. Message Rendering | 0/5 | Not started | - |
+| 3. Message Rendering | 0/3 | Not started | - |
 | 4. Single-Session Navigation | 0/3 | Not started | - |
 | 5. Builder Session Management | 0/3 | Not started | - |
 | 6. Builder Presentation Assembly | 0/3 | Not started | - |
@@ -211,4 +209,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-21 -- Phase 2 complete (4 plans, verified)*
+*Last updated: 2026-02-21 -- Phase 3 planned (3 plans, 3 waves)*
