@@ -8,7 +8,7 @@ interface SessionListProps {
   isLoading: boolean
 }
 
-/** Group sessions by projectFolder, sort groups alphabetically, sort sessions within each group by date descending */
+/** Group sessions by projectFolder, sort groups by most recent session, sort sessions within each group by date descending */
 function groupAndSort(
   sessions: SessionMetadata[]
 ): { projectFolder: string; sessions: SessionMetadata[] }[] {
@@ -33,14 +33,20 @@ function groupAndSort(
     })
   }
 
-  // Sort groups alphabetically by project folder name
-  const sortedKeys = Array.from(groups.keys()).sort((a, b) =>
-    a.localeCompare(b, undefined, { sensitivity: 'base' })
-  )
-
-  return sortedKeys.map((key) => ({
+  // Sort groups by most recent session (newest group first)
+  const entries = Array.from(groups.entries()).map(([key, groupSessions]) => ({
     projectFolder: key,
-    sessions: groups.get(key)!
+    sessions: groupSessions,
+    newestTimestamp: groupSessions[0]?.firstTimestamp
+      ? new Date(groupSessions[0].firstTimestamp).getTime()
+      : 0
+  }))
+
+  entries.sort((a, b) => b.newestTimestamp - a.newestTimestamp)
+
+  return entries.map(({ projectFolder, sessions: s }) => ({
+    projectFolder,
+    sessions: s
   }))
 }
 
