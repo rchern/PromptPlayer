@@ -109,6 +109,7 @@ export async function extractSessionMetadata(
   const sessionId = basename(filePath, '.jsonl')
   let firstTimestamp: string | null = null
   let firstUserMessage: string | null = null
+  let firstCommandSnippet: string | null = null
   let messageCount = 0
 
   try {
@@ -118,7 +119,7 @@ export async function extractSessionMetadata(
     })
 
     let lineCount = 0
-    const MAX_LINES = 50
+    const MAX_LINES = 150
 
     for await (const line of rl) {
       if (!line.trim()) continue
@@ -158,6 +159,13 @@ export async function extractSessionMetadata(
         const message = parsed.message as { content?: string | Array<{ type: string; text?: string }> } | undefined
         const content = message?.content
 
+        const rawText =
+          typeof content === 'string'
+            ? content
+            : Array.isArray(content)
+              ? (content.find((b: { type: string; text?: string }) => b.type === 'text' && typeof b.text === 'string') as { text: string } | undefined)?.text ?? ''
+              : ''
+
         if (typeof content === 'string') {
           if (isCleanUserContent(content)) {
             firstUserMessage = content.slice(0, 150)
@@ -174,6 +182,23 @@ export async function extractSessionMetadata(
             }
           }
         }
+
+        // Fallback: extract command name from command messages (e.g., GSD sessions)
+        // Keep searching until we find a meaningful command (skip /clear, /help, etc.)
+        if (!firstUserMessage && rawText) {
+          const cmdMatch = rawText.match(/<command-message>([^<]+)<\/command-message>/)
+          if (cmdMatch) {
+            const cmdName = cmdMatch[1].trim()
+            const isBoringCommand = ['clear', 'help', 'compact', 'init'].includes(cmdName)
+            if (!isBoringCommand && !firstCommandSnippet) {
+              firstCommandSnippet = '/' + cmdName
+              const argsMatch = rawText.match(/<command-args>([^<]+)<\/command-args>/)
+              if (argsMatch && argsMatch[1].trim()) {
+                firstCommandSnippet += ' ' + argsMatch[1].trim()
+              }
+            }
+          }
+        }
       }
     }
 
@@ -182,7 +207,7 @@ export async function extractSessionMetadata(
       projectFolder,
       filePath,
       firstTimestamp,
-      firstUserMessage,
+      firstUserMessage: firstCommandSnippet ?? firstUserMessage,
       messageCount,
       parseError: null
     }
