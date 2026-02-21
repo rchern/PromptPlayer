@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 Phase: 2 of 10 (Data Pipeline)
 Plan: 2 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-21 - Completed 02-02-PLAN.md (Session discovery and storage)
+Last activity: 2026-02-21 - Completed 02-01-PLAN.md (Core data pipeline logic)
 
 Progress: [████████████░░░░░░░░░░░░░░░░░░░░░░] 4/34 plans (~12%)
 
@@ -31,7 +31,7 @@ Progress: [████████████░░░░░░░░░░░
 | 2. Data Pipeline | 2/4 | 8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 11min, 3min, 6min, 2min
+- Last 5 plans: 11min, 3min, 4min, 6min, 2min
 - Trend: improving
 
 *Updated after each plan completion*
@@ -52,6 +52,10 @@ Recent decisions affecting current work:
 - 01-01: moduleResolution: bundler in tsconfig.node.json for @tailwindcss/vite
 - 01-02: RootLayout with Outlet for nested routing (Titlebar shared across all routes)
 - 01-02: WindowControls extracted as separate component from Titlebar
+- 02-01: Thinking-only messages classified as plumbing (hidden by default)
+- 02-01: Unknown tools default to 'unknown' visibility (shown by default -- safe behavior)
+- 02-01: Parser returns unordered messages; ordering is stitcher's responsibility
+- 02-01: pairToolResults runs post-stitch so tool_use always precedes tool_result
 - 02-02: Deferred app.getPath('userData') resolution via function instead of module-level constant (avoids crash before app.whenReady)
 - 02-02: 50-line scan limit for fast metadata extraction
 - 02-02: Error-as-data pattern (parseError field) instead of thrown exceptions for unreadable files
@@ -71,5 +75,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 02-02-PLAN.md
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
