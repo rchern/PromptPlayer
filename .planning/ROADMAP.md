@@ -1,0 +1,215 @@
+# Roadmap: PromptPlayer
+
+## Overview
+
+PromptPlayer transforms Claude Code JSONL conversation files into curated, step-through presentation demos. The roadmap builds from the inside out: first the data pipeline that parses raw JSONL, then the rendering engine that makes it readable, then navigation that makes it steppable, then the Builder that lets presenters curate multi-session demos, and finally the Player features that make presentations polished and projector-ready. Ten phases deliver all 38 v1 requirements through a sequence of coherent, verifiable capabilities.
+
+## Phases
+
+**Phase Numbering:**
+- Integer phases (1, 2, 3): Planned milestone work
+- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+
+Decimal phases appear between their surrounding integers in numeric order.
+
+- [ ] **Phase 1: App Shell** - Electron scaffold with two-mode home screen
+- [ ] **Phase 2: Data Pipeline** - JSONL parsing, UUID stitching, content extraction, app-local storage
+- [ ] **Phase 3: Message Rendering** - Visual message display with markdown, syntax highlighting, and tool call filtering
+- [ ] **Phase 4: Single-Session Navigation** - Step forward/back through one conversation with progress tracking
+- [ ] **Phase 5: Builder Session Management** - Import, browse, search, and preview conversation sessions
+- [ ] **Phase 6: Builder Presentation Assembly** - Create and organize multi-session presentations with sections
+- [ ] **Phase 7: Builder Configuration and Export** - Configure display options, export .promptplay files, re-edit saved files
+- [ ] **Phase 8: Player Multi-Session Playback** - Open .promptplay files, seamless session transitions, section navigation
+- [ ] **Phase 9: Specialized Tool Call Display** - AskUserQuestion and Task management tool call rendering
+- [ ] **Phase 10: Player Polish** - Timestamps, theme application, and OS file association
+
+## Phase Details
+
+### Phase 1: App Shell
+**Goal**: A running Electron app on Windows with a home screen that routes to Builder or Player mode
+**Depends on**: Nothing (first phase)
+**Requirements**: SHELL-01, SHELL-02
+**Success Criteria** (what must be TRUE):
+  1. App launches on Windows 10/11 without errors
+  2. User sees a home screen with clear options to enter Builder mode or Player mode
+  3. Selecting Builder or Player navigates to the respective mode (placeholder content is fine)
+  4. App window is resizable and has standard window controls (minimize, maximize, close)
+**Plans**: TBD
+
+Plans:
+- [ ] 01-01: Electron + React + TypeScript project scaffold with electron-vite
+- [ ] 01-02: Home screen with Builder/Player mode routing
+
+### Phase 2: Data Pipeline
+**Goal**: Raw JSONL conversation files are parsed into structured, ordered, classified message sequences stored in app-local storage
+**Depends on**: Phase 1
+**Requirements**: DATA-01, DATA-02, DATA-03, DATA-04, DATA-05, DATA-06, DATA-07, SHELL-04
+**Success Criteria** (what must be TRUE):
+  1. User can select a .claude/projects/ directory and import JSONL conversation files into the app
+  2. Imported conversations persist between app launches (stored in app-local storage)
+  3. Messages appear in correct conversational order (parentUuid chain resolved), with sidechain messages excluded
+  4. Malformed or incomplete JSONL lines are skipped without crashing the app
+  5. Each parsed message has its content blocks (text, thinking, tool_use, tool_result) and timestamp extracted
+**Plans**: TBD
+
+Plans:
+- [ ] 02-01: JSONL file discovery and import (filesystem access via Electron IPC)
+- [ ] 02-02: JSONL line parser with content block extraction and error handling
+- [ ] 02-03: parentUuid chain stitcher with sidechain filtering
+- [ ] 02-04: App-local storage layer (persist imported sessions between launches)
+- [ ] 02-05: Message classifier (narrative vs plumbing tool call categorization)
+
+### Phase 3: Message Rendering
+**Goal**: Parsed messages render as a readable, visually distinct conversation optimized for screen sharing
+**Depends on**: Phase 2
+**Requirements**: PLAY-04, PLAY-05, PLAY-06, PLAY-09, PLAY-15
+**Success Criteria** (what must be TRUE):
+  1. User messages and Claude responses are visually distinct (different styling, layout, or color treatment)
+  2. Claude's markdown responses render with proper headings, lists, bold, italic, links, and tables
+  3. Code blocks render with syntax highlighting appropriate to the language specified
+  4. Plumbing tool calls (Read, Grep, Glob, Write, Edit, Bash) are hidden by default in the rendered output
+  5. Text is readable at screen-sharing distance (large base font, high contrast, clean layout)
+**Plans**: TBD
+
+Plans:
+- [ ] 03-01: Message component with user/Claude visual distinction
+- [ ] 03-02: Markdown rendering pipeline (react-markdown + remark-gfm)
+- [ ] 03-03: Code block syntax highlighting (shiki integration)
+- [ ] 03-04: Tool call visibility filtering (hide plumbing by default)
+- [ ] 03-05: Presentation typography (projector-first font sizing and contrast)
+
+### Phase 4: Single-Session Navigation
+**Goal**: User can step forward and backward through a single conversation using keyboard or mouse
+**Depends on**: Phase 3
+**Requirements**: PLAY-02, PLAY-03, PLAY-11
+**Success Criteria** (what must be TRUE):
+  1. User can step forward through messages with right arrow, spacebar, or click
+  2. User can step backward through messages with left arrow
+  3. Navigation skips hidden plumbing tool calls (only stops on narrative messages)
+  4. Progress indicator displays current step N of M within the conversation
+  5. Forward and backward are exact inverses (forward then back returns to the same message)
+**Plans**: TBD
+
+Plans:
+- [ ] 04-01: Navigation controller (Zustand store with currentIndex on filtered narrative steps)
+- [ ] 04-02: Keyboard and mouse input bindings (arrow keys, spacebar, click)
+- [ ] 04-03: Progress indicator component (step N of M)
+
+### Phase 5: Builder Session Management
+**Goal**: User can import, browse, search, and preview conversation sessions in Builder mode
+**Depends on**: Phase 4
+**Requirements**: BLDR-01, BLDR-02, BLDR-03
+**Success Criteria** (what must be TRUE):
+  1. Builder mode displays a list of all imported conversation sessions with identifying information
+  2. User can click a session to preview its conversation content before adding it to a presentation
+  3. User can search or filter sessions by date, content keywords, or project
+**Plans**: TBD
+
+Plans:
+- [ ] 05-01: Session list view with metadata display
+- [ ] 05-02: Session preview panel (reuses Phase 3 rendering components)
+- [ ] 05-03: Session search and filter functionality
+
+### Phase 6: Builder Presentation Assembly
+**Goal**: User can create an ordered, sectioned presentation from selected conversation sessions
+**Depends on**: Phase 5
+**Requirements**: BLDR-04, BLDR-05, BLDR-06, BLDR-07
+**Success Criteria** (what must be TRUE):
+  1. User can create a new presentation by selecting sessions from the imported library
+  2. User can reorder sessions within a presentation via drag-and-drop or equivalent interaction
+  3. User can define named sections/chapters that group consecutive sessions (e.g., "Research", "Execution")
+  4. User can rename sections and sessions with display-friendly labels
+**Plans**: TBD
+
+Plans:
+- [ ] 06-01: Presentation data model and creation workflow
+- [ ] 06-02: Session ordering with drag-and-drop reordering
+- [ ] 06-03: Section/chapter creation, naming, and session grouping
+
+### Phase 7: Builder Configuration and Export
+**Goal**: User can configure display options and export a self-contained .promptplay file
+**Depends on**: Phase 6
+**Requirements**: BLDR-08, BLDR-09, BLDR-10, BLDR-11, BLDR-12
+**Success Criteria** (what must be TRUE):
+  1. User can configure which tool call types are visible vs hidden for the presentation
+  2. User can toggle timestamp display on/off for the presentation
+  3. User can select light or dark theme for the presentation
+  4. User can export the presentation as a self-contained .promptplay file containing all data
+  5. User can open a previously exported .promptplay file in Builder mode and edit it
+**Plans**: TBD
+
+Plans:
+- [ ] 07-01: Tool call visibility configuration UI
+- [ ] 07-02: Presentation settings (timestamp toggle, theme selection)
+- [ ] 07-03: .promptplay file format design and export
+- [ ] 07-04: .promptplay file import and re-editing in Builder
+
+### Phase 8: Player Multi-Session Playback
+**Goal**: Player opens .promptplay files and navigates seamlessly across session boundaries with section support
+**Depends on**: Phase 7
+**Requirements**: PLAY-01, PLAY-10, PLAY-12
+**Success Criteria** (what must be TRUE):
+  1. Player opens a .promptplay file and renders the first step of the presentation
+  2. Navigation crosses session boundaries seamlessly (no jarring reload or gap between sessions)
+  3. Section/chapter markers are visible during playback
+  4. User can jump directly to any section from a section navigation control
+  5. Progress indicator shows section name and overall progress across the full presentation
+**Plans**: TBD
+
+Plans:
+- [ ] 08-01: .promptplay file loading and presentation hydration in Player
+- [ ] 08-02: Cross-session navigation (seamless transition between sessions in chain)
+- [ ] 08-03: Section markers and jump-to-section navigation
+- [ ] 08-04: Multi-session progress indicator (section name, overall progress bar)
+
+### Phase 9: Specialized Tool Call Display
+**Goal**: Narrative tool calls (AskUserQuestion, Task management) render with meaningful, presentation-quality formatting
+**Depends on**: Phase 8
+**Requirements**: PLAY-07, PLAY-08
+**Success Criteria** (what must be TRUE):
+  1. AskUserQuestion tool calls display as interactive-looking prompts showing the question, available options, and which option the user selected
+  2. TaskCreate tool calls display with the task description and any relevant metadata
+  3. TaskUpdate tool calls display showing what changed (status updates, completions)
+  4. TaskList tool calls display as a formatted task summary
+**Plans**: TBD
+
+Plans:
+- [ ] 09-01: AskUserQuestion renderer (question, options, selected answer)
+- [ ] 09-02: Task management renderers (TaskCreate, TaskUpdate, TaskList)
+
+### Phase 10: Player Polish
+**Goal**: Player delivers a fully polished presentation experience with timestamps, themes, and OS integration
+**Depends on**: Phase 9
+**Requirements**: PLAY-13, PLAY-14, SHELL-03
+**Success Criteria** (what must be TRUE):
+  1. Timestamps display between steps when enabled, showing original time and/or elapsed time between messages
+  2. Light and dark themes apply correctly based on the presentation's configured theme
+  3. User can double-click a .promptplay file in Windows Explorer to open it directly in the Player
+**Plans**: TBD
+
+Plans:
+- [ ] 10-01: Timestamp display (original time and elapsed time between steps)
+- [ ] 10-02: Theme engine (light and dark theme application from presentation config)
+- [ ] 10-03: Windows file association (.promptplay opens in app)
+
+## Progress
+
+**Execution Order:**
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 1. App Shell | 0/2 | Not started | - |
+| 2. Data Pipeline | 0/5 | Not started | - |
+| 3. Message Rendering | 0/5 | Not started | - |
+| 4. Single-Session Navigation | 0/3 | Not started | - |
+| 5. Builder Session Management | 0/3 | Not started | - |
+| 6. Builder Presentation Assembly | 0/3 | Not started | - |
+| 7. Builder Configuration and Export | 0/4 | Not started | - |
+| 8. Player Multi-Session Playback | 0/4 | Not started | - |
+| 9. Specialized Tool Call Display | 0/2 | Not started | - |
+| 10. Player Polish | 0/3 | Not started | - |
+
+---
+*Roadmap created: 2026-02-20*
+*Last updated: 2026-02-20*

@@ -77,7 +77,7 @@
 
 ### Advanced Display
 
-- **DISP-01**: Code diff view for Edit tool calls (show old_string → new_string as highlighted diff)
+- **DISP-01**: Code diff view for Edit tool calls (show old_string -> new_string as highlighted diff)
 - **DISP-02**: File tree / artifact summary panel showing files created/modified during the conversation
 - **DISP-03**: Static HTML export for async sharing without the app
 
@@ -101,50 +101,50 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | TBD | Pending |
-| DATA-02 | TBD | Pending |
-| DATA-03 | TBD | Pending |
-| DATA-04 | TBD | Pending |
-| DATA-05 | TBD | Pending |
-| DATA-06 | TBD | Pending |
-| DATA-07 | TBD | Pending |
-| BLDR-01 | TBD | Pending |
-| BLDR-02 | TBD | Pending |
-| BLDR-03 | TBD | Pending |
-| BLDR-04 | TBD | Pending |
-| BLDR-05 | TBD | Pending |
-| BLDR-06 | TBD | Pending |
-| BLDR-07 | TBD | Pending |
-| BLDR-08 | TBD | Pending |
-| BLDR-09 | TBD | Pending |
-| BLDR-10 | TBD | Pending |
-| BLDR-11 | TBD | Pending |
-| BLDR-12 | TBD | Pending |
-| PLAY-01 | TBD | Pending |
-| PLAY-02 | TBD | Pending |
-| PLAY-03 | TBD | Pending |
-| PLAY-04 | TBD | Pending |
-| PLAY-05 | TBD | Pending |
-| PLAY-06 | TBD | Pending |
-| PLAY-07 | TBD | Pending |
-| PLAY-08 | TBD | Pending |
-| PLAY-09 | TBD | Pending |
-| PLAY-10 | TBD | Pending |
-| PLAY-11 | TBD | Pending |
-| PLAY-12 | TBD | Pending |
-| PLAY-13 | TBD | Pending |
-| PLAY-14 | TBD | Pending |
-| PLAY-15 | TBD | Pending |
-| SHELL-01 | TBD | Pending |
-| SHELL-02 | TBD | Pending |
-| SHELL-03 | TBD | Pending |
-| SHELL-04 | TBD | Pending |
+| DATA-01 | Phase 2 | Pending |
+| DATA-02 | Phase 2 | Pending |
+| DATA-03 | Phase 2 | Pending |
+| DATA-04 | Phase 2 | Pending |
+| DATA-05 | Phase 2 | Pending |
+| DATA-06 | Phase 2 | Pending |
+| DATA-07 | Phase 2 | Pending |
+| BLDR-01 | Phase 5 | Pending |
+| BLDR-02 | Phase 5 | Pending |
+| BLDR-03 | Phase 5 | Pending |
+| BLDR-04 | Phase 6 | Pending |
+| BLDR-05 | Phase 6 | Pending |
+| BLDR-06 | Phase 6 | Pending |
+| BLDR-07 | Phase 6 | Pending |
+| BLDR-08 | Phase 7 | Pending |
+| BLDR-09 | Phase 7 | Pending |
+| BLDR-10 | Phase 7 | Pending |
+| BLDR-11 | Phase 7 | Pending |
+| BLDR-12 | Phase 7 | Pending |
+| PLAY-01 | Phase 8 | Pending |
+| PLAY-02 | Phase 4 | Pending |
+| PLAY-03 | Phase 4 | Pending |
+| PLAY-04 | Phase 3 | Pending |
+| PLAY-05 | Phase 3 | Pending |
+| PLAY-06 | Phase 3 | Pending |
+| PLAY-07 | Phase 9 | Pending |
+| PLAY-08 | Phase 9 | Pending |
+| PLAY-09 | Phase 3 | Pending |
+| PLAY-10 | Phase 8 | Pending |
+| PLAY-11 | Phase 4 | Pending |
+| PLAY-12 | Phase 8 | Pending |
+| PLAY-13 | Phase 10 | Pending |
+| PLAY-14 | Phase 10 | Pending |
+| PLAY-15 | Phase 3 | Pending |
+| SHELL-01 | Phase 1 | Pending |
+| SHELL-02 | Phase 1 | Pending |
+| SHELL-03 | Phase 10 | Pending |
+| SHELL-04 | Phase 2 | Pending |
 
 **Coverage:**
 - v1 requirements: 38 total
-- Mapped to phases: 0
-- Unmapped: 38 (pending roadmap)
+- Mapped to phases: 38
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-20*
-*Last updated: 2026-02-20 after initial definition*
+*Last updated: 2026-02-20 after roadmap phase mapping*
