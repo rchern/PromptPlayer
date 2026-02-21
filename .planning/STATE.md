@@ -78,11 +78,11 @@ None yet.
 - AskUserQuestion tool call schema assumed but unverified (Phase 9)
 - electron-store v11 ESM-only incompatible with electron-vite 3.x CJS output -- using JSON file fallback
 - npm audit reports 10 high severity vulnerabilities in eslint dependency chain -- review before packaging
-- Stitcher orphan count always equals message count (parentUuid chain walking not finding root -- likely null vs undefined check). Needs investigation before Phase 3 relies on orphan data.
+- ~~Stitcher orphan count always equals message count~~ PARTIALLY FIXED: root-finding fixed (76841f6), filteredUuidRedirects added (8fc0ece) to resolve through system/progress lines. Orphans reduced but not to 0 -- chain resolution still incomplete. The childOf map may be losing entries when multiple messages share the same parentUuid (Map overwrites). Investigate in next session.
 - Metadata scan message count differs from full parse count (expected: scan approximates, full parse does assistant turn reassembly). Not a bug, but worth documenting for users.
 
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 02-04-PLAN.md (Phase 2 complete)
+Stopped at: Phase 2 complete and verified. Post-verification bug fix in progress -- stitcher orphan chain resolution partially working but not fully resolved. Fix committed (8fc0ece) but orphan count still high (84/97 in one test session). Suspect childOf Map overwriting when multiple messages share same parentUuid after redirect resolution. Resume with /gsd:debug or manual investigation of stitcher.ts chain walking.
 Resume file: None
