@@ -12,7 +12,7 @@ PromptPlayer transforms Claude Code JSONL conversation files into curated, step-
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: App Shell** - Electron scaffold with two-mode home screen
+- [x] **Phase 1: App Shell** - Electron scaffold with two-mode home screen
 - [ ] **Phase 2: Data Pipeline** - JSONL parsing, UUID stitching, content extraction, app-local storage
 - [ ] **Phase 3: Message Rendering** - Visual message display with markdown, syntax highlighting, and tool call filtering
 - [ ] **Phase 4: Single-Session Navigation** - Step forward/back through one conversation with progress tracking
@@ -199,7 +199,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. App Shell | 2/2 | Verifying | - |
+| 1. App Shell | 2/2 | Complete | 2026-02-20 |
 | 2. Data Pipeline | 0/5 | Not started | - |
 | 3. Message Rendering | 0/5 | Not started | - |
 | 4. Single-Session Navigation | 0/3 | Not started | - |
@@ -212,4 +212,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-20*
+*Last updated: 2026-02-20 — Phase 1 complete*
