@@ -13,7 +13,7 @@ PromptPlayer transforms Claude Code JSONL conversation files into curated, step-
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: App Shell** - Electron scaffold with two-mode home screen
-- [ ] **Phase 2: Data Pipeline** - JSONL parsing, UUID stitching, content extraction, app-local storage
+- [x] **Phase 2: Data Pipeline** - JSONL parsing, UUID stitching, content extraction, app-local storage
 - [ ] **Phase 3: Message Rendering** - Visual message display with markdown, syntax highlighting, and tool call filtering
 - [ ] **Phase 4: Single-Session Navigation** - Step forward/back through one conversation with progress tracking
 - [ ] **Phase 5: Builder Session Management** - Import, browse, search, and preview conversation sessions
@@ -53,10 +53,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Pipeline types, JSONL parser with assistant turn reassembly, stitcher, and classifier
-- [ ] 02-02-PLAN.md -- Session discovery with fast metadata scan and app-local storage layer
-- [ ] 02-03-PLAN.md -- IPC bridge (main handlers, preload, renderer types) and Zustand session store
-- [ ] 02-04-PLAN.md -- Builder session browse UI with end-to-end pipeline verification
+- [x] 02-01-PLAN.md -- Pipeline types, JSONL parser with assistant turn reassembly, stitcher, and classifier
+- [x] 02-02-PLAN.md -- Session discovery with fast metadata scan and app-local storage layer
+- [x] 02-03-PLAN.md -- IPC bridge (main handlers, preload, renderer types) and Zustand session store
+- [x] 02-04-PLAN.md -- Builder session browse UI with end-to-end pipeline verification
 
 ### Phase 3: Message Rendering
 **Goal**: Parsed messages render as a readable, visually distinct conversation optimized for screen sharing
@@ -199,7 +199,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. App Shell | 2/2 | Complete | 2026-02-20 |
-| 2. Data Pipeline | 0/4 | Planned | - |
+| 2. Data Pipeline | 4/4 | Complete | 2026-02-21 |
 | 3. Message Rendering | 0/5 | Not started | - |
 | 4. Single-Session Navigation | 0/3 | Not started | - |
 | 5. Builder Session Management | 0/3 | Not started | - |
@@ -211,4 +211,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-21 -- Phase 2 planned (4 plans in 3 waves)*
+*Last updated: 2026-02-21 -- Phase 2 complete (4 plans, verified)*

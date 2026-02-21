@@ -7,13 +7,13 @@
 
 ### Data Pipeline
 
-- [ ] **DATA-01**: App can import JSONL conversation files from `.claude/projects/` directory
-- [ ] **DATA-02**: Imported conversations are stored in app-local storage independent of source files
-- [ ] **DATA-03**: JSONL parser correctly extracts message sequence from parentUuid chain
-- [ ] **DATA-04**: Parser filters out sidechain messages (isSidechain = true)
-- [ ] **DATA-05**: Parser handles malformed or incomplete JSONL lines gracefully (skip, don't crash)
-- [ ] **DATA-06**: Parser extracts content blocks from messages (text, thinking, tool_use, tool_result)
-- [ ] **DATA-07**: Parser extracts timestamps from each message
+- [x] **DATA-01**: App can import JSONL conversation files from `.claude/projects/` directory
+- [x] **DATA-02**: Imported conversations are stored in app-local storage independent of source files
+- [x] **DATA-03**: JSONL parser correctly extracts message sequence from parentUuid chain
+- [x] **DATA-04**: Parser filters out sidechain messages (isSidechain = true)
+- [x] **DATA-05**: Parser handles malformed or incomplete JSONL lines gracefully (skip, don't crash)
+- [x] **DATA-06**: Parser extracts content blocks from messages (text, thinking, tool_use, tool_result)
+- [x] **DATA-07**: Parser extracts timestamps from each message
 
 ### Builder
 
@@ -53,7 +53,7 @@
 - [x] **SHELL-01**: Electron app runs on Windows 10/11
 - [x] **SHELL-02**: App opens to a home screen where user can choose Builder or Player mode
 - [ ] **SHELL-03**: App can open `.promptplay` files directly (double-click or "Open with")
-- [ ] **SHELL-04**: App persists imported sessions and saved presentations between launches
+- [x] **SHELL-04**: App persists imported sessions and saved presentations between launches
 
 ## v2 Requirements
 
