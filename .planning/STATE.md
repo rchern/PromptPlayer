@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 3 of 10 (Message Rendering)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-21 - Completed 03-01-PLAN.md (Markdown rendering infrastructure)
+Last activity: 2026-02-21 - Completed 03-02-PLAN.md (Message display components)
 
-Progress: [████████████████████░░░░░░░░░░░░░░░] 7/34 plans (~21%)
+Progress: [████████████████████████░░░░░░░░░░░] 8/34 plans (~24%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 5.1min
-- Total execution time: 0.60 hours
+- Total plans completed: 8
+- Average duration: 4.8min
+- Total execution time: 0.63 hours
 
 **By Phase:**
 
@@ -29,11 +29,11 @@ Progress: [████████████████████░░░
 |-------|-------|-------|----------|
 | 1. App Shell | 2/2 | 14min | 7min |
 | 2. Data Pipeline | 4/4 | 18min | 4.5min |
-| 3. Message Rendering | 1/4 | 4min | 4min |
+| 3. Message Rendering | 2/4 | 6min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 6min, 2min, 2min, 8min, 4min
-- Trend: stable
+- Last 5 plans: 2min, 2min, 8min, 4min, 2min
+- Trend: stable, fast
 
 *Updated after each plan completion*
 
@@ -70,6 +70,10 @@ Recent decisions affecting current work:
 - 03-01: MarkdownHooks (not sync Markdown) for async @shikijs/rehype plugin compatibility
 - 03-01: Module-level stable refs for plugin/component config to avoid re-creation
 - 03-01: MutationObserver in CodeBlock for overflow detection after async shiki DOM mutation
+- 03-02: User text rendered as pre-wrapped plain text, not markdown (shows what user actually typed)
+- 03-02: ContentBlockRenderer plainText prop for user vs assistant rendering distinction
+- 03-02: Mixed-content plumbing messages still shown -- text is valuable even when tool blocks hidden
+- 03-02: filterVisibleMessages is a module-level pure function (testable, no re-creation)
 
 ### Pending Todos
 
@@ -89,5 +93,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 03-01-PLAN.md. Markdown rendering infrastructure in place (MarkdownRenderer, CodeBlock, presentation CSS, shiki dual-theme CSS). Ready for 03-02-PLAN.md (message display components).
+Stopped at: Completed 03-02-PLAN.md. Message display components complete (MessageList, MessageBubble, ContentBlockRenderer, ThinkingBlock, ToolCallBlock). Ready for 03-03-PLAN.md (wiring components to live data).
 Resume file: None
