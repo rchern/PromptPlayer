@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { AlertCircle, Clock } from 'lucide-react'
 import type { SessionMetadata } from '../../types/pipeline'
 import { formatSessionDuration } from '../../types/pipeline'
@@ -23,9 +23,17 @@ function truncateSnippet(text: string | null, maxLength: number = 100): string {
 }
 
 export function SessionCard({ session, onSelect, isActive = false, showProject = false }: SessionCardProps): React.JSX.Element {
+  const ref = useRef<HTMLButtonElement>(null)
   const hasError = session.parseError !== null
   const duration = formatSessionDuration(session)
   const showDuration = duration !== 'Unknown'
+
+  // Scroll into view when programmatically selected (e.g. after import)
+  useEffect(() => {
+    if (isActive && ref.current) {
+      ref.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    }
+  }, [isActive])
 
   const getBorderColor = (): string => {
     if (isActive) return 'var(--color-accent)'
@@ -41,6 +49,7 @@ export function SessionCard({ session, onSelect, isActive = false, showProject =
 
   return (
     <button
+      ref={ref}
       onClick={() => onSelect(session)}
       className="flex flex-col w-full text-left cursor-pointer"
       style={{

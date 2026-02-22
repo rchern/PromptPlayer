@@ -172,10 +172,9 @@ export const useSessionStore = create<SessionState>((set, get) => ({
         lastImportedIds: uniqueIds,
         isImporting: false
       })
-      // Auto-select first imported session
-      if (unique.length > 0) {
-        get().parseSession(unique[0].filePath, unique[0].sessionId)
-      }
+      // Auto-select first imported session (even if already existed — shows user where it is)
+      const target = newSessions[0]
+      get().parseSession(target.filePath, target.sessionId)
     } catch {
       set({ isImporting: false, importCount: 0, lastImportedIds: [] })
     }
@@ -196,10 +195,9 @@ export const useSessionStore = create<SessionState>((set, get) => ({
         lastImportedIds: uniqueIds,
         isImporting: false
       })
-      // Auto-select first imported session
-      if (unique.length > 0) {
-        get().parseSession(unique[0].filePath, unique[0].sessionId)
-      }
+      // Auto-select first imported session (even if already existed — shows user where it is)
+      const target = newSessions[0]
+      get().parseSession(target.filePath, target.sessionId)
     } catch {
       set({ isImporting: false, importCount: 0, lastImportedIds: [] })
     }
