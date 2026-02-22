@@ -1,10 +1,28 @@
 import type { ParsedMessage } from '../../types/pipeline'
 import { MessageBubble } from './MessageBubble'
+import { cleanUserText } from './cleanUserText'
 
 /**
- * Filter messages for display based on tool visibility.
+ * Check if a user message is empty after cleaning system XML.
+ * Messages that are purely system noise (empty local-command-stdout,
+ * system-reminders with no user content) get filtered out.
+ */
+function isEmptyAfterCleaning(msg: ParsedMessage): boolean {
+  if (msg.role !== 'user') return false
+  const textBlocks = msg.contentBlocks.filter((b) => b.type === 'text')
+  if (textBlocks.length === 0) return false
+  // Clean all text blocks and check if anything meaningful remains
+  return textBlocks.every(
+    (b) => b.type === 'text' && cleanUserText(b.text).length === 0
+  )
+}
+
+/**
+ * Filter messages for display based on tool visibility and meta status.
  *
  * Rules:
+ * - Skip meta messages (internal protocol, not conversation content)
+ * - Skip user messages that are empty after stripping system XML
  * - Always show messages with toolVisibility null (pure text, user messages)
  * - Always show narrative and unknown visibility messages
  * - Show plumbing messages ONLY if showPlumbing is true
@@ -17,6 +35,12 @@ function filterVisibleMessages(
   showPlumbing: boolean
 ): ParsedMessage[] {
   return messages.filter((msg) => {
+    // Skip internal meta messages
+    if (msg.isMeta) return false
+
+    // Skip user messages that become empty after cleaning system XML
+    if (isEmptyAfterCleaning(msg)) return false
+
     // Non-tool messages, narrative, and unknown are always visible
     if (msg.toolVisibility === null) return true
     if (msg.toolVisibility === 'narrative') return true

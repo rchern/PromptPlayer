@@ -5,47 +5,64 @@
    ============================== */
 
 :root {
-  --text-presentation-base: 1.25rem; /* 20px */
+  --text-presentation-base: 1.25rem; /* 20px — Player presentation mode */
+  --text-preview-base: 0.875rem; /* 14px — Builder preview mode */
 }
 
-/* Message view container */
+/* Message view container — defaults to preview scale for Builder.
+   Player will add .presentation-mode class for projector-size text. */
 .message-view {
   max-width: 900px;
   margin: 0 auto;
+  font-size: var(--text-preview-base);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Full presentation scale (Player mode, projector distance) */
+.message-view.presentation-mode {
   font-size: var(--text-presentation-base);
   line-height: 1.7;
 }
 
-/* Heading scale */
+/* Heading scale — preview (Builder) */
 .message-view h1 {
-  font-size: 2rem; /* 32px */
+  font-size: 1.35rem;
   font-weight: 700;
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+  margin-top: 1em;
+  margin-bottom: 0.4em;
 }
 
 .message-view h2 {
-  font-size: 1.75rem; /* 28px */
+  font-size: 1.2rem;
   font-weight: 600;
-  margin-top: 1.25em;
-  margin-bottom: 0.5em;
+  margin-top: 0.8em;
+  margin-bottom: 0.4em;
 }
 
 .message-view h3 {
-  font-size: 1.5rem; /* 24px */
+  font-size: 1.1rem;
   font-weight: 600;
-  margin-top: 1em;
-  margin-bottom: 0.5em;
+  margin-top: 0.6em;
+  margin-bottom: 0.3em;
 }
 
 .message-view h4,
 .message-view h5,
 .message-view h6 {
-  font-size: 1.25rem; /* 20px */
+  font-size: 1rem;
   font-weight: 600;
-  margin-top: 0.75em;
-  margin-bottom: 0.5em;
+  margin-top: 0.5em;
+  margin-bottom: 0.3em;
 }
+
+/* Heading scale — presentation (Player) */
+.message-view.presentation-mode h1 { font-size: 2rem; margin-top: 1.5em; margin-bottom: 0.5em; }
+.message-view.presentation-mode h2 { font-size: 1.75rem; margin-top: 1.25em; margin-bottom: 0.5em; }
+.message-view.presentation-mode h3 { font-size: 1.5rem; margin-top: 1em; margin-bottom: 0.5em; }
+.message-view.presentation-mode h4,
+.message-view.presentation-mode h5,
+.message-view.presentation-mode h6 { font-size: 1.25rem; margin-top: 0.75em; margin-bottom: 0.5em; }
 
 /* Paragraphs */
 .message-view p {

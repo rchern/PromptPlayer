@@ -30,7 +30,7 @@ export function ContentBlockRenderer({
     case 'text':
       if (plainText) {
         return (
-          <div style={{ whiteSpace: 'pre-wrap' }}>
+          <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
             {block.text}
           </div>
         )

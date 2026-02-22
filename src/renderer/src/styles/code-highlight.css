@@ -29,9 +29,16 @@ pre.shiki {
   text-decoration: var(--shiki-dark-text-decoration) !important;
 }
 
+/* Contain code blocks within parent */
+.message-view pre {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
 /* Language badge */
 .code-block-wrapper {
   position: relative;
+  overflow: hidden;
 }
 
 .code-block-lang {
