@@ -85,12 +85,11 @@ Plans:
   3. Navigation skips hidden plumbing tool calls (only stops on narrative messages)
   4. Progress indicator displays current step N of M within the conversation
   5. Forward and backward are exact inverses (forward then back returns to the same message)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Navigation controller (Zustand store with currentIndex on filtered narrative steps)
-- [ ] 04-02: Keyboard and mouse input bindings (arrow keys, spacebar, click)
-- [ ] 04-03: Progress indicator component (step N of M)
+- [ ] 04-01-PLAN.md -- Navigation data layer: NavigationStep type, shared message filtering utility, step pairing logic, Zustand navigation store
+- [ ] 04-02-PLAN.md -- Player UI: keyboard/mouse navigation, collapsible step view, progress indicator, slideshow-style rendering
 
 ### Phase 5: Builder Session Management
 **Goal**: User can import, browse, search, and preview conversation sessions in Builder mode
@@ -199,7 +198,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 1. App Shell | 2/2 | Complete | 2026-02-20 |
 | 2. Data Pipeline | 4/4 | Complete | 2026-02-21 |
 | 3. Message Rendering | 3/3 | Complete | 2026-02-22 |
-| 4. Single-Session Navigation | 0/3 | Not started | - |
+| 4. Single-Session Navigation | 0/2 | Not started | - |
 | 5. Builder Session Management | 0/3 | Not started | - |
 | 6. Builder Presentation Assembly | 0/3 | Not started | - |
 | 7. Builder Configuration and Export | 0/4 | Not started | - |
