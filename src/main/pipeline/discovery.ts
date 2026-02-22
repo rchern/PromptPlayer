@@ -1,7 +1,7 @@
 // Session discovery -- scans ~/.claude/projects/ for JSONL session files
 // and extracts fast metadata (first ~50 lines) for browse list display.
 
-import { readdir, stat } from 'fs/promises'
+import { readdir, stat, open } from 'fs/promises'
 import { createReadStream } from 'fs'
 import { createInterface } from 'readline'
 import { join, basename } from 'path'
@@ -71,6 +71,7 @@ export async function discoverSessions(baseDir?: string): Promise<SessionMetadat
           projectFolder,
           filePath,
           firstTimestamp: null,
+          lastTimestamp: null,
           firstUserMessage: null,
           messageCount: 0,
           parseError: `Unable to stat file: ${filePath}`
@@ -108,6 +109,7 @@ export async function extractSessionMetadata(
 ): Promise<SessionMetadata> {
   const sessionId = basename(filePath, '.jsonl')
   let firstTimestamp: string | null = null
+  let lastTimestamp: string | null = null
   let firstUserMessage: string | null = null
   let firstCommandSnippet: string | null = null
   let messageCount = 0
@@ -138,10 +140,13 @@ export async function extractSessionMetadata(
         continue
       }
 
-      // Track earliest timestamp
+      // Track earliest and latest timestamps within scanned lines
       if (typeof parsed.timestamp === 'string') {
         if (!firstTimestamp || parsed.timestamp < firstTimestamp) {
           firstTimestamp = parsed.timestamp
+        }
+        if (!lastTimestamp || parsed.timestamp > lastTimestamp) {
+          lastTimestamp = parsed.timestamp
         }
       }
 
@@ -202,11 +207,20 @@ export async function extractSessionMetadata(
       }
     }
 
+    // Get the true last timestamp from the tail of the file
+    const tailLastTimestamp = await extractLastTimestamp(filePath)
+    if (tailLastTimestamp) {
+      if (!lastTimestamp || tailLastTimestamp > lastTimestamp) {
+        lastTimestamp = tailLastTimestamp
+      }
+    }
+
     return {
       sessionId,
       projectFolder,
       filePath,
       firstTimestamp,
+      lastTimestamp,
       firstUserMessage: firstCommandSnippet ?? firstUserMessage,
       messageCount,
       parseError: null
@@ -217,10 +231,68 @@ export async function extractSessionMetadata(
       projectFolder,
       filePath,
       firstTimestamp: null,
+      lastTimestamp: null,
       firstUserMessage: null,
       messageCount: 0,
       parseError: String(err)
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Last Timestamp Extraction (tail-read)
+// ---------------------------------------------------------------------------
+
+/**
+ * Read the last ~4096 bytes of a JSONL file and extract the last timestamp.
+ *
+ * This avoids reading the entire file for large sessions -- it reads only the
+ * tail of the file, splits into lines, and finds the last valid timestamp.
+ *
+ * @param filePath - Absolute path to the .jsonl file
+ * @returns The last timestamp found, or null if none
+ */
+export async function extractLastTimestamp(filePath: string): Promise<string | null> {
+  try {
+    const BUFFER_SIZE = 4096
+    const fileStat = await stat(filePath)
+    const fileSize = fileStat.size
+
+    if (fileSize === 0) return null
+
+    const readSize = Math.min(BUFFER_SIZE, fileSize)
+    const offset = Math.max(0, fileSize - readSize)
+
+    const fileHandle = await open(filePath, 'r')
+    try {
+      const buffer = Buffer.alloc(readSize)
+      await fileHandle.read(buffer, 0, readSize, offset)
+
+      const tail = buffer.toString('utf-8')
+      const lines = tail.split('\n')
+
+      let foundTimestamp: string | null = null
+      for (const line of lines) {
+        const trimmed = line.trim()
+        if (!trimmed) continue
+
+        try {
+          const parsed = JSON.parse(trimmed) as Record<string, unknown>
+          if (typeof parsed.timestamp === 'string') {
+            foundTimestamp = parsed.timestamp
+          }
+        } catch {
+          // Partial or malformed line (especially the first line from mid-file read)
+          continue
+        }
+      }
+
+      return foundTimestamp
+    } finally {
+      await fileHandle.close()
+    }
+  } catch {
+    return null
   }
 }
 

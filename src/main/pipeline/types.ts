@@ -150,6 +150,7 @@ export interface SessionMetadata {
   projectFolder: string
   filePath: string
   firstTimestamp: string | null
+  lastTimestamp: string | null
   firstUserMessage: string | null
   messageCount: number
   parseError: string | null

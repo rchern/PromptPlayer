@@ -102,9 +102,26 @@ export interface SessionMetadata {
   projectFolder: string
   filePath: string
   firstTimestamp: string | null
+  lastTimestamp: string | null
   firstUserMessage: string | null
   messageCount: number
   parseError: string | null
+}
+
+/**
+ * Format the duration of a session as a human-readable string.
+ * Returns 'Unknown' if either timestamp is missing.
+ */
+export function formatSessionDuration(meta: SessionMetadata): string {
+  if (!meta.firstTimestamp || !meta.lastTimestamp) return 'Unknown'
+  const startMs = new Date(meta.firstTimestamp).getTime()
+  const endMs = new Date(meta.lastTimestamp).getTime()
+  const diffMs = endMs - startMs
+  if (diffMs < 60_000) return '<1 min'
+  if (diffMs < 3_600_000) return `${Math.round(diffMs / 60_000)} min`
+  const hours = Math.floor(diffMs / 3_600_000)
+  const mins = Math.round((diffMs % 3_600_000) / 60_000)
+  return `${hours}h ${mins}m`
 }
 
 // ---------------------------------------------------------------------------
