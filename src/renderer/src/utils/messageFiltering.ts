@@ -80,12 +80,32 @@ export function buildToolUseMap(
 }
 
 /**
+ * Check if a user message contains only tool_result blocks with no meaningful
+ * user-typed text. These are API responses (e.g. AskUserQuestion answers,
+ * tool rejections) that should be folded into the previous step rather than
+ * creating a new navigation step.
+ */
+function isToolResultOnly(msg: ParsedMessage): boolean {
+  if (msg.role !== 'user') return false
+  // Must have at least one tool_result
+  const hasToolResult = msg.contentBlocks.some((b) => b.type === 'tool_result')
+  if (!hasToolResult) return false
+  // Check if there's any meaningful text content
+  const hasText = msg.contentBlocks.some(
+    (b) => b.type === 'text' && cleanUserText(b.text).trim().length > 0
+  )
+  return !hasText
+}
+
+/**
  * Build navigation steps from already-filtered visible messages.
  *
  * Each step pairs a user message with its following assistant message.
  * Edge cases:
  * - Solo assistant message (no preceding user): { userMessage: null, assistantMessage: msg }
  * - Solo user message at end (no following assistant): { userMessage: msg, assistantMessage: null }
+ * - Tool_result-only user messages (e.g. AskUserQuestion answers) are folded
+ *   into the previous step's followUpMessages so question + answer appear together.
  *
  * IMPORTANT: This function takes ALREADY-FILTERED messages (filterVisibleMessages
  * has already run). It does NOT filter internally.
@@ -98,6 +118,13 @@ export function buildNavigationSteps(visibleMessages: ParsedMessage[]): Navigati
     const msg = visibleMessages[i]
 
     if (msg.role === 'user') {
+      // Tool_result-only user messages fold into the previous step
+      if (isToolResultOnly(msg) && steps.length > 0) {
+        steps[steps.length - 1].followUpMessages.push(msg)
+        i += 1
+        continue
+      }
+
       // Check if next message is assistant
       const next = i + 1 < visibleMessages.length ? visibleMessages[i + 1] : null
       if (next && next.role === 'assistant') {
@@ -105,7 +132,8 @@ export function buildNavigationSteps(visibleMessages: ParsedMessage[]): Navigati
         steps.push({
           index: steps.length,
           userMessage: msg,
-          assistantMessage: next
+          assistantMessage: next,
+          followUpMessages: []
         })
         i += 2
       } else {
@@ -113,7 +141,8 @@ export function buildNavigationSteps(visibleMessages: ParsedMessage[]): Navigati
         steps.push({
           index: steps.length,
           userMessage: msg,
-          assistantMessage: null
+          assistantMessage: null,
+          followUpMessages: []
         })
         i += 1
       }
@@ -124,9 +153,19 @@ export function buildNavigationSteps(visibleMessages: ParsedMessage[]): Navigati
       steps.push({
         index: steps.length,
         userMessage: null,
-        assistantMessage: msg
+        assistantMessage: msg,
+        followUpMessages: []
       })
       i += 1
+    }
+
+    // After creating a step with an assistant message, absorb any
+    // immediately following tool_result-only user messages
+    if (steps.length > 0 && steps[steps.length - 1].assistantMessage) {
+      while (i < visibleMessages.length && isToolResultOnly(visibleMessages[i])) {
+        steps[steps.length - 1].followUpMessages.push(visibleMessages[i])
+        i++
+      }
     }
   }
 

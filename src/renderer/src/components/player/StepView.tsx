@@ -69,6 +69,17 @@ export function StepView({
           />
         </CollapsibleContent>
       )}
+
+      {/* Follow-up messages (e.g. AskUserQuestion answers, tool rejections) */}
+      {step.followUpMessages.length > 0 &&
+        step.followUpMessages.map((msg, idx) => (
+          <MessageBubble
+            key={`followup-${idx}`}
+            message={msg}
+            showPlumbing={false}
+            toolUseMap={toolUseMap}
+          />
+        ))}
     </div>
   )
 }

@@ -1,6 +1,11 @@
 // JSONL file parser with assistant turn reassembly
 // Reads Claude Code JSONL files line-by-line, skips malformed lines,
 // normalizes user content, and reassembles split assistant turns by requestId.
+//
+// Key subtlety: a single requestId can span multiple tool-call rounds
+// (assistant tool_use → user tool_result → assistant continues, all same requestId).
+// Reassembly must split at user-message boundaries so tool_result messages
+// can chain correctly to their preceding assistant turn's UUID.
 
 import { createReadStream } from 'fs'
 import { createInterface } from 'readline'
@@ -41,55 +46,124 @@ function normalizeContent(content: string | ContentBlock[]): ContentBlock[] {
 // Assistant turn reassembly
 // ---------------------------------------------------------------------------
 
+/** Assistant line annotated with its position in the JSONL file */
+interface OrderedAssistantLine {
+  line: JsonlLine
+  fileOrder: number
+}
+
+/**
+ * Merge a contiguous sub-group of assistant lines into a single ParsedMessage.
+ * Uses the last line's UUID and the first line's parentUuid.
+ *
+ * Also registers intermediate UUIDs (non-last lines) in the redirects map
+ * so tool_result messages referencing them can resolve to the sub-group's UUID.
+ * This handles parallel tool calls where each tool_result's parentUuid points
+ * to the specific assistant line that contained the corresponding tool_use.
+ */
+function mergeAssistantSubGroup(
+  group: OrderedAssistantLine[],
+  redirects: Map<string, string | null>
+): ParsedMessage {
+  const first = group[0].line
+  const last = group[group.length - 1].line
+
+  // Register intermediate UUIDs as redirects to the sub-group's UUID
+  for (let i = 0; i < group.length - 1; i++) {
+    redirects.set(group[i].line.uuid, last.uuid)
+  }
+
+  const contentBlocks: ContentBlock[] = group.flatMap(({ line }) => {
+    if (!line.message) return []
+    const content = line.message.content
+    if (typeof content === 'string') {
+      return [{ type: 'text' as const, text: content }]
+    }
+    return content
+  })
+
+  return {
+    uuid: last.uuid,
+    parentUuid: first.parentUuid,
+    role: 'assistant',
+    contentBlocks,
+    timestamp: first.timestamp,
+    requestId: first.requestId,
+    isMeta: false,
+    isSidechain: first.isSidechain,
+    toolVisibility: null
+  }
+}
+
 /**
  * Group assistant lines by requestId and merge their content blocks
- * into single ParsedMessage instances.
+ * into ParsedMessage instances, splitting at user-message boundaries.
  *
- * Each assistant JSONL line contains exactly one content block in its
- * message.content array. Lines sharing the same requestId form one
- * logical assistant turn.
+ * A single requestId can span multiple tool-call rounds:
+ *   assistant(tool_use) → user(tool_result) → assistant(continues) — same requestId
+ *
+ * If we merge all lines in the same requestId into one message, the
+ * intermediate UUIDs vanish from the message set, orphaning the user
+ * tool_result messages whose parentUuid pointed to those intermediates.
+ *
+ * Fix: split each requestId group into contiguous sub-groups wherever
+ * a user message appears in between. Each sub-group becomes its own
+ * reassembled turn with a valid UUID chain.
  */
-function reassembleAssistantTurns(assistantLines: JsonlLine[]): ParsedMessage[] {
-  const turnMap = new Map<string, JsonlLine[]>()
+function reassembleAssistantTurns(
+  orderedAssistantLines: OrderedAssistantLine[],
+  userFileOrders: Set<number>,
+  intermediateRedirects: Map<string, string | null>
+): ParsedMessage[] {
+  // Group by requestId, preserving file order
+  const turnMap = new Map<string, OrderedAssistantLine[]>()
 
-  for (const line of assistantLines) {
-    const rid = line.requestId
+  for (const entry of orderedAssistantLines) {
+    const rid = entry.line.requestId
     if (!rid) continue
     const existing = turnMap.get(rid)
     if (existing) {
-      existing.push(line)
+      existing.push(entry)
     } else {
-      turnMap.set(rid, [line])
+      turnMap.set(rid, [entry])
     }
   }
 
   const turns: ParsedMessage[] = []
 
   for (const group of turnMap.values()) {
-    const first = group[0]
-    const last = group[group.length - 1]
+    // Sort by file order (should already be in order, but be safe)
+    group.sort((a, b) => a.fileOrder - b.fileOrder)
 
-    // Merge content blocks from all lines in this turn
-    const contentBlocks: ContentBlock[] = group.flatMap((line) => {
-      if (!line.message) return []
-      const content = line.message.content
-      if (typeof content === 'string') {
-        return [{ type: 'text' as const, text: content }]
+    // Split into sub-groups at user-message boundaries
+    const subGroups: OrderedAssistantLine[][] = [[]]
+
+    for (let i = 0; i < group.length; i++) {
+      if (i > 0) {
+        // Check if any user message appeared between the previous
+        // assistant line and this one in the original file
+        const prevOrder = group[i - 1].fileOrder
+        const curOrder = group[i].fileOrder
+        let hasUserBetween = false
+        for (let pos = prevOrder + 1; pos < curOrder; pos++) {
+          if (userFileOrders.has(pos)) {
+            hasUserBetween = true
+            break
+          }
+        }
+        if (hasUserBetween) {
+          subGroups.push([])
+        }
       }
-      return content
-    })
+      subGroups[subGroups.length - 1].push(group[i])
+    }
 
-    turns.push({
-      uuid: last.uuid,
-      parentUuid: first.parentUuid,
-      role: 'assistant',
-      contentBlocks,
-      timestamp: first.timestamp,
-      requestId: first.requestId,
-      isMeta: false,
-      isSidechain: first.isSidechain,
-      toolVisibility: null
-    })
+    // Reassemble each sub-group into its own turn
+    for (const sg of subGroups) {
+      if (sg.length > 0) {
+        turns.push(mergeAssistantSubGroup(sg, intermediateRedirects))
+      }
+    }
   }
 
   return turns
@@ -113,7 +187,8 @@ function reassembleAssistantTurns(assistantLines: JsonlLine[]): ParsedMessage[] 
 export async function parseJSONLFile(filePath: string): Promise<ParseResult> {
   const errors: ParseError[] = []
   const userMessages: ParsedMessage[] = []
-  const assistantLines: JsonlLine[] = []
+  const orderedAssistantLines: OrderedAssistantLine[] = []
+  const userFileOrders = new Set<number>()
   const filteredUuidRedirects = new Map<string, string | null>()
 
   const rl = createInterface({
@@ -153,6 +228,7 @@ export async function parseJSONLFile(filePath: string): Promise<ParseResult> {
     if (!parsed.message) continue
 
     if (parsed.type === 'user') {
+      userFileOrders.add(lineNumber)
       userMessages.push({
         uuid: parsed.uuid,
         parentUuid: parsed.parentUuid,
@@ -165,12 +241,19 @@ export async function parseJSONLFile(filePath: string): Promise<ParseResult> {
         toolVisibility: null
       })
     } else if (parsed.type === 'assistant') {
-      assistantLines.push(parsed)
+      orderedAssistantLines.push({ line: parsed, fileOrder: lineNumber })
     }
   }
 
-  // Reassemble split assistant turns
-  const assistantTurns = reassembleAssistantTurns(assistantLines)
+  // Reassemble split assistant turns, breaking at user-message boundaries.
+  // Intermediate assistant UUIDs (from parallel tool calls within a sub-group)
+  // are added to filteredUuidRedirects so tool_result messages can resolve to
+  // the sub-group's UUID.
+  const assistantTurns = reassembleAssistantTurns(
+    orderedAssistantLines,
+    userFileOrders,
+    filteredUuidRedirects
+  )
 
   // Combine all messages (unordered -- stitcher will order them)
   const messages = [...userMessages, ...assistantTurns]

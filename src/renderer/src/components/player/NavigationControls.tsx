@@ -22,7 +22,7 @@ const buttonBase: React.CSSProperties = {
   border: 'none',
   borderRadius: 'var(--radius-md)',
   cursor: 'pointer',
-  opacity: 0,
+  opacity: 0.3,
   transition: 'opacity 200ms ease',
   zIndex: 10,
   padding: 0,
@@ -42,12 +42,12 @@ export function NavigationControls({
   onBack,
   onForward
 }: NavigationControlsProps): React.JSX.Element {
-  function handleHover(e: React.MouseEvent, enabled: boolean): void {
-    e.currentTarget.style.opacity = enabled ? '0.6' : '0.2'
+  function handleHover(e: React.MouseEvent<HTMLButtonElement>, enabled: boolean): void {
+    e.currentTarget.style.opacity = enabled ? '0.7' : '0.15'
   }
 
-  function handleLeave(e: React.MouseEvent): void {
-    e.currentTarget.style.opacity = '0'
+  function handleLeave(e: React.MouseEvent<HTMLButtonElement>, enabled: boolean): void {
+    e.currentTarget.style.opacity = enabled ? '0.3' : '0.15'
   }
 
   return (
@@ -58,10 +58,11 @@ export function NavigationControls({
         aria-label="Previous step"
         style={{
           ...buttonBase,
-          left: 'var(--space-3)'
+          left: 'var(--space-3)',
+          opacity: canGoBack ? 0.3 : 0.15
         }}
         onMouseEnter={(e) => handleHover(e, canGoBack)}
-        onMouseLeave={handleLeave}
+        onMouseLeave={(e) => handleLeave(e, canGoBack)}
       >
         <ChevronLeft size={28} />
       </button>
@@ -72,10 +73,11 @@ export function NavigationControls({
         aria-label="Next step"
         style={{
           ...buttonBase,
-          right: 'var(--space-3)'
+          right: 'var(--space-3)',
+          opacity: canGoForward ? 0.3 : 0.15
         }}
         onMouseEnter={(e) => handleHover(e, canGoForward)}
-        onMouseLeave={handleLeave}
+        onMouseLeave={(e) => handleLeave(e, canGoForward)}
       >
         <ChevronRight size={28} />
       </button>

@@ -56,8 +56,9 @@ export function Player(): React.JSX.Element {
         // Scroll container to top when arriving at a new step
         containerRef.current?.scrollTo(0, 0)
       }, 75)
-      return () => clearTimeout(timer)
+      return (): void => { clearTimeout(timer) }
     }
+    return undefined
   }, [currentStepIndex])
 
   // Build tool use map once for the active session (for rejection display)

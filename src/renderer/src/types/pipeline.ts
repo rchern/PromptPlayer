@@ -90,6 +90,7 @@ export interface NavigationStep {
   index: number
   userMessage: ParsedMessage | null // null when first message is assistant-only
   assistantMessage: ParsedMessage | null // null for unpaired user message at end
+  followUpMessages: ParsedMessage[] // tool_result-only user messages folded into this step (e.g. AskUserQuestion answers)
 }
 
 // ---------------------------------------------------------------------------

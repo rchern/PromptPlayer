@@ -50,11 +50,19 @@ export function stitchConversation(
     }
   }
 
-  // Build child lookup (parentUuid -> child message)
-  const childOf = new Map<string, ParsedMessage>()
+  // Build child lookup (parentUuid -> child messages)
+  // Multiple children per parent can occur with parallel tool calls:
+  // assistant makes two tool_use calls, each tool_result user message
+  // resolves to the same parent after intermediate UUID redirect.
+  const childOf = new Map<string, ParsedMessage[]>()
   for (const msg of messages) {
     if (msg.parentUuid !== null) {
-      childOf.set(msg.parentUuid, msg)
+      const existing = childOf.get(msg.parentUuid)
+      if (existing) {
+        existing.push(msg)
+      } else {
+        childOf.set(msg.parentUuid, [msg])
+      }
     }
   }
 
@@ -68,9 +76,14 @@ export function stitchConversation(
   const ordered: ParsedMessage[] = []
 
   if (root) {
-    // Walk the chain from root
-    let current: ParsedMessage | undefined = root
-    while (current) {
+    // Walk the chain from root using a stack for depth-first traversal.
+    // When a parent has multiple children (parallel tool results), visit
+    // them all in timestamp order before continuing to the next level.
+    const stack: ParsedMessage[] = [root]
+
+    while (stack.length > 0) {
+      const current = stack.shift()!
+      if (visited.has(current.uuid)) continue
       visited.add(current.uuid)
 
       if (current.isSidechain) {
@@ -79,7 +92,14 @@ export function stitchConversation(
         ordered.push(current)
       }
 
-      current = childOf.get(current.uuid)
+      const children = childOf.get(current.uuid)
+      if (children) {
+        // Sort by timestamp so parallel siblings appear in order
+        children.sort((a, b) => a.timestamp.localeCompare(b.timestamp))
+        // Prepend children to stack front (BFS-like for siblings,
+        // but each child's sub-chain follows immediately)
+        stack.unshift(...children)
+      }
     }
   }
 
