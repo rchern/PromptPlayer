@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 5 next - Builder Session Management
+**Current focus:** Phase 5 - Builder Session Management
 
 ## Current Position
 
-Phase: 4 of 10 complete (Single-Session Navigation)
-Plan: 2 of 2 complete
-Status: Phase 4 complete, Phase 5 not started
-Last activity: 2026-02-22 - Phase 4 complete (stitcher fix + Player UI)
+Phase: 5 of 10 (Builder Session Management)
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-02-22 - Completed 05-01-PLAN.md (data layer extensions)
 
-Progress: [████████████████████████████████░░░] 12/34 plans (~35%)
+Progress: [█████████████████████████████████░░] 13/34 plans (~38%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
-- Average duration: 7.5min
+- Total plans completed: 13
+- Average duration: 7min
 - Total execution time: 1.5 hours
 
 **By Phase:**
@@ -31,10 +31,11 @@ Progress: [███████████████████████
 | 2. Data Pipeline | 4/4 | 18min | 4.5min |
 | 3. Message Rendering | 3/3 | 36min | 12min |
 | 4. Single-Session Nav | 2/2 | 42min | 21min |
+| 5. Builder Session Mgmt | 1/3 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 2min, 4min, 30min, 2min
-- Trend: 04-01 fast (pure data layer, no UI verification needed)
+- Last 5 plans: 2min, 4min, 30min, 2min, 3min
+- Trend: 05-01 fast (pure data layer, no UI verification needed)
 
 *Updated after each plan completion*
 
@@ -89,6 +90,9 @@ Recent decisions affecting current work:
 - 04-01: Expand/collapse state stored in Zustand (persists across step navigation), not component state
 - 04-01: initializeSteps filters with showPlumbing=false then builds steps (Player never shows plumbing)
 - 04-01: filterVisibleMessages and buildToolUseMap extracted from MessageList to shared utils/messageFiltering.ts
+- 05-01: extractLastTimestamp uses tail-read (last 4096 bytes via FileHandle) to avoid full-file scan
+- 05-01: deriveProjectFolder uses basename(dirname(filePath)) as fallback project name for imported files
+- 05-01: matchesSearch/matchesDateFilter kept module-private; only filterSessions, DatePreset, DateFilter exported
 
 ### Pending Todos
 
@@ -115,5 +119,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 4 complete. Ready for Phase 5.
+Stopped at: Completed 05-01-PLAN.md. Ready for 05-02.
 Resume file: none
