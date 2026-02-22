@@ -29,6 +29,7 @@ interface SessionState {
   // Import state
   isImporting: boolean
   importCount: number
+  lastImportedIds: string[]
 
   // Deep search state
   deepSearchMatchIds: string[]
@@ -77,6 +78,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   // Import state
   isImporting: false,
   importCount: 0,
+  lastImportedIds: [],
 
   // Deep search state
   deepSearchMatchIds: [],
@@ -157,19 +159,25 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     try {
       const newSessions = await window.electronAPI.importFiles()
       if (!Array.isArray(newSessions) || newSessions.length === 0) {
-        set({ isImporting: false, importCount: 0 })
+        set({ isImporting: false, importCount: 0, lastImportedIds: [] })
         return
       }
       const existing = get().discoveredSessions
       const existingIds = new Set(existing.map((s) => s.sessionId))
       const unique = newSessions.filter((s) => !existingIds.has(s.sessionId))
+      const uniqueIds = unique.map((s) => s.sessionId)
       set({
         discoveredSessions: [...existing, ...unique],
         importCount: unique.length,
+        lastImportedIds: uniqueIds,
         isImporting: false
       })
+      // Auto-select first imported session
+      if (unique.length > 0) {
+        get().parseSession(unique[0].filePath, unique[0].sessionId)
+      }
     } catch {
-      set({ isImporting: false, importCount: 0 })
+      set({ isImporting: false, importCount: 0, lastImportedIds: [] })
     }
   },
 
@@ -181,13 +189,19 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       const existing = get().discoveredSessions
       const existingIds = new Set(existing.map((s) => s.sessionId))
       const unique = newSessions.filter((s) => !existingIds.has(s.sessionId))
+      const uniqueIds = unique.map((s) => s.sessionId)
       set({
         discoveredSessions: [...existing, ...unique],
         importCount: unique.length,
+        lastImportedIds: uniqueIds,
         isImporting: false
       })
+      // Auto-select first imported session
+      if (unique.length > 0) {
+        get().parseSession(unique[0].filePath, unique[0].sessionId)
+      }
     } catch {
-      set({ isImporting: false, importCount: 0 })
+      set({ isImporting: false, importCount: 0, lastImportedIds: [] })
     }
   },
 

@@ -7,6 +7,7 @@ interface SessionCardProps {
   session: SessionMetadata
   onSelect: (session: SessionMetadata) => void
   isActive?: boolean
+  showProject?: boolean
 }
 
 function formatTimestamp(timestamp: string | null): string {
@@ -21,7 +22,7 @@ function truncateSnippet(text: string | null, maxLength: number = 100): string {
   return text.slice(0, maxLength) + '...'
 }
 
-export function SessionCard({ session, onSelect, isActive = false }: SessionCardProps): React.JSX.Element {
+export function SessionCard({ session, onSelect, isActive = false, showProject = false }: SessionCardProps): React.JSX.Element {
   const hasError = session.parseError !== null
   const duration = formatSessionDuration(session)
   const showDuration = duration !== 'Unknown'
@@ -125,6 +126,19 @@ export function SessionCard({ session, onSelect, isActive = false }: SessionCard
           )}
         </div>
       </div>
+
+      {/* Project label (chronological view) */}
+      {showProject && (
+        <span
+          style={{
+            fontSize: 'var(--text-xs)',
+            color: 'var(--color-accent)',
+            fontWeight: 500
+          }}
+        >
+          {session.projectFolder}
+        </span>
+      )}
 
       {/* Snippet */}
       <span

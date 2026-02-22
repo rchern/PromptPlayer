@@ -39,34 +39,35 @@ export function SessionPreviewHeader({
         borderBottom: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-md)',
         padding: 'var(--space-3) var(--space-4)',
-        flexShrink: 0
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-3)'
       }}
     >
+      {/* Compact numeric stats row */}
       <div
-        className="grid"
-        style={{
-          gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-          gap: 'var(--space-3)'
-        }}
+        className="flex"
+        style={{ gap: 'var(--space-6)' }}
       >
         <StatItem label="Messages" value={String(stats.messageCount)} />
         <StatItem label="Steps" value={String(stats.stepCount)} />
         <StatItem label="Duration" value={duration} />
-        <StatItem label="Project" value={projectPath} title={projectPath} />
-        {command && <StatItem label="Command" value={command} title={command} />}
       </div>
+
+      {/* Full-width detail rows */}
+      <FullWidthStat label="Project" value={projectPath} />
+      {command && <FullWidthStat label="Command" value={command} />}
     </div>
   )
 }
 
 function StatItem({
   label,
-  value,
-  title
+  value
 }: {
   label: string
   value: string
-  title?: string
 }): React.JSX.Element {
   return (
     <div className="flex flex-col" style={{ gap: '2px', minWidth: 0 }}>
@@ -82,14 +83,44 @@ function StatItem({
         {label}
       </span>
       <span
-        title={title}
+        style={{
+          fontSize: 'var(--text-sm)',
+          fontWeight: 500,
+          color: 'var(--color-text-primary)'
+        }}
+      >
+        {value}
+      </span>
+    </div>
+  )
+}
+
+function FullWidthStat({
+  label,
+  value
+}: {
+  label: string
+  value: string
+}): React.JSX.Element {
+  return (
+    <div className="flex flex-col" style={{ gap: '2px' }}>
+      <span
+        style={{
+          fontSize: 'var(--text-xs)',
+          fontWeight: 600,
+          color: 'var(--color-text-muted)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em'
+        }}
+      >
+        {label}
+      </span>
+      <span
         style={{
           fontSize: 'var(--text-sm)',
           fontWeight: 500,
           color: 'var(--color-text-primary)',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap'
+          wordBreak: 'break-word'
         }}
       >
         {value}

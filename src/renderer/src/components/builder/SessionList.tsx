@@ -124,6 +124,7 @@ export function SessionList({
             session={session}
             onSelect={onSelectSession}
             isActive={session.sessionId === activeSessionId}
+            showProject
           />
         ))}
       </div>
