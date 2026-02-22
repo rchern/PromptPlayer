@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { RefreshCw, FolderOpen, FileUp } from 'lucide-react'
+import { RefreshCw, FolderOpen, FileUp, AlertTriangle } from 'lucide-react'
 import { useSessionStore } from '../stores/sessionStore'
 import { SessionList } from '../components/builder/SessionList'
 import { SearchFilterBar } from '../components/builder/SearchFilterBar'
 import { ImportDropZone } from '../components/builder/ImportDropZone'
+import { SessionPreviewHeader } from '../components/builder/SessionPreviewHeader'
 import { MessageList } from '../components/message'
 import { filterSessions } from '../utils/sessionFiltering'
 
@@ -54,6 +55,12 @@ export function Builder(): React.JSX.Element {
   const filteredSessions = useMemo(
     () => filterSessions(discoveredSessions, searchQuery, dateFilter),
     [discoveredSessions, searchQuery, dateFilter]
+  )
+
+  // Find metadata for the active session
+  const activeMetadata = useMemo(
+    () => discoveredSessions.find((s) => s.sessionId === activeSessionId) ?? null,
+    [discoveredSessions, activeSessionId]
   )
 
   const handleSelectSession = (session: { filePath: string; sessionId: string }): void => {
@@ -264,8 +271,8 @@ export function Builder(): React.JSX.Element {
                 overflow: 'hidden'
               }}
             >
-              {/* Detail header */}
-              <div className="flex items-center justify-between">
+              {/* Detail header with close button */}
+              <div className="flex items-center justify-between" style={{ flexShrink: 0 }}>
                 <h3
                   style={{
                     fontSize: 'var(--text-lg)',
@@ -273,7 +280,7 @@ export function Builder(): React.JSX.Element {
                     color: 'var(--color-text-primary)'
                   }}
                 >
-                  Session Details
+                  Session Preview
                 </h3>
                 <button
                   onClick={clearActiveSession}
@@ -313,65 +320,36 @@ export function Builder(): React.JSX.Element {
                 </div>
               )}
 
-              {/* Parse error */}
+              {/* Parse error: file-not-found vs generic */}
               {parseError && (
-                <div
-                  style={{
-                    backgroundColor: 'rgba(239, 68, 68, 0.08)',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: 'var(--space-3) var(--space-4)',
-                    fontSize: 'var(--text-sm)',
-                    color: '#ef4444'
-                  }}
-                >
-                  Parse error: {parseError}
-                </div>
+                isFileNotFound(parseError) ? (
+                  <FileNotFoundState
+                    filePath={activeMetadata?.filePath ?? null}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      borderRadius: 'var(--radius-md)',
+                      padding: 'var(--space-3) var(--space-4)',
+                      fontSize: 'var(--text-sm)',
+                      color: '#ef4444'
+                    }}
+                  >
+                    Parse error: {parseError}
+                  </div>
+                )
               )}
 
-              {/* Session details */}
+              {/* Session content with summary header + conversation */}
               {activeSession && !isParsing && (
                 <>
-                  {/* Fixed header area: Session ID + Stats */}
-                  <div className="flex flex-col" style={{ gap: 'var(--space-3)', flexShrink: 0 }}>
-                    {/* Session ID */}
-                    <div className="flex flex-col" style={{ gap: 'var(--space-1)' }}>
-                      <span
-                        style={{
-                          fontSize: 'var(--text-xs)',
-                          fontWeight: 600,
-                          color: 'var(--color-text-muted)',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.05em'
-                        }}
-                      >
-                        Session ID
-                      </span>
-                      <span
-                        style={{
-                          fontSize: 'var(--text-sm)',
-                          color: 'var(--color-text-primary)',
-                          fontFamily: 'var(--font-mono)',
-                          wordBreak: 'break-all'
-                        }}
-                      >
-                        {activeSessionId}
-                      </span>
-                    </div>
-
-                    {/* Stats */}
-                    <div
-                      className="grid"
-                      style={{
-                        gridTemplateColumns: 'repeat(3, 1fr)',
-                        gap: 'var(--space-3)'
-                      }}
-                    >
-                      <StatCard label="Messages" value={activeSession.messages.length} />
-                      <StatCard label="Orphaned" value={activeSession.orphanedCount} />
-                      <StatCard label="Sidechains" value={activeSession.sidechainCount} />
-                    </div>
-                  </div>
+                  {/* Summary header */}
+                  <SessionPreviewHeader
+                    session={activeSession}
+                    metadata={activeMetadata}
+                  />
 
                   {/* Conversation Preview label */}
                   <span
@@ -381,7 +359,6 @@ export function Builder(): React.JSX.Element {
                       color: 'var(--color-text-muted)',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
-                      marginTop: 'var(--space-4)',
                       flexShrink: 0
                     }}
                   >
@@ -402,37 +379,62 @@ export function Builder(): React.JSX.Element {
   )
 }
 
-function StatCard({ label, value }: { label: string; value: number }): React.JSX.Element {
+/** Check if a parse error indicates a missing source file */
+function isFileNotFound(error: string): boolean {
+  const lower = error.toLowerCase()
+  return (
+    lower.includes('enoent') ||
+    lower.includes('no such file') ||
+    lower.includes('not found') ||
+    lower.includes('does not exist')
+  )
+}
+
+/** Distinct error state for missing source files */
+function FileNotFoundState({ filePath }: { filePath: string | null }): React.JSX.Element {
   return (
     <div
       className="flex flex-col items-center"
       style={{
-        backgroundColor: 'var(--color-bg-elevated)',
-        border: '1px solid var(--color-border)',
-        borderRadius: 'var(--radius-md)',
-        padding: 'var(--space-3)',
-        gap: 'var(--space-1)'
+        flex: 1,
+        justifyContent: 'center',
+        gap: 'var(--space-3)',
+        padding: 'var(--space-8)',
+        textAlign: 'center'
       }}
     >
-      <span
+      <AlertTriangle size={48} style={{ color: 'var(--color-text-muted)', opacity: 0.5 }} />
+      <h4
         style={{
-          fontSize: 'var(--text-xl)',
-          fontWeight: 700,
-          color: 'var(--color-accent)'
+          fontSize: 'var(--text-lg)',
+          fontWeight: 600,
+          color: 'var(--color-text-primary)'
         }}
       >
-        {value}
-      </span>
-      <span
+        Source File Not Found
+      </h4>
+      {filePath && (
+        <span
+          style={{
+            fontSize: 'var(--text-sm)',
+            color: 'var(--color-text-muted)',
+            fontFamily: 'var(--font-mono)',
+            wordBreak: 'break-all',
+            maxWidth: '400px'
+          }}
+        >
+          {filePath}
+        </span>
+      )}
+      <p
         style={{
-          fontSize: 'var(--text-xs)',
+          fontSize: 'var(--text-sm)',
           color: 'var(--color-text-muted)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em'
+          maxWidth: '300px'
         }}
       >
-        {label}
-      </span>
+        The JSONL source file may have been moved or deleted.
+      </p>
     </div>
   )
 }
