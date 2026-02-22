@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 3 complete. Ready for Phase 4 - Single-Session Navigation
+**Current focus:** Phase 4 in progress - Single-Session Navigation
 
 ## Current Position
 
-Phase: 3 of 10 (Message Rendering) — COMPLETE
-Plan: 3 of 3 in current phase — all done
-Status: Phase complete
-Last activity: 2026-02-22 - Completed 03-03-PLAN.md (Builder integration + visual verification + rejection rendering)
+Phase: 4 of 10 (Single-Session Navigation)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-22 - Completed 04-01-PLAN.md (Navigation data layer)
 
-Progress: [██████████████████████████░░░░░░░░░] 9/34 plans (~26%)
+Progress: [███████████████████████████░░░░░░░░] 10/34 plans (~29%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: 5.8min
-- Total execution time: 0.87 hours
+- Total plans completed: 10
+- Average duration: 5.4min
+- Total execution time: 0.9 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [███████████████████████
 | 1. App Shell | 2/2 | 14min | 7min |
 | 2. Data Pipeline | 4/4 | 18min | 4.5min |
 | 3. Message Rendering | 3/3 | 36min | 12min |
+| 4. Single-Session Nav | 1/2 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 8min, 4min, 2min, 4min, 30min
-- Trend: 03-03 was slow due to visual verification iterations and rejection rendering fixes
+- Last 5 plans: 4min, 2min, 4min, 30min, 2min
+- Trend: 04-01 fast (pure data layer, no UI verification needed)
 
 *Updated after each plan completion*
 
@@ -83,6 +84,11 @@ Recent decisions affecting current work:
 - 03-03: Tool rejections classified as narrative (is_error + startsWith, not includes — prevents grep false positives)
 - 03-03: Task, Skill, WebSearch, WebFetch, EnterPlanMode, etc. added to plumbing tools
 - 03-03: [Request interrupted by user for tool use] stripped as system noise
+- 04-01: NavigationStep uses explicit userMessage/assistantMessage fields (not generic pair) for role-specific rendering
+- 04-01: Solo assistant messages produce { userMessage: null, assistantMessage: msg } -- never placed in userMessage field
+- 04-01: Expand/collapse state stored in Zustand (persists across step navigation), not component state
+- 04-01: initializeSteps filters with showPlumbing=false then builds steps (Player never shows plumbing)
+- 04-01: filterVisibleMessages and buildToolUseMap extracted from MessageList to shared utils/messageFiltering.ts
 
 ### Pending Todos
 
@@ -104,5 +110,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 3 complete. All 3 plans done, summaries written, ROADMAP updated. Ready for Phase 4 (Single-Session Navigation).
+Stopped at: Completed 04-01-PLAN.md (Navigation data layer). Phase 4 Plan 2 (Player UI) next.
 Resume file: None
