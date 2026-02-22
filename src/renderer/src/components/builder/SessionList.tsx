@@ -6,6 +6,8 @@ interface SessionListProps {
   sessions: SessionMetadata[]
   onSelectSession: (session: SessionMetadata) => void
   isLoading: boolean
+  viewMode: 'grouped' | 'chronological'
+  activeSessionId: string | null
 }
 
 /** Group sessions by projectFolder, sort groups by most recent session, sort sessions within each group by date descending */
@@ -50,10 +52,21 @@ function groupAndSort(
   }))
 }
 
+/** Sort sessions by firstTimestamp descending (newest first) for chronological view */
+function sortChronological(sessions: SessionMetadata[]): SessionMetadata[] {
+  return [...sessions].sort((a, b) => {
+    const timeA = a.firstTimestamp ? new Date(a.firstTimestamp).getTime() : 0
+    const timeB = b.firstTimestamp ? new Date(b.firstTimestamp).getTime() : 0
+    return timeB - timeA
+  })
+}
+
 export function SessionList({
   sessions,
   onSelectSession,
-  isLoading
+  isLoading,
+  viewMode,
+  activeSessionId
 }: SessionListProps): React.JSX.Element {
   if (isLoading) {
     return (
@@ -100,6 +113,24 @@ export function SessionList({
     )
   }
 
+  // Chronological view: flat list sorted by time
+  if (viewMode === 'chronological') {
+    const sorted = sortChronological(sessions)
+    return (
+      <div className="flex flex-col" style={{ gap: 'var(--space-2)' }}>
+        {sorted.map((session) => (
+          <SessionCard
+            key={session.sessionId}
+            session={session}
+            onSelect={onSelectSession}
+            isActive={session.sessionId === activeSessionId}
+          />
+        ))}
+      </div>
+    )
+  }
+
+  // Grouped view: project groups with headers
   const grouped = groupAndSort(sessions)
 
   return (
@@ -127,6 +158,7 @@ export function SessionList({
               key={session.sessionId}
               session={session}
               onSelect={onSelectSession}
+              isActive={session.sessionId === activeSessionId}
             />
           ))}
         </div>

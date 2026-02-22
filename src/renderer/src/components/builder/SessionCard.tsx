@@ -1,10 +1,12 @@
 import React from 'react'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Clock } from 'lucide-react'
 import type { SessionMetadata } from '../../types/pipeline'
+import { formatSessionDuration } from '../../types/pipeline'
 
 interface SessionCardProps {
   session: SessionMetadata
   onSelect: (session: SessionMetadata) => void
+  isActive?: boolean
 }
 
 function formatTimestamp(timestamp: string | null): string {
@@ -19,16 +21,30 @@ function truncateSnippet(text: string | null, maxLength: number = 100): string {
   return text.slice(0, maxLength) + '...'
 }
 
-export function SessionCard({ session, onSelect }: SessionCardProps): React.JSX.Element {
+export function SessionCard({ session, onSelect, isActive = false }: SessionCardProps): React.JSX.Element {
   const hasError = session.parseError !== null
+  const duration = formatSessionDuration(session)
+  const showDuration = duration !== 'Unknown'
+
+  const getBorderColor = (): string => {
+    if (isActive) return 'var(--color-accent)'
+    if (hasError) return 'rgba(239, 68, 68, 0.3)'
+    return 'var(--color-border)'
+  }
+
+  const getBgColor = (): string => {
+    if (isActive) return 'var(--color-accent-subtle)'
+    if (hasError) return 'rgba(239, 68, 68, 0.05)'
+    return 'var(--color-bg-elevated)'
+  }
 
   return (
     <button
       onClick={() => onSelect(session)}
       className="flex flex-col w-full text-left cursor-pointer"
       style={{
-        backgroundColor: hasError ? 'rgba(239, 68, 68, 0.05)' : 'var(--color-bg-elevated)',
-        border: `1px solid ${hasError ? 'rgba(239, 68, 68, 0.3)' : 'var(--color-border)'}`,
+        backgroundColor: getBgColor(),
+        border: `1px solid ${getBorderColor()}`,
         borderRadius: 'var(--radius-md)',
         padding: 'var(--space-3) var(--space-4)',
         gap: 'var(--space-2)',
@@ -36,25 +52,29 @@ export function SessionCard({ session, onSelect }: SessionCardProps): React.JSX.
         outline: 'none'
       }}
       onMouseEnter={(e) => {
-        if (hasError) {
-          e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.5)'
-        } else {
-          e.currentTarget.style.borderColor = 'var(--color-accent)'
+        if (!isActive) {
+          if (hasError) {
+            e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.5)'
+          } else {
+            e.currentTarget.style.borderColor = 'var(--color-accent)'
+          }
+          e.currentTarget.style.backgroundColor = hasError
+            ? 'rgba(239, 68, 68, 0.08)'
+            : 'var(--color-bg-tertiary)'
         }
-        e.currentTarget.style.backgroundColor = hasError
-          ? 'rgba(239, 68, 68, 0.08)'
-          : 'var(--color-bg-tertiary)'
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = hasError
-          ? 'rgba(239, 68, 68, 0.3)'
-          : 'var(--color-border)'
-        e.currentTarget.style.backgroundColor = hasError
-          ? 'rgba(239, 68, 68, 0.05)'
-          : 'var(--color-bg-elevated)'
+        if (!isActive) {
+          e.currentTarget.style.borderColor = hasError
+            ? 'rgba(239, 68, 68, 0.3)'
+            : 'var(--color-border)'
+          e.currentTarget.style.backgroundColor = hasError
+            ? 'rgba(239, 68, 68, 0.05)'
+            : 'var(--color-bg-elevated)'
+        }
       }}
     >
-      {/* Top row: date and message count / error badge */}
+      {/* Top row: date, duration, message count, error badge */}
       <div className="flex items-center justify-between" style={{ gap: 'var(--space-2)' }}>
         <span
           style={{
@@ -66,6 +86,19 @@ export function SessionCard({ session, onSelect }: SessionCardProps): React.JSX.
           {formatTimestamp(session.firstTimestamp)}
         </span>
         <div className="flex items-center" style={{ gap: 'var(--space-2)' }}>
+          {showDuration && (
+            <span
+              className="flex items-center"
+              style={{
+                fontSize: 'var(--text-xs)',
+                color: 'var(--color-text-muted)',
+                gap: '3px'
+              }}
+            >
+              <Clock size={11} />
+              {duration}
+            </span>
+          )}
           {session.messageCount > 0 && (
             <span
               style={{
