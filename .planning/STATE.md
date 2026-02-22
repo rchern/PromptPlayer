@@ -110,5 +110,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 04-01-PLAN.md (Navigation data layer). Phase 4 Plan 2 (Player UI) next.
-Resume file: None
+Stopped at: Phase 4, Plan 02, Task 3 (checkpoint:human-verify). Two bugs fixed (uncommitted), one under investigation (missing user messages after tool rejections — likely stitcher childOf overwrite).
+Resume file: .planning/phases/04-single-session-navigation/.continue-here.md
