@@ -10,16 +10,16 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 5 of 10 (Builder Session Management)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-02-22 - Completed 05-01-PLAN.md (data layer extensions)
+Last activity: 2026-02-22 - Completed 05-02-PLAN.md (search/filter UI, import, view switching)
 
-Progress: [█████████████████████████████████░░] 13/34 plans (~38%)
+Progress: [██████████████████████████████████░░] 14/34 plans (~41%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: 7min
 - Total execution time: 1.5 hours
 
@@ -31,11 +31,11 @@ Progress: [███████████████████████
 | 2. Data Pipeline | 4/4 | 18min | 4.5min |
 | 3. Message Rendering | 3/3 | 36min | 12min |
 | 4. Single-Session Nav | 2/2 | 42min | 21min |
-| 5. Builder Session Mgmt | 1/3 | 3min | 3min |
+| 5. Builder Session Mgmt | 2/3 | 7min | 3.5min |
 
 **Recent Trend:**
-- Last 5 plans: 2min, 4min, 30min, 2min, 3min
-- Trend: 05-01 fast (pure data layer, no UI verification needed)
+- Last 5 plans: 4min, 30min, 2min, 3min, 4min
+- Trend: 05-02 fast (UI components, no visual verification checkpoint)
 
 *Updated after each plan completion*
 
@@ -93,6 +93,9 @@ Recent decisions affecting current work:
 - 05-01: extractLastTimestamp uses tail-read (last 4096 bytes via FileHandle) to avoid full-file scan
 - 05-01: deriveProjectFolder uses basename(dirname(filePath)) as fallback project name for imported files
 - 05-01: matchesSearch/matchesDateFilter kept module-private; only filterSessions, DatePreset, DateFilter exported
+- 05-02: Import toast uses simple React state with 3s auto-dismiss (no toast library)
+- 05-02: ImportDropZone filters for .jsonl at both File and path levels
+- 05-02: Active session highlight uses accent-subtle bg + accent border from theme tokens
 
 ### Pending Todos
 
@@ -119,5 +122,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 05-01-PLAN.md. Ready for 05-02.
+Stopped at: Completed 05-02-PLAN.md. Ready for 05-03.
 Resume file: none
