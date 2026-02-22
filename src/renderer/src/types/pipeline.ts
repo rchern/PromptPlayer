@@ -83,6 +83,16 @@ export interface StitchedSession {
 }
 
 // ---------------------------------------------------------------------------
+// Navigation Step (user+assistant pair for Player navigation)
+// ---------------------------------------------------------------------------
+
+export interface NavigationStep {
+  index: number
+  userMessage: ParsedMessage | null // null when first message is assistant-only
+  assistantMessage: ParsedMessage | null // null for unpaired user message at end
+}
+
+// ---------------------------------------------------------------------------
 // Session Metadata
 // ---------------------------------------------------------------------------
 
