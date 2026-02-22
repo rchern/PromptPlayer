@@ -99,12 +99,12 @@ Plans:
   1. Builder mode displays a list of all imported conversation sessions with identifying information
   2. User can click a session to preview its conversation content before adding it to a presentation
   3. User can search or filter sessions by date, content keywords, or project
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: Session list view with metadata display
-- [ ] 05-02: Session preview panel (reuses Phase 3 rendering components)
-- [ ] 05-03: Session search and filter functionality
+- [ ] 05-01-PLAN.md -- Data layer: lastTimestamp metadata, file import IPC, drag-drop path extraction, content search, filtering utilities
+- [ ] 05-02-PLAN.md -- UI: SearchFilterBar, ImportDropZone, enhanced SessionCard/List with view switching, Builder integration
+- [ ] 05-03-PLAN.md -- Preview: SessionPreviewHeader with summary stats, file-not-found handling, visual verification checkpoint
 
 ### Phase 6: Builder Presentation Assembly
 **Goal**: User can create an ordered, sectioned presentation from selected conversation sessions
@@ -208,4 +208,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-22 -- Phase 4 complete*
+*Last updated: 2026-02-22 -- Phase 5 planned*
