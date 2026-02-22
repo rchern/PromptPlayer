@@ -18,7 +18,17 @@ const PLUMBING_TOOLS = new Set([
   'Glob',
   'Write',
   'Edit',
-  'Bash'
+  'Bash',
+  'Task',
+  'TaskOutput',
+  'TaskStop',
+  'Skill',
+  'EnterPlanMode',
+  'ExitPlanMode',
+  'EnterWorktree',
+  'NotebookEdit',
+  'WebFetch',
+  'WebSearch'
 ])
 
 /** Tools whose invocations are narrative -- shown by default in presentation */
@@ -110,6 +120,10 @@ export function pairToolResults(messages: ParsedMessage[]): ParsedMessage[] {
       if (block.type === 'tool_result') {
         const visibility = toolUseVisibility.get(block.tool_use_id)
         if (visibility) {
+          // Tool rejections are narrative -- the user made an active decision
+          if (isToolRejection(block.content, block.is_error)) {
+            return { ...msg, toolVisibility: 'narrative' }
+          }
           return { ...msg, toolVisibility: visibility }
         }
       }
@@ -117,4 +131,15 @@ export function pairToolResults(messages: ParsedMessage[]): ParsedMessage[] {
 
     return msg
   })
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Check if tool_result indicates the user rejected the tool call */
+function isToolRejection(content: string, isError: boolean): boolean {
+  return isError &&
+    typeof content === 'string' &&
+    content.startsWith("The user doesn't want to proceed with this tool use")
 }

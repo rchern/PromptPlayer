@@ -5,6 +5,25 @@ import { cleanUserText, parseUserAnswer, parseToolRejection } from './cleanUserT
 interface MessageBubbleProps {
   message: ParsedMessage
   showPlumbing: boolean
+  toolUseMap?: Map<string, { name: string; input: Record<string, unknown> }>
+}
+
+/** Summarize a tool's input for display (e.g., the command or file path) */
+function summarizeToolInput(name: string, input: Record<string, unknown>): string {
+  if (name === 'Bash' && typeof input.command === 'string') {
+    const cmd = input.command
+    return cmd.length > 80 ? cmd.slice(0, 77) + '...' : cmd
+  }
+  if ((name === 'Write' || name === 'Edit' || name === 'Read') && typeof input.file_path === 'string') {
+    return input.file_path
+  }
+  if (name === 'Glob' && typeof input.pattern === 'string') {
+    return input.pattern
+  }
+  if (name === 'Grep' && typeof input.pattern === 'string') {
+    return input.pattern
+  }
+  return ''
 }
 
 /**
@@ -16,7 +35,7 @@ interface MessageBubbleProps {
  * Content blocks are rendered via ContentBlockRenderer which handles
  * block-level plumbing filtering and type dispatch.
  */
-export function MessageBubble({ message, showPlumbing }: MessageBubbleProps): React.JSX.Element {
+export function MessageBubble({ message, showPlumbing, toolUseMap }: MessageBubbleProps): React.JSX.Element {
   const isUser = message.role === 'user'
 
   return (
@@ -81,16 +100,31 @@ export function MessageBubble({ message, showPlumbing }: MessageBubbleProps): Re
               )
             }
             // Check for tool rejection (user declined a tool use)
-            const rejection = parseToolRejection(content)
+            const rejection = block.is_error ? parseToolRejection(content) : null
             if (rejection) {
+              const toolInfo = toolUseMap?.get(block.tool_use_id)
+              const toolName = toolInfo?.name ?? 'Tool'
+              const toolSummary = toolInfo ? summarizeToolInput(toolInfo.name, toolInfo.input) : ''
+
               return (
                 <div key={index} style={{
                   fontSize: 'var(--text-sm)',
-                  color: 'var(--color-text-muted)',
-                  fontStyle: 'italic',
+                  color: 'rgba(239, 68, 68, 0.8)',
                   padding: 'var(--space-2) 0'
                 }}>
-                  {rejection}
+                  <span style={{ fontWeight: 600 }}>
+                    {toolName} declined
+                  </span>
+                  {toolSummary && (
+                    <span style={{ fontFamily: 'var(--font-mono)', marginLeft: 'var(--space-2)', opacity: 0.7, fontSize: 'var(--text-xs)' }}>
+                      {toolSummary}
+                    </span>
+                  )}
+                  {rejection !== 'Declined' && (
+                    <div style={{ fontStyle: 'italic', marginTop: 'var(--space-1)' }}>
+                      {rejection}
+                    </div>
+                  )}
                 </div>
               )
             }

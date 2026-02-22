@@ -67,6 +67,19 @@ interface MessageListProps {
   showPlumbing?: boolean
 }
 
+/** Build a lookup from tool_use_id to tool name + input for rejection display */
+function buildToolUseMap(messages: ParsedMessage[]): Map<string, { name: string; input: Record<string, unknown> }> {
+  const map = new Map<string, { name: string; input: Record<string, unknown> }>()
+  for (const msg of messages) {
+    for (const block of msg.contentBlocks) {
+      if (block.type === 'tool_use') {
+        map.set(block.id, { name: block.name, input: block.input })
+      }
+    }
+  }
+  return map
+}
+
 /**
  * Renders a filtered, scrollable list of messages.
  *
@@ -78,6 +91,7 @@ export function MessageList({
   showPlumbing = false
 }: MessageListProps): React.JSX.Element {
   const visible = filterVisibleMessages(messages, showPlumbing)
+  const toolUseMap = buildToolUseMap(messages)
 
   return (
     <div
@@ -88,7 +102,7 @@ export function MessageList({
       }}
     >
       {visible.map((msg) => (
-        <MessageBubble key={msg.uuid} message={msg} showPlumbing={showPlumbing} />
+        <MessageBubble key={msg.uuid} message={msg} showPlumbing={showPlumbing} toolUseMap={toolUseMap} />
       ))}
     </div>
   )

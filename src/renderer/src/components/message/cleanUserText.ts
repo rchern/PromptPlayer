@@ -52,6 +52,9 @@ export function cleanUserText(text: string): string {
   // Transform "User has answered your questions: ..." into clean answer display
   cleaned = cleanAskUserAnswer(cleaned)
 
+  // Strip system-generated interruption notices (redundant with rejection display)
+  cleaned = cleaned.replace(/\[Request interrupted by user for tool use\]/g, '')
+
   // Trim what's left
   cleaned = cleaned.trim()
 
@@ -103,7 +106,7 @@ function cleanAskUserAnswer(text: string): string {
  * or "Declined" if no reason given.
  */
 export function parseToolRejection(text: string): string | null {
-  if (!text.includes("doesn't want to proceed with this tool use")) return null
+  if (!text.startsWith("The user doesn't want to proceed with this tool use")) return null
   // Extract what the user said after "the user said:"
   const saidMatch = text.match(/the user said:\s*([\s\S]*?)(?:\.\s*This means|$)/)
   if (saidMatch && saidMatch[1].trim()) {
