@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: App Shell** - Electron scaffold with two-mode home screen
 - [x] **Phase 2: Data Pipeline** - JSONL parsing, UUID stitching, content extraction, app-local storage
-- [ ] **Phase 3: Message Rendering** - Visual message display with markdown, syntax highlighting, and tool call filtering
+- [x] **Phase 3: Message Rendering** - Visual message display with markdown, syntax highlighting, and tool call filtering
 - [ ] **Phase 4: Single-Session Navigation** - Step forward/back through one conversation with progress tracking
 - [ ] **Phase 5: Builder Session Management** - Import, browse, search, and preview conversation sessions
 - [ ] **Phase 6: Builder Presentation Assembly** - Create and organize multi-session presentations with sections
@@ -71,9 +71,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- Rendering infrastructure: install deps, MarkdownRenderer, CodeBlock, presentation CSS, shiki dual-theme CSS
-- [ ] 03-02-PLAN.md -- Message components: ThinkingBlock, ToolCallBlock, ContentBlockRenderer, MessageBubble, MessageList, visibility filtering
-- [ ] 03-03-PLAN.md -- Builder integration: wire MessageList into session detail panel, visual verification checkpoint
+- [x] 03-01-PLAN.md -- Rendering infrastructure: install deps, MarkdownRenderer, CodeBlock, presentation CSS, shiki dual-theme CSS
+- [x] 03-02-PLAN.md -- Message components: ThinkingBlock, ToolCallBlock, ContentBlockRenderer, MessageBubble, MessageList, visibility filtering
+- [x] 03-03-PLAN.md -- Builder integration: wire MessageList into session detail panel, visual verification checkpoint
 
 ### Phase 4: Single-Session Navigation
 **Goal**: User can step forward and backward through a single conversation using keyboard or mouse
@@ -198,7 +198,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 |-------|----------------|--------|-----------|
 | 1. App Shell | 2/2 | Complete | 2026-02-20 |
 | 2. Data Pipeline | 4/4 | Complete | 2026-02-21 |
-| 3. Message Rendering | 0/3 | Not started | - |
+| 3. Message Rendering | 3/3 | Complete | 2026-02-22 |
 | 4. Single-Session Navigation | 0/3 | Not started | - |
 | 5. Builder Session Management | 0/3 | Not started | - |
 | 6. Builder Presentation Assembly | 0/3 | Not started | - |
@@ -209,4 +209,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-21 -- Phase 3 planned (3 plans, 3 waves)*
+*Last updated: 2026-02-22 -- Phase 3 complete*
