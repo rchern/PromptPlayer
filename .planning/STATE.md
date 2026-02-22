@@ -92,7 +92,12 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None yet.
+- Player UX feedback (5 items) — see `.planning/todos/pending/player-ux-feedback.md`
+  - "Show more" button visible when nothing to expand
+  - Broken box/border rendering (CHECKPOINT, HR patterns)
+  - System-generated messages showing as "YOU"
+  - Consecutive solo Claude steps could be combined
+  - Step sequencing needs design thought
 
 ### Blockers/Concerns
 
