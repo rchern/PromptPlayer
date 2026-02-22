@@ -1,8 +1,9 @@
 import { app, BrowserWindow, dialog, ipcMain, nativeTheme, screen } from 'electron'
-import { join } from 'path'
-import { readFileSync, writeFileSync, mkdirSync } from 'fs'
+import { join, basename, dirname } from 'path'
+import { readFileSync, writeFileSync, mkdirSync, createReadStream } from 'fs'
+import { createInterface } from 'readline'
 import { is } from '@electron-toolkit/utils'
-import { discoverSessions } from './pipeline/discovery'
+import { discoverSessions, extractSessionMetadata } from './pipeline/discovery'
 import { parseJSONLFile } from './pipeline/parser'
 import { stitchConversation } from './pipeline/stitcher'
 import {
@@ -39,6 +40,14 @@ function saveWindowBounds(bounds: WindowBounds): void {
   } catch (err) {
     console.error('Failed to save window bounds:', err)
   }
+}
+
+/**
+ * Derive a project folder name from a file path by using the parent directory name.
+ * For files imported from arbitrary locations, this gives a reasonable fallback name.
+ */
+function deriveProjectFolder(filePath: string): string {
+  return basename(dirname(filePath))
 }
 
 // ---------- Window creation ----------
@@ -122,6 +131,49 @@ function createWindow(): void {
     if (result.canceled || result.filePaths.length === 0) return null
     return result.filePaths[0]
   })
+
+  ipcMain.handle('pipeline:importFiles', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile', 'multiSelections'],
+      filters: [
+        { name: 'JSONL Files', extensions: ['jsonl'] },
+        { name: 'All Files', extensions: ['*'] }
+      ],
+      title: 'Import Session Files'
+    })
+    if (result.canceled || result.filePaths.length === 0) return []
+
+    const sessions = await Promise.all(
+      result.filePaths.map((filePath) =>
+        extractSessionMetadata(filePath, deriveProjectFolder(filePath))
+      )
+    )
+    return sessions
+  })
+
+  ipcMain.handle(
+    'pipeline:searchSessionContent',
+    async (_event, filePath: string, query: string) => {
+      try {
+        const q = query.toLowerCase()
+        const rl = createInterface({
+          input: createReadStream(filePath, { encoding: 'utf-8' }),
+          crlfDelay: Infinity
+        })
+
+        for await (const line of rl) {
+          if (line.toLowerCase().includes(q)) {
+            rl.close()
+            return true
+          }
+        }
+
+        return false
+      } catch {
+        return false
+      }
+    }
+  )
 
   // ---------- IPC: Session Storage ----------
   ipcMain.handle('pipeline:getStoredSessions', async () => {

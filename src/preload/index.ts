@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Window controls
@@ -27,6 +27,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.invoke('pipeline:parseSession', filePath),
   browseDirectory: (): Promise<unknown> =>
     ipcRenderer.invoke('pipeline:browseDirectory'),
+
+  // Pipeline - Import
+  getFilePaths: (files: FileList): string[] => {
+    return Array.from(files).map((f) => webUtils.getPathForFile(f))
+  },
+  importFiles: (): Promise<unknown> =>
+    ipcRenderer.invoke('pipeline:importFiles'),
+  searchSessionContent: (filePath: string, query: string): Promise<unknown> =>
+    ipcRenderer.invoke('pipeline:searchSessionContent', filePath, query),
 
   // Pipeline - Storage
   getStoredSessions: (): Promise<unknown> =>

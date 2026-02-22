@@ -17,6 +17,11 @@ export interface ElectronAPI {
   parseSession: (filePath: string) => Promise<StitchedSession>
   browseDirectory: () => Promise<string | null>
 
+  // Pipeline - Import
+  getFilePaths: (files: FileList) => string[]
+  importFiles: () => Promise<SessionMetadata[]>
+  searchSessionContent: (filePath: string, query: string) => Promise<boolean>
+
   // Pipeline - Storage
   getStoredSessions: () => Promise<StoredSession[]>
   saveStoredSession: (session: StoredSession) => Promise<void>
