@@ -4,6 +4,7 @@ import type {
   StitchedSession,
   StoredSession
 } from '../types/pipeline'
+import type { DateFilter } from '../utils/sessionFiltering'
 
 interface SessionState {
   // Discovery
@@ -20,6 +21,19 @@ interface SessionState {
   // Stored sessions (for presentations)
   storedSessions: StoredSession[]
 
+  // Filter/search state
+  searchQuery: string
+  dateFilter: DateFilter
+  viewMode: 'grouped' | 'chronological'
+
+  // Import state
+  isImporting: boolean
+  importCount: number
+
+  // Deep search state
+  deepSearchMatchIds: string[]
+  isDeepSearching: boolean
+
   // Actions
   discover: (baseDir?: string) => Promise<void>
   browseAndDiscover: () => Promise<void>
@@ -28,6 +42,18 @@ interface SessionState {
   saveSessionToStorage: (session: StoredSession) => Promise<void>
   removeSessionFromStorage: (sessionId: string) => Promise<void>
   clearActiveSession: () => void
+
+  // Filter/search actions
+  setSearchQuery: (query: string) => void
+  setDateFilter: (filter: DateFilter) => void
+  setViewMode: (mode: 'grouped' | 'chronological') => void
+
+  // Import actions
+  importFiles: () => Promise<void>
+  importDroppedFiles: (filePaths: string[]) => Promise<void>
+
+  // Deep search
+  deepSearch: (query: string) => Promise<void>
 }
 
 export const useSessionStore = create<SessionState>((set, get) => ({
@@ -42,6 +68,19 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   parseError: null,
 
   storedSessions: [],
+
+  // Filter/search state
+  searchQuery: '',
+  dateFilter: { preset: 'all' },
+  viewMode: 'grouped',
+
+  // Import state
+  isImporting: false,
+  importCount: 0,
+
+  // Deep search state
+  deepSearchMatchIds: [],
+  isDeepSearching: false,
 
   // Actions
 
@@ -95,5 +134,98 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
   clearActiveSession: (): void => {
     set({ activeSession: null, activeSessionId: null, parseError: null })
+  },
+
+  // Filter/search actions
+
+  setSearchQuery: (query: string): void => {
+    set({ searchQuery: query })
+  },
+
+  setDateFilter: (filter: DateFilter): void => {
+    set({ dateFilter: filter })
+  },
+
+  setViewMode: (mode: 'grouped' | 'chronological'): void => {
+    set({ viewMode: mode })
+  },
+
+  // Import actions
+
+  importFiles: async (): Promise<void> => {
+    set({ isImporting: true })
+    try {
+      const newSessions = await window.electronAPI.importFiles()
+      if (!Array.isArray(newSessions) || newSessions.length === 0) {
+        set({ isImporting: false, importCount: 0 })
+        return
+      }
+      const existing = get().discoveredSessions
+      const existingIds = new Set(existing.map((s) => s.sessionId))
+      const unique = newSessions.filter((s) => !existingIds.has(s.sessionId))
+      set({
+        discoveredSessions: [...existing, ...unique],
+        importCount: unique.length,
+        isImporting: false
+      })
+    } catch {
+      set({ isImporting: false, importCount: 0 })
+    }
+  },
+
+  importDroppedFiles: async (filePaths: string[]): Promise<void> => {
+    if (filePaths.length === 0) return
+    set({ isImporting: true })
+    try {
+      const newSessions = await window.electronAPI.importFromPaths(filePaths)
+      const existing = get().discoveredSessions
+      const existingIds = new Set(existing.map((s) => s.sessionId))
+      const unique = newSessions.filter((s) => !existingIds.has(s.sessionId))
+      set({
+        discoveredSessions: [...existing, ...unique],
+        importCount: unique.length,
+        isImporting: false
+      })
+    } catch {
+      set({ isImporting: false, importCount: 0 })
+    }
+  },
+
+  // Deep search
+
+  deepSearch: async (query: string): Promise<void> => {
+    if (!query.trim()) {
+      set({ deepSearchMatchIds: [], isDeepSearching: false })
+      return
+    }
+
+    set({ isDeepSearching: true })
+    try {
+      const sessions = get().discoveredSessions
+      const q = query.toLowerCase()
+
+      // Skip sessions that already match metadata search
+      const needsDeepSearch = sessions.filter((s) => {
+        const matchesMeta =
+          (s.firstUserMessage?.toLowerCase().includes(q) ?? false) ||
+          s.projectFolder.toLowerCase().includes(q) ||
+          s.sessionId.toLowerCase().includes(q)
+        return !matchesMeta
+      })
+
+      const results = await Promise.all(
+        needsDeepSearch.map(async (s) => {
+          const matches = await window.electronAPI.searchSessionContent(s.filePath, query)
+          return matches ? s.sessionId : null
+        })
+      )
+
+      set({
+        deepSearchMatchIds: results.filter((id): id is string => id !== null),
+        isDeepSearching: false
+      })
+    } catch {
+      set({ deepSearchMatchIds: [], isDeepSearching: false })
+    }
   }
 }))

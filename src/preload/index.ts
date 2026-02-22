@@ -34,6 +34,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
   importFiles: (): Promise<unknown> =>
     ipcRenderer.invoke('pipeline:importFiles'),
+  importFromPaths: (filePaths: string[]): Promise<unknown> =>
+    ipcRenderer.invoke('pipeline:importFromPaths', filePaths),
   searchSessionContent: (filePath: string, query: string): Promise<unknown> =>
     ipcRenderer.invoke('pipeline:searchSessionContent', filePath, query),
 

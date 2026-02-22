@@ -152,6 +152,16 @@ function createWindow(): void {
   })
 
   ipcMain.handle(
+    'pipeline:importFromPaths',
+    async (_event, filePaths: string[]) => {
+      const sessions = await Promise.all(
+        filePaths.map((fp) => extractSessionMetadata(fp, deriveProjectFolder(fp)))
+      )
+      return sessions
+    }
+  )
+
+  ipcMain.handle(
     'pipeline:searchSessionContent',
     async (_event, filePath: string, query: string) => {
       try {

@@ -20,6 +20,7 @@ export interface ElectronAPI {
   // Pipeline - Import
   getFilePaths: (files: FileList) => string[]
   importFiles: () => Promise<SessionMetadata[]>
+  importFromPaths: (filePaths: string[]) => Promise<SessionMetadata[]>
   searchSessionContent: (filePath: string, query: string) => Promise<boolean>
 
   // Pipeline - Storage
