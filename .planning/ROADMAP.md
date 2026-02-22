@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: App Shell** - Electron scaffold with two-mode home screen
 - [x] **Phase 2: Data Pipeline** - JSONL parsing, UUID stitching, content extraction, app-local storage
 - [x] **Phase 3: Message Rendering** - Visual message display with markdown, syntax highlighting, and tool call filtering
-- [ ] **Phase 4: Single-Session Navigation** - Step forward/back through one conversation with progress tracking
+- [x] **Phase 4: Single-Session Navigation** - Step forward/back through one conversation with progress tracking
 - [ ] **Phase 5: Builder Session Management** - Import, browse, search, and preview conversation sessions
 - [ ] **Phase 6: Builder Presentation Assembly** - Create and organize multi-session presentations with sections
 - [ ] **Phase 7: Builder Configuration and Export** - Configure display options, export .promptplay files, re-edit saved files
@@ -88,8 +88,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01-PLAN.md -- Navigation data layer: NavigationStep type, shared message filtering utility, step pairing logic, Zustand navigation store
-- [ ] 04-02-PLAN.md -- Player UI: keyboard/mouse navigation, collapsible step view, progress indicator, slideshow-style rendering
+- [x] 04-01-PLAN.md -- Navigation data layer: NavigationStep type, shared message filtering utility, step pairing logic, Zustand navigation store
+- [x] 04-02-PLAN.md -- Player UI: keyboard/mouse navigation, collapsible step view, progress indicator, slideshow-style rendering
 
 ### Phase 5: Builder Session Management
 **Goal**: User can import, browse, search, and preview conversation sessions in Builder mode
@@ -198,7 +198,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 1. App Shell | 2/2 | Complete | 2026-02-20 |
 | 2. Data Pipeline | 4/4 | Complete | 2026-02-21 |
 | 3. Message Rendering | 3/3 | Complete | 2026-02-22 |
-| 4. Single-Session Navigation | 0/2 | Not started | - |
+| 4. Single-Session Navigation | 2/2 | Complete | 2026-02-22 |
 | 5. Builder Session Management | 0/3 | Not started | - |
 | 6. Builder Presentation Assembly | 0/3 | Not started | - |
 | 7. Builder Configuration and Export | 0/4 | Not started | - |
@@ -208,4 +208,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-22 -- Phase 3 complete*
+*Last updated: 2026-02-22 -- Phase 4 complete*

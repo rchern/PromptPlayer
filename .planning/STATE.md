@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 4 in progress - Single-Session Navigation
+**Current focus:** Phase 5 next - Builder Session Management
 
 ## Current Position
 
-Phase: 4 of 10 (Single-Session Navigation)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-22 - Completed 04-01-PLAN.md (Navigation data layer)
+Phase: 4 of 10 complete (Single-Session Navigation)
+Plan: 2 of 2 complete
+Status: Phase 4 complete, Phase 5 not started
+Last activity: 2026-02-22 - Phase 4 complete (stitcher fix + Player UI)
 
-Progress: [███████████████████████████░░░░░░░░] 10/34 plans (~29%)
+Progress: [████████████████████████████████░░░] 12/34 plans (~35%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 5.4min
-- Total execution time: 0.9 hours
+- Total plans completed: 12
+- Average duration: 7.5min
+- Total execution time: 1.5 hours
 
 **By Phase:**
 
@@ -30,7 +30,7 @@ Progress: [███████████████████████
 | 1. App Shell | 2/2 | 14min | 7min |
 | 2. Data Pipeline | 4/4 | 18min | 4.5min |
 | 3. Message Rendering | 3/3 | 36min | 12min |
-| 4. Single-Session Nav | 1/2 | 2min | 2min |
+| 4. Single-Session Nav | 2/2 | 42min | 21min |
 
 **Recent Trend:**
 - Last 5 plans: 4min, 2min, 4min, 30min, 2min
@@ -106,7 +106,7 @@ Recent decisions affecting current work:
 - AskUserQuestion tool call schema assumed but unverified (Phase 9)
 - electron-store v11 ESM-only incompatible with electron-vite 3.x CJS output -- using JSON file fallback
 - npm audit reports 10 high severity vulnerabilities in eslint dependency chain -- review before packaging
-- ~~Stitcher orphan count always equals message count~~ PARTIALLY FIXED: root-finding fixed (76841f6), filteredUuidRedirects added (8fc0ece) to resolve through system/progress lines. Orphans reduced but not to 0 -- chain resolution still incomplete. The childOf map may be losing entries when multiple messages share the same parentUuid (Map overwrites). Investigate in next session.
+- ~~Stitcher orphan count always equals message count~~ FIXED (16a2857): Root cause was assistant turn reassembly destroying intermediate UUIDs, not childOf overwrite. Fix splits reassembly at user-message boundaries and adds multi-child support to stitcher. 0 orphans across all 15 test sessions.
 - Metadata scan message count differs from full parse count (expected: scan approximates, full parse does assistant turn reassembly). Not a bug, but worth documenting for users.
 - Renderer bundle at 810KB includes all shiki grammars -- consider fine-grained bundling if size becomes a concern
 - **Message filtering confidence**: User expressed partial confidence in visibility filtering. Some edge cases may remain — consecutive Claude messages with no visible user interaction look odd but are technically correct (all plumbing hidden). May need a "collapsed plumbing" indicator in future.
@@ -115,5 +115,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 4, Plan 02, Task 3 (checkpoint:human-verify). Two bugs fixed (uncommitted), one under investigation (missing user messages after tool rejections — likely stitcher childOf overwrite).
-Resume file: .planning/phases/04-single-session-navigation/.continue-here.md
+Stopped at: Phase 4 complete. Ready for Phase 5.
+Resume file: none
