@@ -1,12 +1,39 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { RefreshCw, FolderOpen, FileUp, AlertTriangle } from 'lucide-react'
+import { RefreshCw, FolderOpen, FileUp, AlertTriangle, CheckSquare, ArrowLeft, Plus } from 'lucide-react'
 import { useSessionStore } from '../stores/sessionStore'
+import { usePresentationStore } from '../stores/presentationStore'
 import { SessionList } from '../components/builder/SessionList'
 import { SearchFilterBar } from '../components/builder/SearchFilterBar'
 import { ImportDropZone } from '../components/builder/ImportDropZone'
 import { SessionPreviewHeader } from '../components/builder/SessionPreviewHeader'
+import { PresentationOutline } from '../components/builder/PresentationOutline'
+import { PresentationList } from '../components/builder/PresentationList'
 import { MessageList } from '../components/message'
 import { filterSessions } from '../utils/sessionFiltering'
+
+type BuilderView = 'browse' | 'assembly'
+
+// Shared button style base (reused across header buttons)
+const headerButtonStyle: React.CSSProperties = {
+  backgroundColor: 'var(--color-bg-tertiary)',
+  border: '1px solid var(--color-border)',
+  borderRadius: 'var(--radius-md)',
+  padding: 'var(--space-2) var(--space-3)',
+  fontSize: 'var(--text-sm)',
+  color: 'var(--color-text-secondary)',
+  gap: 'var(--space-2)',
+  transition: 'all 150ms ease'
+}
+
+function headerButtonHover(e: React.MouseEvent<HTMLButtonElement>): void {
+  e.currentTarget.style.borderColor = 'var(--color-accent)'
+  e.currentTarget.style.color = 'var(--color-text-primary)'
+}
+
+function headerButtonLeave(e: React.MouseEvent<HTMLButtonElement>): void {
+  e.currentTarget.style.borderColor = 'var(--color-border)'
+  e.currentTarget.style.color = 'var(--color-text-secondary)'
+}
 
 export function Builder(): React.JSX.Element {
   const {
@@ -22,6 +49,8 @@ export function Builder(): React.JSX.Element {
     viewMode,
     isImporting,
     importCount,
+    selectedSessionIds,
+    isSelecting,
     discover,
     browseAndDiscover,
     parseSession,
@@ -30,12 +59,26 @@ export function Builder(): React.JSX.Element {
     setDateFilter,
     setViewMode,
     importFiles,
-    importDroppedFiles
+    importDroppedFiles,
+    toggleSessionSelection,
+    clearSelection,
+    setSelecting
   } = useSessionStore()
 
-  // Auto-discover on mount
+  const {
+    loadPresentations,
+    createPresentation,
+    presentations,
+    activePresentationId,
+    addSessions
+  } = usePresentationStore()
+
+  const [view, setView] = useState<BuilderView>('browse')
+
+  // Auto-discover and load presentations on mount
   useEffect(() => {
     discover()
+    loadPresentations()
   }, [])
 
   // Import success toast
@@ -67,6 +110,171 @@ export function Builder(): React.JSX.Element {
     parseSession(session.filePath, session.sessionId)
   }
 
+  // Create presentation from selected sessions, then switch to assembly view
+  const handleCreatePresentation = async (): Promise<void> => {
+    const selectedMeta = discoveredSessions.filter((s) => selectedSessionIds.has(s.sessionId))
+    if (selectedMeta.length === 0) return
+    await createPresentation(selectedMeta)
+    clearSelection()
+    setView('assembly')
+  }
+
+  // Add selected sessions to active presentation (assembly left panel)
+  const handleAddSessions = (): void => {
+    const selectedMeta = discoveredSessions.filter((s) => selectedSessionIds.has(s.sessionId))
+    if (selectedMeta.length === 0) return
+    addSessions(selectedMeta)
+    clearSelection()
+  }
+
+  // "New Presentation" from PresentationList: switch to browse view in selection mode
+  const handleNewPresentation = (): void => {
+    setSelecting(true)
+    setView('browse')
+  }
+
+  // =========================================================================
+  // ASSEMBLY VIEW
+  // =========================================================================
+  if (view === 'assembly') {
+    return (
+      <div
+        className="flex flex-col"
+        style={{
+          height: '100%',
+          padding: 'var(--space-6) var(--space-8)',
+          gap: 'var(--space-4)',
+          overflow: 'hidden'
+        }}
+      >
+        <div className="flex" style={{ flex: 1, gap: 'var(--space-4)', overflow: 'hidden', minHeight: 0 }}>
+          {/* Left panel: compact session library for adding sessions */}
+          <div
+            className="flex flex-col"
+            style={{
+              flex: '0 0 40%',
+              overflow: 'hidden',
+              borderRight: '1px solid var(--color-border)',
+              paddingRight: 'var(--space-4)'
+            }}
+          >
+            {/* Left panel header */}
+            <div
+              className="flex items-center justify-between"
+              style={{ marginBottom: 'var(--space-3)', flexShrink: 0 }}
+            >
+              <h3
+                style={{
+                  fontSize: 'var(--text-lg)',
+                  fontWeight: 600,
+                  color: 'var(--color-text-primary)'
+                }}
+              >
+                Add Sessions
+              </h3>
+              <button
+                onClick={() => {
+                  setView('browse')
+                  clearSelection()
+                }}
+                className="flex items-center cursor-pointer"
+                style={headerButtonStyle}
+                onMouseEnter={headerButtonHover}
+                onMouseLeave={headerButtonLeave}
+              >
+                <ArrowLeft size={14} />
+                Back to Browser
+              </button>
+            </div>
+
+            {/* Search/filter bar (compact) */}
+            <div style={{ flexShrink: 0, marginBottom: 'var(--space-2)' }}>
+              <SearchFilterBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                dateFilter={dateFilter}
+                onDateFilterChange={setDateFilter}
+                viewMode={viewMode}
+                onViewModeChange={setViewMode}
+                totalCount={discoveredSessions.length}
+                filteredCount={filteredSessions.length}
+              />
+            </div>
+
+            {/* Session list in selectable mode */}
+            <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+              <SessionList
+                sessions={filteredSessions}
+                onSelectSession={handleSelectSession}
+                isLoading={isDiscovering}
+                viewMode={viewMode}
+                activeSessionId={null}
+                selectable={true}
+                selectedSessionIds={selectedSessionIds}
+                onToggleSelect={toggleSessionSelection}
+              />
+            </div>
+
+            {/* "Add to Presentation" action bar */}
+            {selectedSessionIds.size > 0 && (
+              <div
+                className="flex items-center justify-between"
+                style={{
+                  flexShrink: 0,
+                  padding: 'var(--space-3)',
+                  marginTop: 'var(--space-2)',
+                  backgroundColor: 'var(--color-bg-secondary)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--color-border)'
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 'var(--text-sm)',
+                    color: 'var(--color-text-secondary)'
+                  }}
+                >
+                  {selectedSessionIds.size} selected
+                </span>
+                <button
+                  onClick={handleAddSessions}
+                  disabled={!activePresentationId}
+                  className="flex items-center cursor-pointer"
+                  style={{
+                    backgroundColor: 'var(--color-accent)',
+                    border: '1px solid var(--color-accent)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: 'var(--space-2) var(--space-3)',
+                    fontSize: 'var(--text-sm)',
+                    color: 'white',
+                    gap: 'var(--space-2)',
+                    transition: 'all 150ms ease',
+                    fontWeight: 500
+                  }}
+                >
+                  <Plus size={14} />
+                  Add to Presentation
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Right panel: presentation outline */}
+          <div
+            className="flex flex-col"
+            style={{ flex: '1 1 60%', overflow: 'hidden' }}
+          >
+            <PresentationList onNewPresentation={handleNewPresentation} />
+            <PresentationOutline />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // =========================================================================
+  // BROWSE VIEW (existing, with selection mode additions)
+  // =========================================================================
   return (
     <div
       className="flex flex-col"
@@ -100,32 +308,61 @@ export function Builder(): React.JSX.Element {
               Importing...
             </span>
           )}
+
+          {/* Selection mode toggle */}
+          {isSelecting ? (
+            <button
+              onClick={() => setSelecting(false)}
+              className="flex items-center cursor-pointer"
+              style={{
+                ...headerButtonStyle,
+                backgroundColor: 'var(--color-accent-subtle)',
+                borderColor: 'var(--color-accent)',
+                color: 'var(--color-accent)'
+              }}
+            >
+              <CheckSquare size={14} />
+              Cancel Selection
+            </button>
+          ) : (
+            <button
+              onClick={() => setSelecting(true)}
+              className="flex items-center cursor-pointer"
+              style={headerButtonStyle}
+              onMouseEnter={headerButtonHover}
+              onMouseLeave={headerButtonLeave}
+            >
+              <CheckSquare size={14} />
+              Select for Presentation
+            </button>
+          )}
+
+          {/* Go to assembly view (only if presentations exist) */}
+          {presentations.length > 0 && !isSelecting && (
+            <button
+              onClick={() => setView('assembly')}
+              className="flex items-center cursor-pointer"
+              style={headerButtonStyle}
+              onMouseEnter={headerButtonHover}
+              onMouseLeave={headerButtonLeave}
+            >
+              Presentations ({presentations.length})
+            </button>
+          )}
+
           <button
             onClick={() => importFiles()}
             disabled={isImporting}
             className="flex items-center cursor-pointer"
             title="Import JSONL files"
             style={{
-              backgroundColor: 'var(--color-bg-tertiary)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-md)',
-              padding: 'var(--space-2) var(--space-3)',
-              fontSize: 'var(--text-sm)',
-              color: 'var(--color-text-secondary)',
-              gap: 'var(--space-2)',
-              transition: 'all 150ms ease',
+              ...headerButtonStyle,
               opacity: isImporting ? 0.6 : 1
             }}
             onMouseEnter={(e) => {
-              if (!isImporting) {
-                e.currentTarget.style.borderColor = 'var(--color-accent)'
-                e.currentTarget.style.color = 'var(--color-text-primary)'
-              }
+              if (!isImporting) headerButtonHover(e)
             }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'var(--color-border)'
-              e.currentTarget.style.color = 'var(--color-text-secondary)'
-            }}
+            onMouseLeave={headerButtonLeave}
           >
             <FileUp size={14} />
             Import
@@ -135,26 +372,13 @@ export function Builder(): React.JSX.Element {
             disabled={isDiscovering}
             className="flex items-center cursor-pointer"
             style={{
-              backgroundColor: 'var(--color-bg-tertiary)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-md)',
-              padding: 'var(--space-2) var(--space-3)',
-              fontSize: 'var(--text-sm)',
-              color: 'var(--color-text-secondary)',
-              gap: 'var(--space-2)',
-              transition: 'all 150ms ease',
+              ...headerButtonStyle,
               opacity: isDiscovering ? 0.6 : 1
             }}
             onMouseEnter={(e) => {
-              if (!isDiscovering) {
-                e.currentTarget.style.borderColor = 'var(--color-accent)'
-                e.currentTarget.style.color = 'var(--color-text-primary)'
-              }
+              if (!isDiscovering) headerButtonHover(e)
             }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'var(--color-border)'
-              e.currentTarget.style.color = 'var(--color-text-secondary)'
-            }}
+            onMouseLeave={headerButtonLeave}
           >
             <RefreshCw size={14} style={isDiscovering ? { animation: 'spin 1s linear infinite' } : undefined} />
             Refresh
@@ -164,26 +388,13 @@ export function Builder(): React.JSX.Element {
             disabled={isDiscovering}
             className="flex items-center cursor-pointer"
             style={{
-              backgroundColor: 'var(--color-bg-tertiary)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-md)',
-              padding: 'var(--space-2) var(--space-3)',
-              fontSize: 'var(--text-sm)',
-              color: 'var(--color-text-secondary)',
-              gap: 'var(--space-2)',
-              transition: 'all 150ms ease',
+              ...headerButtonStyle,
               opacity: isDiscovering ? 0.6 : 1
             }}
             onMouseEnter={(e) => {
-              if (!isDiscovering) {
-                e.currentTarget.style.borderColor = 'var(--color-accent)'
-                e.currentTarget.style.color = 'var(--color-text-primary)'
-              }
+              if (!isDiscovering) headerButtonHover(e)
             }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'var(--color-border)'
-              e.currentTarget.style.color = 'var(--color-text-secondary)'
-            }}
+            onMouseLeave={headerButtonLeave}
           >
             <FolderOpen size={14} />
             Browse Other Location
@@ -238,139 +449,191 @@ export function Builder(): React.JSX.Element {
 
       {/* Main content area wrapped in drop zone */}
       <ImportDropZone onImportFiles={importDroppedFiles}>
-        <div className="flex" style={{ flex: 1, gap: 'var(--space-4)', overflow: 'hidden', minHeight: 0, height: '100%' }}>
-          {/* Session list */}
-          <div
-            style={{
-              flex: activeSessionId ? '0 0 50%' : '1 1 100%',
-              overflowY: 'auto',
-              paddingRight: 'var(--space-2)',
-              transition: 'flex 200ms ease'
-            }}
-          >
-            <SessionList
-              sessions={filteredSessions}
-              onSelectSession={handleSelectSession}
-              isLoading={isDiscovering}
-              viewMode={viewMode}
-              activeSessionId={activeSessionId}
-            />
+        <div className="flex flex-col" style={{ flex: 1, overflow: 'hidden', minHeight: 0, height: '100%', position: 'relative' }}>
+          <div className="flex" style={{ flex: 1, gap: 'var(--space-4)', overflow: 'hidden', minHeight: 0, height: '100%' }}>
+            {/* Session list */}
+            <div
+              style={{
+                flex: activeSessionId && !isSelecting ? '0 0 50%' : '1 1 100%',
+                overflowY: 'auto',
+                paddingRight: 'var(--space-2)',
+                transition: 'flex 200ms ease'
+              }}
+            >
+              <SessionList
+                sessions={filteredSessions}
+                onSelectSession={handleSelectSession}
+                isLoading={isDiscovering}
+                viewMode={viewMode}
+                activeSessionId={isSelecting ? null : activeSessionId}
+                selectable={isSelecting}
+                selectedSessionIds={selectedSessionIds}
+                onToggleSelect={toggleSessionSelection}
+              />
+            </div>
+
+            {/* Detail panel (only in non-selection mode) */}
+            {activeSessionId && !isSelecting && (
+              <div
+                className="flex flex-col"
+                style={{
+                  flex: '0 0 50%',
+                  backgroundColor: 'var(--color-bg-secondary)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: 'var(--space-4)',
+                  gap: 'var(--space-3)',
+                  overflow: 'hidden'
+                }}
+              >
+                {/* Detail header with close button */}
+                <div className="flex items-center justify-between" style={{ flexShrink: 0 }}>
+                  <h3
+                    style={{
+                      fontSize: 'var(--text-lg)',
+                      fontWeight: 600,
+                      color: 'var(--color-text-primary)'
+                    }}
+                  >
+                    Session Preview
+                  </h3>
+                  <button
+                    onClick={clearActiveSession}
+                    className="cursor-pointer"
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: 'var(--radius-sm)',
+                      padding: 'var(--space-1) var(--space-2)',
+                      fontSize: 'var(--text-xs)',
+                      color: 'var(--color-text-muted)',
+                      transition: 'all 150ms ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--color-text-muted)'
+                      e.currentTarget.style.color = 'var(--color-text-secondary)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--color-border)'
+                      e.currentTarget.style.color = 'var(--color-text-muted)'
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+
+                {/* Parsing state */}
+                {isParsing && (
+                  <div
+                    style={{
+                      fontSize: 'var(--text-sm)',
+                      color: 'var(--color-text-muted)',
+                      animation: 'pulse 2s ease-in-out infinite'
+                    }}
+                  >
+                    Parsing session...
+                  </div>
+                )}
+
+                {/* Parse error: file-not-found vs generic */}
+                {parseError && (
+                  isFileNotFound(parseError) ? (
+                    <FileNotFoundState
+                      filePath={activeMetadata?.filePath ?? null}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        borderRadius: 'var(--radius-md)',
+                        padding: 'var(--space-3) var(--space-4)',
+                        fontSize: 'var(--text-sm)',
+                        color: '#ef4444'
+                      }}
+                    >
+                      Parse error: {parseError}
+                    </div>
+                  )
+                )}
+
+                {/* Session content with summary header + conversation */}
+                {activeSession && !isParsing && (
+                  <>
+                    {/* Summary header */}
+                    <SessionPreviewHeader
+                      session={activeSession}
+                      metadata={activeMetadata}
+                    />
+
+                    {/* Conversation Preview label */}
+                    <span
+                      style={{
+                        fontSize: 'var(--text-sm)',
+                        fontWeight: 600,
+                        color: 'var(--color-text-muted)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        flexShrink: 0
+                      }}
+                    >
+                      Conversation Preview
+                    </span>
+
+                    {/* MessageList fills remaining space with its own scroll */}
+                    <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                      <MessageList messages={activeSession.messages} />
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Detail panel */}
-          {activeSessionId && (
+          {/* Floating action bar for selection mode */}
+          {isSelecting && (
             <div
-              className="flex flex-col"
+              className="flex items-center justify-between"
               style={{
-                flex: '0 0 50%',
+                position: 'absolute',
+                bottom: 'var(--space-4)',
+                left: 'var(--space-4)',
+                right: 'var(--space-4)',
                 backgroundColor: 'var(--color-bg-secondary)',
                 border: '1px solid var(--color-border)',
                 borderRadius: 'var(--radius-md)',
-                padding: 'var(--space-4)',
-                gap: 'var(--space-3)',
-                overflow: 'hidden'
+                padding: 'var(--space-3) var(--space-4)',
+                boxShadow: '0 -2px 12px rgba(0,0,0,0.15)'
               }}
             >
-              {/* Detail header with close button */}
-              <div className="flex items-center justify-between" style={{ flexShrink: 0 }}>
-                <h3
-                  style={{
-                    fontSize: 'var(--text-lg)',
-                    fontWeight: 600,
-                    color: 'var(--color-text-primary)'
-                  }}
-                >
-                  Session Preview
-                </h3>
-                <button
-                  onClick={clearActiveSession}
-                  className="cursor-pointer"
-                  style={{
-                    backgroundColor: 'transparent',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-sm)',
-                    padding: 'var(--space-1) var(--space-2)',
-                    fontSize: 'var(--text-xs)',
-                    color: 'var(--color-text-muted)',
-                    transition: 'all 150ms ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--color-text-muted)'
-                    e.currentTarget.style.color = 'var(--color-text-secondary)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--color-border)'
-                    e.currentTarget.style.color = 'var(--color-text-muted)'
-                  }}
-                >
-                  Close
-                </button>
-              </div>
-
-              {/* Parsing state */}
-              {isParsing && (
-                <div
-                  style={{
-                    fontSize: 'var(--text-sm)',
-                    color: 'var(--color-text-muted)',
-                    animation: 'pulse 2s ease-in-out infinite'
-                  }}
-                >
-                  Parsing session...
-                </div>
-              )}
-
-              {/* Parse error: file-not-found vs generic */}
-              {parseError && (
-                isFileNotFound(parseError) ? (
-                  <FileNotFoundState
-                    filePath={activeMetadata?.filePath ?? null}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      backgroundColor: 'rgba(239, 68, 68, 0.08)',
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                      borderRadius: 'var(--radius-md)',
-                      padding: 'var(--space-3) var(--space-4)',
-                      fontSize: 'var(--text-sm)',
-                      color: '#ef4444'
-                    }}
-                  >
-                    Parse error: {parseError}
-                  </div>
-                )
-              )}
-
-              {/* Session content with summary header + conversation */}
-              {activeSession && !isParsing && (
-                <>
-                  {/* Summary header */}
-                  <SessionPreviewHeader
-                    session={activeSession}
-                    metadata={activeMetadata}
-                  />
-
-                  {/* Conversation Preview label */}
-                  <span
-                    style={{
-                      fontSize: 'var(--text-sm)',
-                      fontWeight: 600,
-                      color: 'var(--color-text-muted)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      flexShrink: 0
-                    }}
-                  >
-                    Conversation Preview
-                  </span>
-
-                  {/* MessageList fills remaining space with its own scroll */}
-                  <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
-                    <MessageList messages={activeSession.messages} />
-                  </div>
-                </>
-              )}
+              <span
+                style={{
+                  fontSize: 'var(--text-sm)',
+                  color: 'var(--color-text-secondary)',
+                  fontWeight: 500
+                }}
+              >
+                {selectedSessionIds.size} session{selectedSessionIds.size !== 1 ? 's' : ''} selected
+              </span>
+              <button
+                onClick={handleCreatePresentation}
+                disabled={selectedSessionIds.size === 0}
+                className="flex items-center cursor-pointer"
+                style={{
+                  backgroundColor: selectedSessionIds.size > 0 ? 'var(--color-accent)' : 'var(--color-bg-tertiary)',
+                  border: '1px solid ' + (selectedSessionIds.size > 0 ? 'var(--color-accent)' : 'var(--color-border)'),
+                  borderRadius: 'var(--radius-md)',
+                  padding: 'var(--space-2) var(--space-4)',
+                  fontSize: 'var(--text-sm)',
+                  color: selectedSessionIds.size > 0 ? 'white' : 'var(--color-text-muted)',
+                  gap: 'var(--space-2)',
+                  transition: 'all 150ms ease',
+                  fontWeight: 600,
+                  opacity: selectedSessionIds.size === 0 ? 0.6 : 1
+                }}
+              >
+                Create Presentation
+              </button>
             </div>
           )}
         </div>
