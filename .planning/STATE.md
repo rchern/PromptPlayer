@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 5 - Builder Session Management
+**Current focus:** Phase 6 next - Builder Presentation Assembly
 
 ## Current Position
 
-Phase: 5 of 10 (Builder Session Management)
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-02-22 - Completed 05-02-PLAN.md (search/filter UI, import, view switching)
+Phase: 5 of 10 complete (Builder Session Management)
+Plan: 3 of 3 complete
+Status: Phase 5 complete, Phase 6 not started
+Last activity: 2026-02-22 - Phase 5 complete (session management, search/filter, preview)
 
-Progress: [██████████████████████████████████░░] 14/34 plans (~41%)
+Progress: [█████████████████████████████████████░] 15/34 plans (~44%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
+- Total plans completed: 15
 - Average duration: 7min
-- Total execution time: 1.5 hours
+- Total execution time: 1.7 hours
 
 **By Phase:**
 
@@ -31,11 +31,11 @@ Progress: [███████████████████████
 | 2. Data Pipeline | 4/4 | 18min | 4.5min |
 | 3. Message Rendering | 3/3 | 36min | 12min |
 | 4. Single-Session Nav | 2/2 | 42min | 21min |
-| 5. Builder Session Mgmt | 2/3 | 7min | 3.5min |
+| 5. Builder Session Mgmt | 3/3 | 12min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 30min, 2min, 3min, 4min
-- Trend: 05-02 fast (UI components, no visual verification checkpoint)
+- Last 5 plans: 30min, 2min, 3min, 4min, 5min
+- Trend: Phase 5 fast (~4min/plan avg, data layer + UI + preview with checkpoint)
 
 *Updated after each plan completion*
 
@@ -96,6 +96,9 @@ Recent decisions affecting current work:
 - 05-02: Import toast uses simple React state with 3s auto-dismiss (no toast library)
 - 05-02: ImportDropZone filters for .jsonl at both File and path levels
 - 05-02: Active session highlight uses accent-subtle bg + accent border from theme tokens
+- 05-03: Preview header uses two-tier layout: compact stats row (Messages/Steps/Duration) + full-width rows (Project/Command)
+- 05-03: SessionCard scrollIntoView on programmatic activation (import auto-select)
+- 05-03: Import auto-selects first imported session even for duplicates (shows user where it is)
 
 ### Pending Todos
 
@@ -105,6 +108,8 @@ Recent decisions affecting current work:
   - System-generated messages showing as "YOU"
   - Consecutive solo Claude steps could be combined
   - Step sequencing needs design thought
+- Builder UX feedback (1 item) — see `.planning/todos/pending/builder-ux-feedback.md`
+  - Date filter presets: "This Week"/"This Month" vs "Last 7 days"/"Last 30 days" naming
 
 ### Blockers/Concerns
 
@@ -122,5 +127,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 05-02-PLAN.md. Ready for 05-03.
+Stopped at: Phase 5 complete. Ready for Phase 6.
 Resume file: none

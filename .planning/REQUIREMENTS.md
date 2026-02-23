@@ -17,9 +17,9 @@
 
 ### Builder
 
-- [ ] **BLDR-01**: Builder mode provides a list of imported conversation sessions
-- [ ] **BLDR-02**: User can preview a conversation session before adding it to a presentation
-- [ ] **BLDR-03**: User can search/filter imported sessions (by date, content, or project)
+- [x] **BLDR-01**: Builder mode provides a list of imported conversation sessions
+- [x] **BLDR-02**: User can preview a conversation session before adding it to a presentation
+- [x] **BLDR-03**: User can search/filter imported sessions (by date, content, or project)
 - [ ] **BLDR-04**: User can create a new presentation by selecting and ordering sessions
 - [ ] **BLDR-05**: User can reorder sessions within a presentation via drag-and-drop or similar
 - [ ] **BLDR-06**: User can define named sections/chapters that group sessions (e.g., "Questioning", "Research", "Execution")
@@ -101,16 +101,16 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DATA-01 | Phase 2 | Pending |
-| DATA-02 | Phase 2 | Pending |
-| DATA-03 | Phase 2 | Pending |
-| DATA-04 | Phase 2 | Pending |
-| DATA-05 | Phase 2 | Pending |
-| DATA-06 | Phase 2 | Pending |
-| DATA-07 | Phase 2 | Pending |
-| BLDR-01 | Phase 5 | Pending |
-| BLDR-02 | Phase 5 | Pending |
-| BLDR-03 | Phase 5 | Pending |
+| DATA-01 | Phase 2 | Complete |
+| DATA-02 | Phase 2 | Complete |
+| DATA-03 | Phase 2 | Complete |
+| DATA-04 | Phase 2 | Complete |
+| DATA-05 | Phase 2 | Complete |
+| DATA-06 | Phase 2 | Complete |
+| DATA-07 | Phase 2 | Complete |
+| BLDR-01 | Phase 5 | Complete |
+| BLDR-02 | Phase 5 | Complete |
+| BLDR-03 | Phase 5 | Complete |
 | BLDR-04 | Phase 6 | Pending |
 | BLDR-05 | Phase 6 | Pending |
 | BLDR-06 | Phase 6 | Pending |
@@ -121,24 +121,24 @@
 | BLDR-11 | Phase 7 | Pending |
 | BLDR-12 | Phase 7 | Pending |
 | PLAY-01 | Phase 8 | Pending |
-| PLAY-02 | Phase 4 | Pending |
-| PLAY-03 | Phase 4 | Pending |
-| PLAY-04 | Phase 3 | Pending |
-| PLAY-05 | Phase 3 | Pending |
-| PLAY-06 | Phase 3 | Pending |
+| PLAY-02 | Phase 4 | Complete |
+| PLAY-03 | Phase 4 | Complete |
+| PLAY-04 | Phase 3 | Complete |
+| PLAY-05 | Phase 3 | Complete |
+| PLAY-06 | Phase 3 | Complete |
 | PLAY-07 | Phase 9 | Pending |
 | PLAY-08 | Phase 9 | Pending |
-| PLAY-09 | Phase 3 | Pending |
+| PLAY-09 | Phase 3 | Complete |
 | PLAY-10 | Phase 8 | Pending |
-| PLAY-11 | Phase 4 | Pending |
+| PLAY-11 | Phase 4 | Complete |
 | PLAY-12 | Phase 8 | Pending |
 | PLAY-13 | Phase 10 | Pending |
 | PLAY-14 | Phase 10 | Pending |
-| PLAY-15 | Phase 3 | Pending |
+| PLAY-15 | Phase 3 | Complete |
 | SHELL-01 | Phase 1 | Complete |
 | SHELL-02 | Phase 1 | Complete |
 | SHELL-03 | Phase 10 | Pending |
-| SHELL-04 | Phase 2 | Pending |
+| SHELL-04 | Phase 2 | Complete |
 
 **Coverage:**
 - v1 requirements: 38 total
@@ -147,4 +147,4 @@
 
 ---
 *Requirements defined: 2026-02-20*
-*Last updated: 2026-02-20 after roadmap phase mapping*
+*Last updated: 2026-02-22 -- Phase 5 complete*

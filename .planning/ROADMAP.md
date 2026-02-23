@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Data Pipeline** - JSONL parsing, UUID stitching, content extraction, app-local storage
 - [x] **Phase 3: Message Rendering** - Visual message display with markdown, syntax highlighting, and tool call filtering
 - [x] **Phase 4: Single-Session Navigation** - Step forward/back through one conversation with progress tracking
-- [ ] **Phase 5: Builder Session Management** - Import, browse, search, and preview conversation sessions
+- [x] **Phase 5: Builder Session Management** - Import, browse, search, and preview conversation sessions
 - [ ] **Phase 6: Builder Presentation Assembly** - Create and organize multi-session presentations with sections
 - [ ] **Phase 7: Builder Configuration and Export** - Configure display options, export .promptplay files, re-edit saved files
 - [ ] **Phase 8: Player Multi-Session Playback** - Open .promptplay files, seamless session transitions, section navigation
@@ -102,9 +102,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 05-01-PLAN.md -- Data layer: lastTimestamp metadata, file import IPC, drag-drop path extraction, content search, filtering utilities
-- [ ] 05-02-PLAN.md -- UI: SearchFilterBar, ImportDropZone, enhanced SessionCard/List with view switching, Builder integration
-- [ ] 05-03-PLAN.md -- Preview: SessionPreviewHeader with summary stats, file-not-found handling, visual verification checkpoint
+- [x] 05-01-PLAN.md -- Data layer: lastTimestamp metadata, file import IPC, drag-drop path extraction, content search, filtering utilities
+- [x] 05-02-PLAN.md -- UI: SearchFilterBar, ImportDropZone, enhanced SessionCard/List with view switching, Builder integration
+- [x] 05-03-PLAN.md -- Preview: SessionPreviewHeader with summary stats, file-not-found handling, visual verification checkpoint
 
 ### Phase 6: Builder Presentation Assembly
 **Goal**: User can create an ordered, sectioned presentation from selected conversation sessions
@@ -199,7 +199,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 2. Data Pipeline | 4/4 | Complete | 2026-02-21 |
 | 3. Message Rendering | 3/3 | Complete | 2026-02-22 |
 | 4. Single-Session Navigation | 2/2 | Complete | 2026-02-22 |
-| 5. Builder Session Management | 0/3 | Not started | - |
+| 5. Builder Session Management | 3/3 | Complete | 2026-02-22 |
 | 6. Builder Presentation Assembly | 0/3 | Not started | - |
 | 7. Builder Configuration and Export | 0/4 | Not started | - |
 | 8. Player Multi-Session Playback | 0/4 | Not started | - |
@@ -208,4 +208,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-22 -- Phase 5 planned*
+*Last updated: 2026-02-22 -- Phase 5 complete*
