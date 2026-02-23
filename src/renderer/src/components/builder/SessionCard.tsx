@@ -8,6 +8,9 @@ interface SessionCardProps {
   onSelect: (session: SessionMetadata) => void
   isActive?: boolean
   showProject?: boolean
+  selectable?: boolean
+  isSelected?: boolean
+  onToggleSelect?: (sessionId: string) => void
 }
 
 function formatTimestamp(timestamp: string | null): string {
@@ -22,7 +25,15 @@ function truncateSnippet(text: string | null, maxLength: number = 100): string {
   return text.slice(0, maxLength) + '...'
 }
 
-export function SessionCard({ session, onSelect, isActive = false, showProject = false }: SessionCardProps): React.JSX.Element {
+export function SessionCard({
+  session,
+  onSelect,
+  isActive = false,
+  showProject = false,
+  selectable = false,
+  isSelected = false,
+  onToggleSelect
+}: SessionCardProps): React.JSX.Element {
   const ref = useRef<HTMLButtonElement>(null)
   const hasError = session.parseError !== null
   const duration = formatSessionDuration(session)
@@ -36,12 +47,14 @@ export function SessionCard({ session, onSelect, isActive = false, showProject =
   }, [isActive])
 
   const getBorderColor = (): string => {
+    if (isSelected) return 'var(--color-accent)'
     if (isActive) return 'var(--color-accent)'
     if (hasError) return 'rgba(239, 68, 68, 0.3)'
     return 'var(--color-border)'
   }
 
   const getBgColor = (): string => {
+    if (isSelected) return 'var(--color-accent-subtle)'
     if (isActive) return 'var(--color-accent-subtle)'
     if (hasError) return 'rgba(239, 68, 68, 0.05)'
     return 'var(--color-bg-elevated)'
@@ -50,16 +63,24 @@ export function SessionCard({ session, onSelect, isActive = false, showProject =
   return (
     <button
       ref={ref}
-      onClick={() => onSelect(session)}
+      onClick={() => {
+        if (selectable) {
+          onToggleSelect?.(session.sessionId)
+        } else {
+          onSelect(session)
+        }
+      }}
       className="flex flex-col w-full text-left cursor-pointer"
       style={{
         backgroundColor: getBgColor(),
         border: `1px solid ${getBorderColor()}`,
         borderRadius: 'var(--radius-md)',
         padding: 'var(--space-3) var(--space-4)',
+        paddingRight: selectable ? 'var(--space-10)' : 'var(--space-4)',
         gap: 'var(--space-2)',
         transition: 'all 150ms ease',
-        outline: 'none'
+        outline: 'none',
+        position: selectable ? 'relative' : undefined
       }}
       onMouseEnter={(e) => {
         if (!isActive) {
@@ -84,6 +105,25 @@ export function SessionCard({ session, onSelect, isActive = false, showProject =
         }
       }}
     >
+      {/* Selection checkbox (selectable mode only) */}
+      {selectable && (
+        <div
+          className="flex items-center"
+          style={{ position: 'absolute', top: 'var(--space-3)', right: 'var(--space-3)' }}
+        >
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={(e) => {
+              e.stopPropagation()
+              onToggleSelect?.(session.sessionId)
+            }}
+            onClick={(e) => e.stopPropagation()}
+            style={{ accentColor: 'var(--color-accent)', width: '16px', height: '16px', cursor: 'pointer' }}
+          />
+        </div>
+      )}
+
       {/* Top row: date, duration, message count, error badge */}
       <div className="flex items-center justify-between" style={{ gap: 'var(--space-2)' }}>
         <span

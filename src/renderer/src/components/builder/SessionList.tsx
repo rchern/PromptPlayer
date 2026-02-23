@@ -8,6 +8,9 @@ interface SessionListProps {
   isLoading: boolean
   viewMode: 'grouped' | 'chronological'
   activeSessionId: string | null
+  selectable?: boolean
+  selectedSessionIds?: Set<string>
+  onToggleSelect?: (sessionId: string) => void
 }
 
 /** Group sessions by projectFolder, sort groups by most recent session, sort sessions within each group by date descending */
@@ -66,7 +69,10 @@ export function SessionList({
   onSelectSession,
   isLoading,
   viewMode,
-  activeSessionId
+  activeSessionId,
+  selectable = false,
+  selectedSessionIds,
+  onToggleSelect
 }: SessionListProps): React.JSX.Element {
   if (isLoading) {
     return (
@@ -125,6 +131,9 @@ export function SessionList({
             onSelect={onSelectSession}
             isActive={session.sessionId === activeSessionId}
             showProject
+            selectable={selectable}
+            isSelected={selectedSessionIds?.has(session.sessionId) ?? false}
+            onToggleSelect={onToggleSelect}
           />
         ))}
       </div>
@@ -160,6 +169,9 @@ export function SessionList({
               session={session}
               onSelect={onSelectSession}
               isActive={session.sessionId === activeSessionId}
+              selectable={selectable}
+              isSelected={selectedSessionIds?.has(session.sessionId) ?? false}
+              onToggleSelect={onToggleSelect}
             />
           ))}
         </div>

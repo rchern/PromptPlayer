@@ -35,6 +35,10 @@ interface SessionState {
   deepSearchMatchIds: string[]
   isDeepSearching: boolean
 
+  // Selection state (for presentation creation flow)
+  selectedSessionIds: Set<string>
+  isSelecting: boolean
+
   // Actions
   discover: (baseDir?: string) => Promise<void>
   browseAndDiscover: () => Promise<void>
@@ -55,6 +59,11 @@ interface SessionState {
 
   // Deep search
   deepSearch: (query: string) => Promise<void>
+
+  // Selection actions
+  toggleSessionSelection: (sessionId: string) => void
+  clearSelection: () => void
+  setSelecting: (selecting: boolean) => void
 }
 
 export const useSessionStore = create<SessionState>((set, get) => ({
@@ -83,6 +92,10 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   // Deep search state
   deepSearchMatchIds: [],
   isDeepSearching: false,
+
+  // Selection state
+  selectedSessionIds: new Set<string>(),
+  isSelecting: false,
 
   // Actions
 
@@ -238,6 +251,32 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       })
     } catch {
       set({ deepSearchMatchIds: [], isDeepSearching: false })
+    }
+  },
+
+  // Selection actions
+
+  toggleSessionSelection: (sessionId: string): void => {
+    const current = get().selectedSessionIds
+    const next = new Set(current)
+    if (next.has(sessionId)) {
+      next.delete(sessionId)
+    } else {
+      next.add(sessionId)
+    }
+    set({ selectedSessionIds: next })
+  },
+
+  clearSelection: (): void => {
+    set({ selectedSessionIds: new Set<string>(), isSelecting: false })
+  },
+
+  setSelecting: (selecting: boolean): void => {
+    if (selecting) {
+      set({ isSelecting: true })
+    } else {
+      // Clear selection when exiting selection mode (prevents stale selections)
+      set({ isSelecting: false, selectedSessionIds: new Set<string>() })
     }
   }
 }))
