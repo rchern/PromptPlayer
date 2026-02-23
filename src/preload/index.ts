@@ -45,5 +45,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveStoredSession: (session: unknown): Promise<void> =>
     ipcRenderer.invoke('pipeline:saveStoredSession', session),
   removeStoredSession: (sessionId: string): Promise<void> =>
-    ipcRenderer.invoke('pipeline:removeStoredSession', sessionId)
+    ipcRenderer.invoke('pipeline:removeStoredSession', sessionId),
+
+  // Presentation storage
+  getPresentations: (): Promise<unknown> =>
+    ipcRenderer.invoke('presentation:getAll'),
+  savePresentation: (presentation: unknown): Promise<void> =>
+    ipcRenderer.invoke('presentation:save', presentation),
+  deletePresentation: (id: string): Promise<void> =>
+    ipcRenderer.invoke('presentation:delete', id)
 })

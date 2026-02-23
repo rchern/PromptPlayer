@@ -11,6 +11,11 @@ import {
   saveStoredSession,
   removeStoredSession
 } from './storage/sessionStore'
+import {
+  getPresentations,
+  savePresentation,
+  deletePresentation
+} from './storage/presentationStore'
 
 // ---------- Window bounds persistence (JSON file fallback) ----------
 // electron-store v11+ is ESM-only and electron-vite 3.x compiles main to CJS,
@@ -196,6 +201,19 @@ function createWindow(): void {
 
   ipcMain.handle('pipeline:removeStoredSession', async (_event, sessionId: string) => {
     removeStoredSession(sessionId)
+  })
+
+  // ---------- IPC: Presentation Storage ----------
+  ipcMain.handle('presentation:getAll', async () => {
+    return getPresentations()
+  })
+
+  ipcMain.handle('presentation:save', async (_event, presentation) => {
+    savePresentation(presentation)
+  })
+
+  ipcMain.handle('presentation:delete', async (_event, id: string) => {
+    deletePresentation(id)
   })
 
   // ---------- Load renderer ----------

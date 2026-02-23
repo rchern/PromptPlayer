@@ -155,3 +155,30 @@ export interface SessionMetadata {
   messageCount: number
   parseError: string | null
 }
+
+// ---------------------------------------------------------------------------
+// Presentation Types
+// ---------------------------------------------------------------------------
+// These mirror src/renderer/src/types/presentation.ts.
+// Main and renderer cannot share imports due to electron-vite's separate
+// build targets. Keep them in sync manually.
+
+export interface SessionRef {
+  sessionId: string // References StoredSession.sessionId
+  displayName: string // User-editable friendly name
+  sortKey: string // ISO timestamp for chronological ordering
+}
+
+export interface PresentationSection {
+  id: string // crypto.randomUUID()
+  name: string // User-editable section name
+  sessionRefs: SessionRef[] // Ordered by sortKey (chronological)
+}
+
+export interface Presentation {
+  id: string // crypto.randomUUID()
+  name: string // User-editable presentation name
+  sections: PresentationSection[]
+  createdAt: number // Date.now()
+  updatedAt: number // Date.now()
+}

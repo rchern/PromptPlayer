@@ -1,4 +1,5 @@
 import type { SessionMetadata, StitchedSession, StoredSession } from './pipeline'
+import type { Presentation } from './presentation'
 
 export interface ElectronAPI {
   // Window controls
@@ -27,6 +28,11 @@ export interface ElectronAPI {
   getStoredSessions: () => Promise<StoredSession[]>
   saveStoredSession: (session: StoredSession) => Promise<void>
   removeStoredSession: (sessionId: string) => Promise<void>
+
+  // Presentation storage
+  getPresentations: () => Promise<Presentation[]>
+  savePresentation: (presentation: Presentation) => Promise<void>
+  deletePresentation: (id: string) => Promise<void>
 }
 
 declare global {
