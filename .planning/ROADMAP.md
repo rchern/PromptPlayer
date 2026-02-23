@@ -2,7 +2,7 @@
 
 ## Overview
 
-PromptPlayer transforms Claude Code JSONL conversation files into curated, step-through presentation demos. The roadmap builds from the inside out: first the data pipeline that parses raw JSONL, then the rendering engine that makes it readable, then navigation that makes it steppable, then the Builder that lets presenters curate multi-session demos, and finally the Player features that make presentations polished and projector-ready. Ten phases deliver all 38 v1 requirements through a sequence of coherent, verifiable capabilities.
+PromptPlayer transforms Claude Code JSONL conversation files into curated, step-through presentation demos. The roadmap builds from the inside out: first the data pipeline that parses raw JSONL, then the rendering engine that makes it readable, then navigation that makes it steppable, then the Builder that lets presenters curate multi-session demos, and finally the Player features that make presentations polished and projector-ready. Eleven phases deliver all 38 v1 requirements through a sequence of coherent, verifiable capabilities.
 
 ## Phases
 
@@ -21,7 +21,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 7: Builder Configuration and Export** - Configure display options, export .promptplay files, re-edit saved files
 - [ ] **Phase 8: Player Multi-Session Playback** - Open .promptplay files, seamless session transitions, section navigation
 - [ ] **Phase 9: Specialized Tool Call Display** - AskUserQuestion and Task management tool call rendering
-- [ ] **Phase 10: Player Polish** - Timestamps, theme application, and OS file association
+- [ ] **Phase 10: Packaging and Release** - Windows installer, GitHub Actions CI/CD, .promptplay file association
+- [ ] **Phase 11: Player Polish** - Timestamps and theme application
 
 ## Phase Details
 
@@ -173,25 +174,39 @@ Plans:
 - [ ] 09-01: AskUserQuestion renderer (question, options, selected answer)
 - [ ] 09-02: Task management renderers (TaskCreate, TaskUpdate, TaskList)
 
-### Phase 10: Player Polish
-**Goal**: Player delivers a fully polished presentation experience with timestamps, themes, and OS integration
+### Phase 10: Packaging and Release
+**Goal**: App is packaged as a distributable Windows installer with CI/CD pipeline and OS file association
 **Depends on**: Phase 9
-**Requirements**: PLAY-13, PLAY-14, SHELL-03
+**Requirements**: SHELL-03
 **Success Criteria** (what must be TRUE):
-  1. Timestamps display between steps when enabled, showing original time and/or elapsed time between messages
-  2. Light and dark themes apply correctly based on the presentation's configured theme
-  3. User can double-click a .promptplay file in Windows Explorer to open it directly in the Player
+  1. electron-builder (or equivalent) produces a Windows installer (.exe) or portable executable
+  2. GitHub Actions workflow builds the app on push/tag and publishes release artifacts
+  3. Packaged app runs correctly (CSP, asset paths, shiki WASM bundling all work in production)
+  4. User can double-click a .promptplay file in Windows Explorer to open it directly in the Player
 **Plans**: TBD
 
 Plans:
-- [ ] 10-01: Timestamp display (original time and elapsed time between steps)
-- [ ] 10-02: Theme engine (light and dark theme application from presentation config)
-- [ ] 10-03: Windows file association (.promptplay opens in app)
+- [ ] 10-01: electron-builder configuration and Windows packaging
+- [ ] 10-02: GitHub Actions CI/CD workflow (build, test, release)
+- [ ] 10-03: .promptplay file association and OS integration (SHELL-03)
+
+### Phase 11: Player Polish
+**Goal**: Player delivers a fully polished presentation experience with timestamps and themes
+**Depends on**: Phase 10
+**Requirements**: PLAY-13, PLAY-14
+**Success Criteria** (what must be TRUE):
+  1. Timestamps display between steps when enabled, showing original time and/or elapsed time between messages
+  2. Light and dark themes apply correctly based on the presentation's configured theme
+**Plans**: TBD
+
+Plans:
+- [ ] 11-01: Timestamp display (original time and elapsed time between steps)
+- [ ] 11-02: Theme engine (light and dark theme application from presentation config)
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -204,8 +219,9 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 7. Builder Configuration and Export | 0/4 | Not started | - |
 | 8. Player Multi-Session Playback | 0/4 | Not started | - |
 | 9. Specialized Tool Call Display | 0/2 | Not started | - |
-| 10. Player Polish | 0/3 | Not started | - |
+| 10. Packaging and Release | 0/3 | Not started | - |
+| 11. Player Polish | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-22 -- Phase 5 complete*
+*Last updated: 2026-02-22 -- Phase 10 inserted (packaging/release), old Phase 10 renumbered to 11*

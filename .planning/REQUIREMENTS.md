@@ -132,12 +132,12 @@
 | PLAY-10 | Phase 8 | Pending |
 | PLAY-11 | Phase 4 | Complete |
 | PLAY-12 | Phase 8 | Pending |
-| PLAY-13 | Phase 10 | Pending |
-| PLAY-14 | Phase 10 | Pending |
+| PLAY-13 | Phase 11 | Pending |
+| PLAY-14 | Phase 11 | Pending |
 | PLAY-15 | Phase 3 | Complete |
 | SHELL-01 | Phase 1 | Complete |
 | SHELL-02 | Phase 1 | Complete |
-| SHELL-03 | Phase 10 | Pending |
+| SHELL-03 | Phase 10 (Packaging) | Pending |
 | SHELL-04 | Phase 2 | Complete |
 
 **Coverage:**
