@@ -116,12 +116,12 @@ Plans:
   2. User can reorder sessions within a presentation via drag-and-drop or equivalent interaction
   3. User can define named sections/chapters that group consecutive sessions (e.g., "Research", "Execution")
   4. User can rename sections and sessions with display-friendly labels
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: Presentation data model and creation workflow
-- [ ] 06-02: Session ordering with drag-and-drop reordering
-- [ ] 06-03: Section/chapter creation, naming, and session grouping
+- [ ] 06-01-PLAN.md -- Presentation types, utility functions, main-process persistence, IPC bridge
+- [ ] 06-02-PLAN.md -- Presentation Zustand store, session selection state, selectable SessionCard/List
+- [ ] 06-03-PLAN.md -- Assembly UI: InlineEdit, outline components, PresentationList, two-view Builder
 
 ### Phase 7: Builder Configuration and Export
 **Goal**: User can configure display options and export a self-contained .promptplay file
@@ -224,4 +224,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-22 -- Phase 10 inserted (packaging/release), old Phase 10 renumbered to 11*
+*Last updated: 2026-02-22 -- Phase 6 planned (3 plans in 3 waves)*
