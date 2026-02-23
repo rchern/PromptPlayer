@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 6 next - Builder Presentation Assembly
+**Current focus:** Phase 6 - Builder Presentation Assembly (plan 1 of 3 complete)
 
 ## Current Position
 
-Phase: 5 of 11 complete (Builder Session Management)
-Plan: 3 of 3 complete
-Status: Phase 5 complete, Phase 6 not started
-Last activity: 2026-02-22 - Phase 5 complete (session management, search/filter, preview)
+Phase: 6 of 11 (Builder Presentation Assembly)
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-02-22 - Completed 06-01-PLAN.md (presentation data foundation)
 
-Progress: [█████████████████████████████████████░] 15/36 plans (~42%)
+Progress: [██████████████████████████████████████░░] 16/36 plans (~44%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: 7min
-- Total execution time: 1.7 hours
+- Total execution time: 1.75 hours
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: [███████████████████████
 | 3. Message Rendering | 3/3 | 36min | 12min |
 | 4. Single-Session Nav | 2/2 | 42min | 21min |
 | 5. Builder Session Mgmt | 3/3 | 12min | 4min |
+| 6. Builder Presentation Assembly | 1/3 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 30min, 2min, 3min, 4min, 5min
-- Trend: Phase 5 fast (~4min/plan avg, data layer + UI + preview with checkpoint)
+- Last 5 plans: 3min, 4min, 5min, 3min, 3min
+- Trend: Data layer plans consistently fast (~3-4min)
 
 *Updated after each plan completion*
 
@@ -99,6 +100,9 @@ Recent decisions affecting current work:
 - 05-03: Preview header uses two-tier layout: compact stats row (Messages/Steps/Duration) + full-width rows (Project/Command)
 - 05-03: SessionCard scrollIntoView on programmatic activation (import auto-select)
 - 05-03: Import auto-selects first imported session even for duplicates (shows user where it is)
+- 06-01: GSD commands use kebab-to-title-case conversion for display names (/gsd:plan-phase 3 -> "Plan Phase 3")
+- 06-01: Missing sortKeys sort last in chronological ordering
+- 06-01: Presentation IPC uses presentation:* namespace (distinct from pipeline:* for sessions)
 
 ### Pending Todos
 
@@ -127,5 +131,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 5 complete. Ready for Phase 6.
+Stopped at: Completed 06-01-PLAN.md (presentation data foundation)
 Resume file: none
