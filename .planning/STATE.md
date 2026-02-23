@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 6 - Builder Presentation Assembly (plan 1 of 3 complete)
+**Current focus:** Phase 6 - Builder Presentation Assembly (plan 2 of 3 complete)
 
 ## Current Position
 
 Phase: 6 of 11 (Builder Presentation Assembly)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-02-22 - Completed 06-01-PLAN.md (presentation data foundation)
+Last activity: 2026-02-22 - Completed 06-02-PLAN.md (presentation store and session selection)
 
-Progress: [██████████████████████████████████████░░] 16/36 plans (~44%)
+Progress: [███████████████████████████████████████░░] 17/36 plans (~47%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 7min
-- Total execution time: 1.75 hours
+- Total execution time: 1.82 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [███████████████████████
 | 3. Message Rendering | 3/3 | 36min | 12min |
 | 4. Single-Session Nav | 2/2 | 42min | 21min |
 | 5. Builder Session Mgmt | 3/3 | 12min | 4min |
-| 6. Builder Presentation Assembly | 1/3 | 3min | 3min |
+| 6. Builder Presentation Assembly | 2/3 | 7min | 3.5min |
 
 **Recent Trend:**
-- Last 5 plans: 3min, 4min, 5min, 3min, 3min
+- Last 5 plans: 4min, 5min, 3min, 3min, 4min
 - Trend: Data layer plans consistently fast (~3-4min)
 
 *Updated after each plan completion*
@@ -103,6 +103,9 @@ Recent decisions affecting current work:
 - 06-01: GSD commands use kebab-to-title-case conversion for display names (/gsd:plan-phase 3 -> "Plan Phase 3")
 - 06-01: Missing sortKeys sort last in chronological ordering
 - 06-01: Presentation IPC uses presentation:* namespace (distinct from pipeline:* for sessions)
+- 06-02: persistPresentation helper encapsulates IPC save + local state update for all mutations
+- 06-02: setSelecting(false) auto-clears selectedSessionIds to prevent stale selections
+- 06-02: Selected cards reuse accent-subtle bg + accent border from active session highlight pattern
 
 ### Pending Todos
 
@@ -131,5 +134,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed 06-01-PLAN.md (presentation data foundation)
+Stopped at: Completed 06-02-PLAN.md (presentation store and session selection)
 Resume file: none
