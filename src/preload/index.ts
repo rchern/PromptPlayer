@@ -53,5 +53,25 @@ contextBridge.exposeInMainWorld('electronAPI', {
   savePresentation: (presentation: unknown): Promise<void> =>
     ipcRenderer.invoke('presentation:save', presentation),
   deletePresentation: (id: string): Promise<void> =>
-    ipcRenderer.invoke('presentation:delete', id)
+    ipcRenderer.invoke('presentation:delete', id),
+
+  // Presentation export/import
+  exportPresentation: (presentationId: string): Promise<unknown> =>
+    ipcRenderer.invoke('presentation:export', presentationId),
+  importPresentation: (): Promise<unknown> =>
+    ipcRenderer.invoke('presentation:import'),
+  saveToPath: (presentationId: string, filePath: string): Promise<unknown> =>
+    ipcRenderer.invoke('presentation:saveToPath', presentationId, filePath),
+
+  // Menu events
+  onMenuSave: (callback: () => void): (() => void) => {
+    const handler = (): void => callback()
+    ipcRenderer.on('menu:save', handler)
+    return () => ipcRenderer.removeListener('menu:save', handler)
+  },
+  onMenuSaveAs: (callback: () => void): (() => void) => {
+    const handler = (): void => callback()
+    ipcRenderer.on('menu:saveAs', handler)
+    return () => ipcRenderer.removeListener('menu:saveAs', handler)
+  }
 })

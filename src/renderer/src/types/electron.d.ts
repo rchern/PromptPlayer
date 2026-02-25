@@ -33,6 +33,21 @@ export interface ElectronAPI {
   getPresentations: () => Promise<Presentation[]>
   savePresentation: (presentation: Presentation) => Promise<void>
   deletePresentation: (id: string) => Promise<void>
+
+  // Presentation export/import
+  exportPresentation: (
+    presentationId: string
+  ) => Promise<{ filePath: string; canceled: false } | { canceled: true }>
+  importPresentation: () => Promise<{
+    presentation: Presentation
+    sessions: StoredSession[]
+    filePath: string
+  } | null>
+  saveToPath: (presentationId: string, filePath: string) => Promise<{ success: boolean }>
+
+  // Menu events
+  onMenuSave: (callback: () => void) => () => void
+  onMenuSaveAs: (callback: () => void) => () => void
 }
 
 declare global {
