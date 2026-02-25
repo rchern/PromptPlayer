@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 7 of 11 (Builder Configuration and Export)
-Plan: 2 of 4 complete
+Plan: 3 of 4 complete
 Status: In progress
-Last activity: 2026-02-25 - Completed 07-03-PLAN.md (export/import IPC pipeline)
+Last activity: 2026-02-25 - Completed 07-02-PLAN.md (settings panel and Builder integration)
 
-Progress: [██████████████████████████████████████████░░] 20/36 plans (56%)
+Progress: [███████████████████████████████████████████░░] 21/36 plans (58%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
+- Total plans completed: 21
 - Average duration: 6min
-- Total execution time: 2.0 hours
+- Total execution time: 2.1 hours
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: [███████████████████████
 | 4. Single-Session Nav | 2/2 | 42min | 21min |
 | 5. Builder Session Mgmt | 3/3 | 12min | 4min |
 | 6. Builder Presentation Assembly | 3/3 | 12min | 4min |
-| 7. Builder Config & Export | 2/4 | 7min | 3.5min |
+| 7. Builder Config & Export | 3/4 | 11min | 3.7min |
 
 **Recent Trend:**
-- Last 5 plans: 3min, 4min, 5min, 6min, 1min
-- Trend: IPC pipeline plans execute fast when types are already defined
+- Last 5 plans: 4min, 5min, 6min, 1min, 4min
+- Trend: Settings UI plans execute quickly with well-defined types from Plan 01
 
 *Updated after each plan completion*
 
@@ -118,6 +118,10 @@ Recent decisions affecting current work:
 - 07-01: "Other" catch-all category defaults to visible (unknown tools shown, per 02-01)
 - 07-01: Type-only circular import accepted between pipeline/types.ts and sessionStore.ts
 - 07-01: filterWithToolSettings coexists with filterVisibleMessages (Player uses simple boolean, Builder uses granular settings)
+- 07-02: Category toggle resets per-tool overrides (prevents stale state from previous category setting)
+- 07-02: Theme override scoped via data-theme on preview wrapper div (not documentElement, per Pitfall 7)
+- 07-02: Assembly view gains session preview panel for live-filtered message preview
+- 07-02: Custom CSS-only ToggleSwitch component (no external toggle library)
 - 07-03: Export assembles data in main process from stores (avoids large IPC transfer per Pitfall 2)
 - 07-03: Menu event bridges (onMenuSave, onMenuSaveAs) wired proactively for Plan 04
 
@@ -150,5 +154,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 07-03-PLAN.md (export/import IPC pipeline)
+Stopped at: Completed 07-02-PLAN.md (settings panel and Builder integration); 07-01, 07-02, 07-03 done
 Resume file: none
