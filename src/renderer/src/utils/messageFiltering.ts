@@ -1,4 +1,5 @@
 import type { ParsedMessage, NavigationStep } from '../types/pipeline'
+import type { ToolCategoryConfig } from '../types/presentation'
 import { cleanUserText } from '../components/message/cleanUserText'
 
 /**
@@ -59,6 +60,102 @@ export function filterVisibleMessages(
 
     return false
   })
+}
+
+/**
+ * Filter messages using per-category and per-tool visibility settings.
+ *
+ * This coexists with filterVisibleMessages (which the Player uses with its
+ * simple showPlumbing boolean). The Builder's settings panel uses this function
+ * for granular control over which tool categories and individual tools are visible.
+ *
+ * Rules:
+ * - Skip meta messages and empty-after-cleaning user messages (same as filterVisibleMessages)
+ * - toolVisibility null: always show (pure text, no tool calls)
+ * - toolVisibility 'narrative': check if the specific tool is hidden in settings.
+ *   If hidden but message has meaningful text, still show (mixed-content exception).
+ * - toolVisibility 'unknown': use the "Other" category's visible setting.
+ *   If hidden but has text, still show.
+ * - toolVisibility 'plumbing': check if the specific tool is enabled in settings.
+ *   If enabled, show. If not but has meaningful text, still show (mixed-content exception).
+ */
+export function filterWithToolSettings(
+  messages: ParsedMessage[],
+  toolVisibility: ToolCategoryConfig[]
+): ParsedMessage[] {
+  // Build a flat lookup: tool name -> visible (boolean)
+  // Per-tool override takes precedence over category-level setting
+  const visibilityMap = new Map<string, boolean>()
+  let otherCategoryVisible = true // default for unknown tools
+
+  for (const category of toolVisibility) {
+    if (category.tools.length === 0) {
+      // "Other" catch-all category
+      otherCategoryVisible = category.visible
+      continue
+    }
+    for (const tool of category.tools) {
+      const toolOverride = category.toolOverrides[tool]
+      visibilityMap.set(tool, toolOverride ?? category.visible)
+    }
+  }
+
+  return messages.filter((msg) => {
+    // Skip internal meta messages
+    if (msg.isMeta) return false
+
+    // Skip user messages that become empty after cleaning system XML
+    if (isEmptyAfterCleaning(msg)) return false
+
+    // Non-tool messages are always visible
+    if (msg.toolVisibility === null) return true
+
+    // Narrative messages: check if the specific tool is hidden
+    if (msg.toolVisibility === 'narrative') {
+      for (const block of msg.contentBlocks) {
+        if (block.type === 'tool_use') {
+          const isVisible = visibilityMap.get(block.name)
+          if (isVisible === false) {
+            // Mixed-content exception: still show if message has meaningful text
+            return hasMeaningfulText(msg)
+          }
+        }
+      }
+      return true
+    }
+
+    // Unknown tools: use the "Other" category's visible setting
+    if (msg.toolVisibility === 'unknown') {
+      if (!otherCategoryVisible) {
+        return hasMeaningfulText(msg)
+      }
+      return true
+    }
+
+    // Plumbing messages: check if specific tool is enabled
+    if (msg.toolVisibility === 'plumbing') {
+      for (const block of msg.contentBlocks) {
+        if (block.type === 'tool_use') {
+          if (visibilityMap.get(block.name) === true) return true
+        }
+      }
+      // Mixed-content exception: still show if message has meaningful text
+      return hasMeaningfulText(msg)
+    }
+
+    return false
+  })
+}
+
+/**
+ * Check if a message has meaningful (non-empty) text content.
+ * Used for the mixed-content exception: messages with tool blocks
+ * that are hidden still show if they contain valuable text.
+ */
+function hasMeaningfulText(msg: ParsedMessage): boolean {
+  return msg.contentBlocks.some(
+    (block) => block.type === 'text' && block.text.trim().length > 0
+  )
 }
 
 /**

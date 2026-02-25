@@ -3,6 +3,7 @@
 
 import type { SessionMetadata } from '../types/pipeline'
 import type { Presentation, PresentationSection, SessionRef } from '../types/presentation'
+import { getDefaultSettings } from './toolCategories'
 
 // ---------------------------------------------------------------------------
 // Session Display Name Generation
@@ -133,7 +134,32 @@ export function createPresentationFromSessions(sessions: SessionMetadata[]): Pre
     id: crypto.randomUUID(),
     name: generatePresentationName(sessions),
     sections,
+    settings: getDefaultSettings(),
     createdAt: Date.now(),
     updatedAt: Date.now()
   }
+}
+
+// ---------------------------------------------------------------------------
+// Settings Backfill
+// ---------------------------------------------------------------------------
+
+/**
+ * Ensure a presentation has valid settings (handles pre-Phase 7 presentations).
+ *
+ * Presentations created before Phase 7 lack the `settings` field. This function
+ * backfills with smart defaults so the rest of the app can safely access
+ * `presentation.settings` without null checks.
+ *
+ * Returns the presentation as-is if settings already exist and are valid.
+ */
+export function backfillSettings(presentation: Presentation): Presentation {
+  if (
+    presentation.settings &&
+    Array.isArray(presentation.settings.toolVisibility) &&
+    presentation.settings.toolVisibility.length > 0
+  ) {
+    return presentation
+  }
+  return { ...presentation, settings: getDefaultSettings() }
 }
