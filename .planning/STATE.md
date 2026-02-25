@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 6 - Builder Presentation Assembly (complete)
+**Current focus:** Phase 7 next - Builder Configuration and Export
 
 ## Current Position
 
-Phase: 6 of 11 (Builder Presentation Assembly)
+Phase: 6 of 11 complete (Builder Presentation Assembly)
 Plan: 3 of 3 complete
-Status: Phase complete
-Last activity: 2026-02-24 - Completed 06-03-PLAN.md (assembly UI components and two-view Builder)
+Status: Phase 6 complete, Phase 7 not started
+Last activity: 2026-02-24 - Phase 6 complete (presentation assembly, verified)
 
 Progress: [████████████████████████████████████████░░] 18/36 plans (50%)
 

@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Message Rendering** - Visual message display with markdown, syntax highlighting, and tool call filtering
 - [x] **Phase 4: Single-Session Navigation** - Step forward/back through one conversation with progress tracking
 - [x] **Phase 5: Builder Session Management** - Import, browse, search, and preview conversation sessions
-- [ ] **Phase 6: Builder Presentation Assembly** - Create and organize multi-session presentations with sections
+- [x] **Phase 6: Builder Presentation Assembly** - Create and organize multi-session presentations with sections
 - [ ] **Phase 7: Builder Configuration and Export** - Configure display options, export .promptplay files, re-edit saved files
 - [ ] **Phase 8: Player Multi-Session Playback** - Open .promptplay files, seamless session transitions, section navigation
 - [ ] **Phase 9: Specialized Tool Call Display** - AskUserQuestion and Task management tool call rendering
@@ -119,9 +119,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 06-01-PLAN.md -- Presentation types, utility functions, main-process persistence, IPC bridge
-- [ ] 06-02-PLAN.md -- Presentation Zustand store, session selection state, selectable SessionCard/List
-- [ ] 06-03-PLAN.md -- Assembly UI: InlineEdit, outline components, PresentationList, two-view Builder
+- [x] 06-01-PLAN.md -- Presentation types, utility functions, main-process persistence, IPC bridge
+- [x] 06-02-PLAN.md -- Presentation Zustand store, session selection state, selectable SessionCard/List
+- [x] 06-03-PLAN.md -- Assembly UI: InlineEdit, outline components, PresentationList, two-view Builder
 
 ### Phase 7: Builder Configuration and Export
 **Goal**: User can configure display options and export a self-contained .promptplay file
@@ -215,7 +215,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 3. Message Rendering | 3/3 | Complete | 2026-02-22 |
 | 4. Single-Session Navigation | 2/2 | Complete | 2026-02-22 |
 | 5. Builder Session Management | 3/3 | Complete | 2026-02-22 |
-| 6. Builder Presentation Assembly | 0/3 | Not started | - |
+| 6. Builder Presentation Assembly | 3/3 | Complete | 2026-02-24 |
 | 7. Builder Configuration and Export | 0/4 | Not started | - |
 | 8. Player Multi-Session Playback | 0/4 | Not started | - |
 | 9. Specialized Tool Call Display | 0/2 | Not started | - |
@@ -224,4 +224,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-22 -- Phase 6 planned (3 plans in 3 waves)*
+*Last updated: 2026-02-24 -- Phase 6 complete (3 plans, 3 waves)*

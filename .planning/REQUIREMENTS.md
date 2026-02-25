@@ -20,10 +20,10 @@
 - [x] **BLDR-01**: Builder mode provides a list of imported conversation sessions
 - [x] **BLDR-02**: User can preview a conversation session before adding it to a presentation
 - [x] **BLDR-03**: User can search/filter imported sessions (by date, content, or project)
-- [ ] **BLDR-04**: User can create a new presentation by selecting and ordering sessions
-- [ ] **BLDR-05**: User can reorder sessions within a presentation via drag-and-drop or similar
-- [ ] **BLDR-06**: User can define named sections/chapters that group sessions (e.g., "Questioning", "Research", "Execution")
-- [ ] **BLDR-07**: User can rename sections and sessions with display-friendly labels
+- [x] **BLDR-04**: User can create a new presentation by selecting and ordering sessions
+- [x] **BLDR-05**: User can reorder sessions within a presentation via drag-and-drop or similar
+- [x] **BLDR-06**: User can define named sections/chapters that group sessions (e.g., "Questioning", "Research", "Execution")
+- [x] **BLDR-07**: User can rename sections and sessions with display-friendly labels
 - [ ] **BLDR-08**: User can configure which tool call types are visible vs hidden per presentation
 - [ ] **BLDR-09**: User can toggle timestamp display on/off per presentation
 - [ ] **BLDR-10**: User can select light or dark theme for the presentation
@@ -111,10 +111,10 @@
 | BLDR-01 | Phase 5 | Complete |
 | BLDR-02 | Phase 5 | Complete |
 | BLDR-03 | Phase 5 | Complete |
-| BLDR-04 | Phase 6 | Pending |
-| BLDR-05 | Phase 6 | Pending |
-| BLDR-06 | Phase 6 | Pending |
-| BLDR-07 | Phase 6 | Pending |
+| BLDR-04 | Phase 6 | Complete |
+| BLDR-05 | Phase 6 | Complete |
+| BLDR-06 | Phase 6 | Complete |
+| BLDR-07 | Phase 6 | Complete |
 | BLDR-08 | Phase 7 | Pending |
 | BLDR-09 | Phase 7 | Pending |
 | BLDR-10 | Phase 7 | Pending |
@@ -147,4 +147,4 @@
 
 ---
 *Requirements defined: 2026-02-20*
-*Last updated: 2026-02-22 -- Phase 5 complete*
+*Last updated: 2026-02-24 -- Phase 6 complete*
