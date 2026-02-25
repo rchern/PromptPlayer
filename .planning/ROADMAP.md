@@ -133,13 +133,15 @@ Plans:
   3. User can select light or dark theme for the presentation
   4. User can export the presentation as a self-contained .promptplay file containing all data
   5. User can open a previously exported .promptplay file in Builder mode and edit it
-**Plans**: 4 plans
+**Plans**: 6 plans
 
 Plans:
-- [ ] 07-01-PLAN.md -- Types, tool categories, defaults, filterWithToolSettings, settings backfill
-- [ ] 07-02-PLAN.md -- Settings panel UI with tool visibility, timestamp toggle, theme selector, live preview
-- [ ] 07-03-PLAN.md -- Export/import IPC handlers, .promptplay file format, save/open dialogs
-- [ ] 07-04-PLAN.md -- Import workflow, re-edit capabilities, Ctrl+S/Ctrl+Shift+S keyboard shortcuts
+- [x] 07-01-PLAN.md -- Types, tool categories, defaults, filterWithToolSettings, settings backfill
+- [x] 07-02-PLAN.md -- Settings panel UI with tool visibility, timestamp toggle, theme selector, live preview
+- [x] 07-03-PLAN.md -- Export/import IPC handlers, .promptplay file format, save/open dialogs
+- [x] 07-04-PLAN.md -- Import workflow, re-edit capabilities, Ctrl+S/Ctrl+Shift+S keyboard shortcuts
+- [ ] 07-05-PLAN.md -- Gap closure: parse and save sessions to storage during presentation creation (export data fix)
+- [ ] 07-06-PLAN.md -- Gap closure: button overlap fix, visible Save/Save As buttons, click-to-preview in assembly
 
 ### Phase 8: Player Multi-Session Playback
 **Goal**: Player opens .promptplay files and navigates seamlessly across session boundaries with section support
