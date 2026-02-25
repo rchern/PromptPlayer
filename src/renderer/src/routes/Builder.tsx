@@ -2,14 +2,17 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { RefreshCw, FolderOpen, FileUp, AlertTriangle, CheckSquare, ArrowLeft, Plus } from 'lucide-react'
 import { useSessionStore } from '../stores/sessionStore'
 import { usePresentationStore } from '../stores/presentationStore'
+import { useAppStore } from '../stores/appStore'
 import { SessionList } from '../components/builder/SessionList'
 import { SearchFilterBar } from '../components/builder/SearchFilterBar'
 import { ImportDropZone } from '../components/builder/ImportDropZone'
 import { SessionPreviewHeader } from '../components/builder/SessionPreviewHeader'
 import { PresentationOutline } from '../components/builder/PresentationOutline'
 import { PresentationList } from '../components/builder/PresentationList'
+import { SettingsPanel } from '../components/builder/SettingsPanel'
 import { MessageList } from '../components/message'
 import { filterSessions } from '../utils/sessionFiltering'
+import { filterWithToolSettings } from '../utils/messageFiltering'
 
 type BuilderView = 'browse' | 'assembly'
 
@@ -70,8 +73,11 @@ export function Builder(): React.JSX.Element {
     createPresentation,
     presentations,
     activePresentationId,
-    addSessions
+    addSessions,
+    getActivePresentation
   } = usePresentationStore()
+
+  const isDarkMode = useAppStore((s) => s.isDarkMode)
 
   const [view, setView] = useState<BuilderView>('browse')
 
@@ -132,6 +138,24 @@ export function Builder(): React.JSX.Element {
     setSelecting(true)
     setView('browse')
   }
+
+  // Active presentation (for assembly view live preview)
+  const activePresentation = getActivePresentation()
+
+  // Filter messages using presentation tool visibility settings (assembly view live preview)
+  const filteredMessages = useMemo(() => {
+    if (!activeSession || !activePresentation?.settings) return activeSession?.messages ?? []
+    return filterWithToolSettings(activeSession.messages, activePresentation.settings.toolVisibility)
+  }, [activeSession, activePresentation?.settings])
+
+  // Resolve scoped theme for the message preview area (assembly view only)
+  // 'system' => undefined (inherit system theme), 'light'/'dark' => override
+  const resolvedTheme = useMemo(() => {
+    if (!activePresentation?.settings) return undefined
+    const t = activePresentation.settings.theme
+    if (t === 'system') return isDarkMode ? 'dark' : 'light'
+    return t
+  }, [activePresentation?.settings?.theme, isDarkMode])
 
   // =========================================================================
   // ASSEMBLY VIEW
@@ -259,13 +283,79 @@ export function Builder(): React.JSX.Element {
             )}
           </div>
 
-          {/* Right panel: presentation outline */}
+          {/* Right panel: settings + presentation outline + preview */}
           <div
             className="flex flex-col"
             style={{ flex: '1 1 60%', overflow: 'hidden' }}
           >
             <PresentationList onNewPresentation={handleNewPresentation} />
+            {activePresentationId && <SettingsPanel />}
             <PresentationOutline />
+
+            {/* Session preview with live filtering + scoped theme */}
+            {activeSession && !isParsing && (
+              <div
+                className="flex flex-col"
+                style={{
+                  flex: 1,
+                  minHeight: '200px',
+                  marginTop: 'var(--space-3)',
+                  backgroundColor: 'var(--color-bg-secondary)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  overflow: 'hidden'
+                }}
+              >
+                <div
+                  className="flex items-center justify-between"
+                  style={{
+                    padding: 'var(--space-2) var(--space-3)',
+                    borderBottom: '1px solid var(--color-border)',
+                    flexShrink: 0
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 'var(--text-xs)',
+                      fontWeight: 600,
+                      color: 'var(--color-text-muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em'
+                    }}
+                  >
+                    Live Preview
+                  </span>
+                  <button
+                    onClick={clearActiveSession}
+                    className="cursor-pointer"
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: 'var(--radius-sm)',
+                      padding: '2px var(--space-2)',
+                      fontSize: 'var(--text-xs)',
+                      color: 'var(--color-text-muted)',
+                      transition: 'all 150ms ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--color-text-muted)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--color-border)'
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+                {/* Scoped theme wrapper: data-theme only affects this preview area */}
+                <div
+                  data-theme={resolvedTheme}
+                  style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}
+                >
+                  <MessageList messages={filteredMessages} />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
