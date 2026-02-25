@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 7 - Builder Configuration and Export (execution complete, gaps found)
+**Current focus:** Phase 7 - Builder Configuration and Export (fully complete, all gaps closed)
 
 ## Current Position
 
 Phase: 7 of 11 (Builder Configuration and Export)
-Plan: 5 of 6 complete
-Status: Phase 7 gap closure in progress
-Last activity: 2026-02-25 - Completed 07-05-PLAN.md (export data fix)
+Plan: 6 of 6 complete
+Status: Phase 7 complete (all plans + gap closures done)
+Last activity: 2026-02-25 - Completed 07-06-PLAN.md (UI gap closure)
 
-Progress: [██████████████████████████████████████████████░░] 23/36 plans (64%)
+Progress: [███████████████████████████████████████████████░] 24/36 plans (67%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23
+- Total plans completed: 24
 - Average duration: 6min
-- Total execution time: 2.2 hours
+- Total execution time: 2.27 hours
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: [███████████████████████
 | 4. Single-Session Nav | 2/2 | 42min | 21min |
 | 5. Builder Session Mgmt | 3/3 | 12min | 4min |
 | 6. Builder Presentation Assembly | 3/3 | 12min | 4min |
-| 7. Builder Config & Export | 5/6 | 17min | 3.4min |
+| 7. Builder Config & Export | 6/6 | 21min | 3.5min |
 
 **Recent Trend:**
-- Last 5 plans: 6min, 1min, 4min, 3min, 3min
-- Trend: Phase 7 gap closure in progress; export data pipeline fixed
+- Last 5 plans: 1min, 4min, 3min, 3min, 4min
+- Trend: Phase 7 fully complete including gap closures; ready for Phase 8
 
 *Updated after each plan completion*
 
@@ -130,6 +130,9 @@ Recent decisions affecting current work:
 - 07-04: getState() in menu callbacks (registered once, reads current state at invocation)
 - 07-05: Parse-and-save pattern: createPresentation and addSessions parse JSONL and save StoredSession via IPC before persisting presentation
 - 07-05: addSessions changed from sync to async (Promise<void>) to accommodate IPC calls; Builder.tsx caller updated
+- 07-06: Save button reuses sourceFilePath overwrite logic; Save As always shows save dialog (same as Export)
+- 07-06: SessionEntry onClick fires alongside InlineEdit click (non-destructive: preview loads while name can be edited)
+- 07-06: Dual-source session lookup for outline click-to-preview: discoveredSessions for JSONL, storedSessions for imported .promptplay
 
 ### Pending Todos
 
@@ -143,11 +146,11 @@ Recent decisions affecting current work:
   - Date filter presets: "This Week"/"This Month" vs "Last 7 days"/"Last 30 days" naming
   - Session checkbox placement in assembly outline could use better positioning
   - Split session to new section (complement to merge)
-- Phase 7 checkpoint gaps (4 items from 07-04 visual verification):
-  - Create Presentation button covers last session checkbox (positioning/z-index fix)
-  - No message preview in assembly view (tool/timestamp/theme toggles have no visible effect)
-  - Export does not embed parsed messages (.promptplay file lacks conversation content)
-  - Save/Save As need visible buttons (not just Ctrl+S/Ctrl+Shift+S shortcuts)
+- ~~Phase 7 checkpoint gaps (4 items from 07-04 visual verification)~~ ALL RESOLVED:
+  - ~~Create Presentation button covers last session checkbox~~ FIXED (07-06): paddingBottom clearance
+  - ~~No message preview in assembly view~~ FIXED (07-06): click-to-preview on outline session entries
+  - ~~Export does not embed parsed messages~~ FIXED (07-05): parse-and-save in createPresentation/addSessions
+  - ~~Save/Save As need visible buttons~~ FIXED (07-06): Save and Save As buttons in assembly action bar
 
 ### Blockers/Concerns
 
@@ -165,5 +168,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 07-05-PLAN.md (export data fix); 5 of 6 Phase 7 plans done, 1 gap closure plan remaining
+Stopped at: Completed 07-06-PLAN.md (UI gap closure); Phase 7 fully complete (6/6 plans)
 Resume file: none

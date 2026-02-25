@@ -24,9 +24,9 @@
 - [x] **BLDR-05**: User can reorder sessions within a presentation via drag-and-drop or similar
 - [x] **BLDR-06**: User can define named sections/chapters that group sessions (e.g., "Questioning", "Research", "Execution")
 - [x] **BLDR-07**: User can rename sections and sessions with display-friendly labels
-- [ ] **BLDR-08**: User can configure which tool call types are visible vs hidden per presentation
-- [ ] **BLDR-09**: User can toggle timestamp display on/off per presentation
-- [ ] **BLDR-10**: User can select light or dark theme for the presentation
+- [x] **BLDR-08**: User can configure which tool call types are visible vs hidden per presentation
+- [x] **BLDR-09**: User can toggle timestamp display on/off per presentation
+- [x] **BLDR-10**: User can select light or dark theme for the presentation
 - [x] **BLDR-11**: User can export a self-contained `.promptplay` file containing all presentation data
 - [x] **BLDR-12**: User can open and edit previously saved `.promptplay` files
 
@@ -115,9 +115,9 @@
 | BLDR-05 | Phase 6 | Complete |
 | BLDR-06 | Phase 6 | Complete |
 | BLDR-07 | Phase 6 | Complete |
-| BLDR-08 | Phase 7 | Pending |
-| BLDR-09 | Phase 7 | Pending |
-| BLDR-10 | Phase 7 | Pending |
+| BLDR-08 | Phase 7 | Complete |
+| BLDR-09 | Phase 7 | Complete |
+| BLDR-10 | Phase 7 | Complete |
 | BLDR-11 | Phase 7 | Complete |
 | BLDR-12 | Phase 7 | Complete |
 | PLAY-01 | Phase 8 | Pending |
