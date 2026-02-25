@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { SessionMetadata } from '../types/pipeline'
+import type { SessionMetadata, StoredSession } from '../types/pipeline'
 import type {
   Presentation,
   PresentationSection,
@@ -49,6 +49,10 @@ interface PresentationState {
   updateToolCategoryVisibility: (categoryName: string, visible: boolean) => void
   updateToolOverride: (categoryName: string, toolName: string, visible: boolean) => void
   toggleToolCategoryExpanded: (categoryName: string) => void
+
+  // Import/Export
+  importFromPromptPlay: (presentation: Presentation, sessions: StoredSession[], filePath: string) => Promise<void>
+  setSourceFilePath: (presentationId: string, filePath: string) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -373,6 +377,57 @@ export const usePresentationStore = create<PresentationState>((set, get) => {
               : cat
           )
         },
+        updatedAt: Date.now()
+      }
+
+      persistPresentation(updated)
+    },
+
+    // -----------------------------------------------------------------------
+    // Import/Export
+    // -----------------------------------------------------------------------
+
+    importFromPromptPlay: async (
+      presentation: Presentation,
+      sessions: StoredSession[],
+      filePath: string
+    ): Promise<void> => {
+      // 1. Save each session to app-local storage
+      for (const session of sessions) {
+        await window.electronAPI.saveStoredSession(session)
+      }
+
+      // 2. Set sourceFilePath on the presentation
+      presentation.sourceFilePath = filePath
+
+      // 3. Save the presentation via IPC
+      await window.electronAPI.savePresentation(presentation)
+
+      // 4. Update local state: add or replace presentation
+      set((state) => {
+        const existing = state.presentations.findIndex((p) => p.id === presentation.id)
+        let updated: Presentation[]
+        if (existing >= 0) {
+          updated = state.presentations.map((p) =>
+            p.id === presentation.id ? presentation : p
+          )
+        } else {
+          updated = [...state.presentations, presentation]
+        }
+        return {
+          presentations: updated,
+          activePresentationId: presentation.id
+        }
+      })
+    },
+
+    setSourceFilePath: (presentationId: string, filePath: string): void => {
+      const presentation = get().presentations.find((p) => p.id === presentationId)
+      if (!presentation) return
+
+      const updated: Presentation = {
+        ...presentation,
+        sourceFilePath: filePath,
         updatedAt: Date.now()
       }
 

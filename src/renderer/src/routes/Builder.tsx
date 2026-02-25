@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { RefreshCw, FolderOpen, FileUp, AlertTriangle, CheckSquare, ArrowLeft, Plus } from 'lucide-react'
+import { RefreshCw, FolderOpen, FileUp, AlertTriangle, CheckSquare, ArrowLeft, Plus, Download } from 'lucide-react'
 import { useSessionStore } from '../stores/sessionStore'
 import { usePresentationStore } from '../stores/presentationStore'
 import { useAppStore } from '../stores/appStore'
@@ -74,7 +74,9 @@ export function Builder(): React.JSX.Element {
     presentations,
     activePresentationId,
     addSessions,
-    getActivePresentation
+    getActivePresentation,
+    importFromPromptPlay,
+    setSourceFilePath
   } = usePresentationStore()
 
   const isDarkMode = useAppStore((s) => s.isDarkMode)
@@ -99,6 +101,76 @@ export function Builder(): React.JSX.Element {
       return () => clearTimeout(timer)
     }
   }, [importCount, isImporting])
+
+  // Export success toast
+  const [showExportToast, setShowExportToast] = useState(false)
+  const [exportToastMessage, setExportToastMessage] = useState('')
+
+  const showExportSuccess = (filename: string): void => {
+    setExportToastMessage(`Saved to ${filename}`)
+    setShowExportToast(true)
+    setTimeout(() => setShowExportToast(false), 3000)
+  }
+
+  // Export handler (reused by button and keyboard shortcuts)
+  const handleExport = async (): Promise<void> => {
+    const active = usePresentationStore.getState().getActivePresentation()
+    if (!active) return
+    const result = await window.electronAPI.exportPresentation(active.id)
+    if (!result.canceled) {
+      usePresentationStore.getState().setSourceFilePath(active.id, result.filePath)
+      const filename = result.filePath.split(/[/\\]/).pop() ?? result.filePath
+      showExportSuccess(filename)
+    }
+  }
+
+  // Open/import .promptplay handler
+  const handleOpenPromptPlay = async (): Promise<void> => {
+    const result = await window.electronAPI.importPresentation()
+    if (result) {
+      await importFromPromptPlay(result.presentation, result.sessions, result.filePath)
+      setView('assembly')
+    }
+  }
+
+  // Keyboard shortcut handlers (Ctrl+S / Ctrl+Shift+S)
+  useEffect(() => {
+    const cleanupSave = window.electronAPI.onMenuSave(() => {
+      const active = usePresentationStore.getState().getActivePresentation()
+      if (!active) return
+      if (active.sourceFilePath) {
+        window.electronAPI.saveToPath(active.id, active.sourceFilePath).then(() => {
+          const filename = active.sourceFilePath!.split(/[/\\]/).pop() ?? active.sourceFilePath!
+          showExportSuccess(filename)
+        })
+      } else {
+        window.electronAPI.exportPresentation(active.id).then((result) => {
+          if (!result.canceled) {
+            usePresentationStore.getState().setSourceFilePath(active.id, result.filePath)
+            const filename = result.filePath.split(/[/\\]/).pop() ?? result.filePath
+            showExportSuccess(filename)
+          }
+        })
+      }
+    })
+
+    const cleanupSaveAs = window.electronAPI.onMenuSaveAs(() => {
+      const active = usePresentationStore.getState().getActivePresentation()
+      if (!active) return
+      window.electronAPI.exportPresentation(active.id).then((result) => {
+        if (!result.canceled) {
+          usePresentationStore.getState().setSourceFilePath(active.id, result.filePath)
+          const filename = result.filePath.split(/[/\\]/).pop() ?? result.filePath
+          showExportSuccess(filename)
+        }
+      })
+    })
+
+    return () => {
+      cleanupSave()
+      cleanupSaveAs()
+    }
+  }, [])
 
   // Derive filtered sessions
   const filteredSessions = useMemo(
@@ -289,6 +361,59 @@ export function Builder(): React.JSX.Element {
             style={{ flex: '1 1 60%', overflow: 'hidden' }}
           >
             <PresentationList onNewPresentation={handleNewPresentation} />
+
+            {/* Export / Open action bar */}
+            {activePresentationId && (
+              <div
+                className="flex items-center"
+                style={{
+                  gap: 'var(--space-2)',
+                  flexShrink: 0,
+                  marginBottom: 'var(--space-2)'
+                }}
+              >
+                <button
+                  onClick={handleExport}
+                  className="flex items-center cursor-pointer"
+                  style={headerButtonStyle}
+                  onMouseEnter={headerButtonHover}
+                  onMouseLeave={headerButtonLeave}
+                >
+                  <Download size={14} />
+                  Export
+                </button>
+                <button
+                  onClick={handleOpenPromptPlay}
+                  className="flex items-center cursor-pointer"
+                  style={headerButtonStyle}
+                  onMouseEnter={headerButtonHover}
+                  onMouseLeave={headerButtonLeave}
+                >
+                  <FolderOpen size={14} />
+                  Open
+                </button>
+              </div>
+            )}
+
+            {/* Export success toast */}
+            {showExportToast && (
+              <div
+                style={{
+                  backgroundColor: 'var(--color-accent-subtle)',
+                  border: '1px solid var(--color-accent)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: 'var(--space-2) var(--space-4)',
+                  fontSize: 'var(--text-sm)',
+                  color: 'var(--color-accent)',
+                  flexShrink: 0,
+                  marginBottom: 'var(--space-2)',
+                  transition: 'opacity 300ms ease'
+                }}
+              >
+                {exportToastMessage}
+              </div>
+            )}
+
             {activePresentationId && <SettingsPanel />}
             <PresentationOutline />
 
