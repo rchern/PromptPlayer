@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 7 of 11 (Builder Configuration and Export)
-Plan: 1 of 4 complete
+Plan: 2 of 4 complete
 Status: In progress
-Last activity: 2026-02-25 - Completed 07-01-PLAN.md (types, tool categories, settings foundation)
+Last activity: 2026-02-25 - Completed 07-03-PLAN.md (export/import IPC pipeline)
 
-Progress: [█████████████████████████████████████████░░] 19/36 plans (53%)
+Progress: [██████████████████████████████████████████░░] 20/36 plans (56%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
-- Average duration: 7min
+- Total plans completed: 20
+- Average duration: 6min
 - Total execution time: 2.0 hours
 
 **By Phase:**
@@ -33,11 +33,11 @@ Progress: [███████████████████████
 | 4. Single-Session Nav | 2/2 | 42min | 21min |
 | 5. Builder Session Mgmt | 3/3 | 12min | 4min |
 | 6. Builder Presentation Assembly | 3/3 | 12min | 4min |
-| 7. Builder Config & Export | 1/4 | 6min | 6min |
+| 7. Builder Config & Export | 2/4 | 7min | 3.5min |
 
 **Recent Trend:**
-- Last 5 plans: 3min, 3min, 4min, 5min, 6min
-- Trend: Type/utility foundation plans take slightly longer due to cross-file coordination
+- Last 5 plans: 3min, 4min, 5min, 6min, 1min
+- Trend: IPC pipeline plans execute fast when types are already defined
 
 *Updated after each plan completion*
 
@@ -118,6 +118,8 @@ Recent decisions affecting current work:
 - 07-01: "Other" catch-all category defaults to visible (unknown tools shown, per 02-01)
 - 07-01: Type-only circular import accepted between pipeline/types.ts and sessionStore.ts
 - 07-01: filterWithToolSettings coexists with filterVisibleMessages (Player uses simple boolean, Builder uses granular settings)
+- 07-03: Export assembles data in main process from stores (avoids large IPC transfer per Pitfall 2)
+- 07-03: Menu event bridges (onMenuSave, onMenuSaveAs) wired proactively for Plan 04
 
 ### Pending Todos
 
@@ -148,5 +150,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 07-01-PLAN.md (types, tool categories, settings foundation)
+Stopped at: Completed 07-03-PLAN.md (export/import IPC pipeline)
 Resume file: none
