@@ -1,7 +1,13 @@
 import { create } from 'zustand'
 import type { SessionMetadata } from '../types/pipeline'
-import type { Presentation, PresentationSection, SessionRef } from '../types/presentation'
+import type {
+  Presentation,
+  PresentationSection,
+  PresentationSettings,
+  SessionRef
+} from '../types/presentation'
 import {
+  backfillSettings,
   createPresentationFromSessions,
   generateSessionDisplayName,
   sortSessionRefsChronologically
@@ -37,6 +43,12 @@ interface PresentationState {
   renamePresentation: (id: string, name: string) => void
   renameSection: (sectionId: string, name: string) => void
   renameSessionRef: (sectionId: string, sessionId: string, name: string) => void
+
+  // Settings
+  updateSettings: (patch: Partial<PresentationSettings>) => void
+  updateToolCategoryVisibility: (categoryName: string, visible: boolean) => void
+  updateToolOverride: (categoryName: string, toolName: string, visible: boolean) => void
+  toggleToolCategoryExpanded: (categoryName: string) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -73,7 +85,9 @@ export const usePresentationStore = create<PresentationState>((set, get) => {
     loadPresentations: async (): Promise<void> => {
       set({ isLoading: true })
       try {
-        const presentations = await window.electronAPI.getPresentations()
+        const raw = await window.electronAPI.getPresentations()
+        // Backfill settings for pre-Phase 7 presentations that lack them
+        const presentations = raw.map(backfillSettings)
         set({ presentations, isLoading: false })
       } catch {
         set({ isLoading: false })
@@ -282,6 +296,83 @@ export const usePresentationStore = create<PresentationState>((set, get) => {
               }
             : section
         ),
+        updatedAt: Date.now()
+      }
+
+      persistPresentation(updated)
+    },
+
+    // -----------------------------------------------------------------------
+    // Settings
+    // -----------------------------------------------------------------------
+
+    updateSettings: (patch: Partial<PresentationSettings>): void => {
+      const active = get().getActivePresentation()
+      if (!active) return
+
+      const updated: Presentation = {
+        ...active,
+        settings: { ...active.settings, ...patch },
+        updatedAt: Date.now()
+      }
+
+      persistPresentation(updated)
+    },
+
+    updateToolCategoryVisibility: (categoryName: string, visible: boolean): void => {
+      const active = get().getActivePresentation()
+      if (!active) return
+
+      const updated: Presentation = {
+        ...active,
+        settings: {
+          ...active.settings,
+          toolVisibility: active.settings.toolVisibility.map((cat) =>
+            cat.categoryName === categoryName
+              ? { ...cat, visible, toolOverrides: {} } // Reset per-tool overrides when category changes
+              : cat
+          )
+        },
+        updatedAt: Date.now()
+      }
+
+      persistPresentation(updated)
+    },
+
+    updateToolOverride: (categoryName: string, toolName: string, visible: boolean): void => {
+      const active = get().getActivePresentation()
+      if (!active) return
+
+      const updated: Presentation = {
+        ...active,
+        settings: {
+          ...active.settings,
+          toolVisibility: active.settings.toolVisibility.map((cat) =>
+            cat.categoryName === categoryName
+              ? { ...cat, toolOverrides: { ...cat.toolOverrides, [toolName]: visible } }
+              : cat
+          )
+        },
+        updatedAt: Date.now()
+      }
+
+      persistPresentation(updated)
+    },
+
+    toggleToolCategoryExpanded: (categoryName: string): void => {
+      const active = get().getActivePresentation()
+      if (!active) return
+
+      const updated: Presentation = {
+        ...active,
+        settings: {
+          ...active.settings,
+          toolVisibility: active.settings.toolVisibility.map((cat) =>
+            cat.categoryName === categoryName
+              ? { ...cat, expanded: !cat.expanded }
+              : cat
+          )
+        },
         updatedAt: Date.now()
       }
 
