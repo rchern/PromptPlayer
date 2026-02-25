@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, nativeTheme, screen } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, Menu, nativeTheme, screen } from 'electron'
 import { join, basename, dirname } from 'path'
 import { readFileSync, writeFileSync, mkdirSync, createReadStream } from 'fs'
 import { createInterface } from 'readline'
@@ -87,6 +87,26 @@ function createWindow(): void {
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()
   })
+
+  // ---------- Hidden Menu: Keyboard Shortcuts ----------
+  const menu = Menu.buildFromTemplate([
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Save',
+          accelerator: 'CommandOrControl+S',
+          click: () => mainWindow.webContents.send('menu:save')
+        },
+        {
+          label: 'Save As...',
+          accelerator: 'CommandOrControl+Shift+S',
+          click: () => mainWindow.webContents.send('menu:saveAs')
+        }
+      ]
+    }
+  ])
+  Menu.setApplicationMenu(menu)
 
   // Save window bounds on close
   mainWindow.on('close', () => {
