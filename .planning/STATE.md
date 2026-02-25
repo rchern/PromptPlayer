@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 7 - Builder Configuration and Export
+**Current focus:** Phase 7 - Builder Configuration and Export (execution complete, gaps found)
 
 ## Current Position
 
 Phase: 7 of 11 (Builder Configuration and Export)
-Plan: 3 of 4 complete
-Status: In progress
-Last activity: 2026-02-25 - Completed 07-02-PLAN.md (settings panel and Builder integration)
+Plan: 4 of 4 complete
+Status: Phase 7 execution complete (gaps found)
+Last activity: 2026-02-25 - Completed 07-04-PLAN.md (import workflow and keyboard shortcuts)
 
-Progress: [███████████████████████████████████████████░░] 21/36 plans (58%)
+Progress: [█████████████████████████████████████████████░░] 22/36 plans (61%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
+- Total plans completed: 22
 - Average duration: 6min
-- Total execution time: 2.1 hours
+- Total execution time: 2.15 hours
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: [███████████████████████
 | 4. Single-Session Nav | 2/2 | 42min | 21min |
 | 5. Builder Session Mgmt | 3/3 | 12min | 4min |
 | 6. Builder Presentation Assembly | 3/3 | 12min | 4min |
-| 7. Builder Config & Export | 3/4 | 11min | 3.7min |
+| 7. Builder Config & Export | 4/4 | 14min | 3.5min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 5min, 6min, 1min, 4min
-- Trend: Settings UI plans execute quickly with well-defined types from Plan 01
+- Last 5 plans: 5min, 6min, 1min, 4min, 3min
+- Trend: Phase 7 complete; export/import workflow assembled from prior plan foundations
 
 *Updated after each plan completion*
 
@@ -124,6 +124,10 @@ Recent decisions affecting current work:
 - 07-02: Custom CSS-only ToggleSwitch component (no external toggle library)
 - 07-03: Export assembles data in main process from stores (avoids large IPC transfer per Pitfall 2)
 - 07-03: Menu event bridges (onMenuSave, onMenuSaveAs) wired proactively for Plan 04
+- 07-04: Hidden menu for global keyboard accelerators without visible menu chrome
+- 07-04: Import hydration saves sessions to app-local storage for full re-editing capability
+- 07-04: Ctrl+S overwrites sourceFilePath when set, otherwise opens save dialog
+- 07-04: getState() in menu callbacks (registered once, reads current state at invocation)
 
 ### Pending Todos
 
@@ -137,6 +141,11 @@ Recent decisions affecting current work:
   - Date filter presets: "This Week"/"This Month" vs "Last 7 days"/"Last 30 days" naming
   - Session checkbox placement in assembly outline could use better positioning
   - Split session to new section (complement to merge)
+- Phase 7 checkpoint gaps (4 items from 07-04 visual verification):
+  - Create Presentation button covers last session checkbox (positioning/z-index fix)
+  - No message preview in assembly view (tool/timestamp/theme toggles have no visible effect)
+  - Export does not embed parsed messages (.promptplay file lacks conversation content)
+  - Save/Save As need visible buttons (not just Ctrl+S/Ctrl+Shift+S shortcuts)
 
 ### Blockers/Concerns
 
@@ -154,5 +163,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed 07-02-PLAN.md (settings panel and Builder integration); 07-01, 07-02, 07-03 done
+Stopped at: Completed 07-04-PLAN.md (import workflow and keyboard shortcuts); Phase 7 all 4 plans done, gaps identified
 Resume file: none
