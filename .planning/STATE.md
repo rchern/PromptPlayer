@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 7 next - Builder Configuration and Export
+**Current focus:** Phase 7 - Builder Configuration and Export
 
 ## Current Position
 
-Phase: 6 of 11 complete (Builder Presentation Assembly)
-Plan: 3 of 3 complete
-Status: Phase 6 complete, Phase 7 not started
-Last activity: 2026-02-24 - Phase 6 complete (presentation assembly, verified)
+Phase: 7 of 11 (Builder Configuration and Export)
+Plan: 1 of 4 complete
+Status: In progress
+Last activity: 2026-02-25 - Completed 07-01-PLAN.md (types, tool categories, settings foundation)
 
-Progress: [████████████████████████████████████████░░] 18/36 plans (50%)
+Progress: [█████████████████████████████████████████░░] 19/36 plans (53%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 7min
-- Total execution time: 1.9 hours
+- Total execution time: 2.0 hours
 
 **By Phase:**
 
@@ -33,10 +33,11 @@ Progress: [███████████████████████
 | 4. Single-Session Nav | 2/2 | 42min | 21min |
 | 5. Builder Session Mgmt | 3/3 | 12min | 4min |
 | 6. Builder Presentation Assembly | 3/3 | 12min | 4min |
+| 7. Builder Config & Export | 1/4 | 6min | 6min |
 
 **Recent Trend:**
-- Last 5 plans: 5min, 3min, 3min, 4min, 5min
-- Trend: UI component plans slightly longer than data-layer plans (~4-5min vs ~3-4min)
+- Last 5 plans: 3min, 3min, 4min, 5min, 6min
+- Trend: Type/utility foundation plans take slightly longer due to cross-file coordination
 
 *Updated after each plan completion*
 
@@ -113,6 +114,10 @@ Recent decisions affecting current work:
 - 06-03: PresentationList uses compact tab-style layout above outline
 - 06-03: Builder defaults to browse view on fresh start; assembly view entered via creation flow or Presentations button
 - 06-03: Checkpoint feedback: checkbox placement and split-to-new-section logged as future todos
+- 07-01: Task Management category defaults to hidden (mixed plumbing/narrative, mostly plumbing)
+- 07-01: "Other" catch-all category defaults to visible (unknown tools shown, per 02-01)
+- 07-01: Type-only circular import accepted between pipeline/types.ts and sessionStore.ts
+- 07-01: filterWithToolSettings coexists with filterVisibleMessages (Player uses simple boolean, Builder uses granular settings)
 
 ### Pending Todos
 
@@ -142,6 +147,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-24
-Stopped at: Completed 06-03-PLAN.md (assembly UI) -- Phase 6 complete
+Last session: 2026-02-25
+Stopped at: Completed 07-01-PLAN.md (types, tool categories, settings foundation)
 Resume file: none
