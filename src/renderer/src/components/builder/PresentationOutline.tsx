@@ -5,7 +5,11 @@ import { InlineEdit } from './InlineEdit'
 import { SectionHeader } from './SectionHeader'
 import { SessionEntry } from './SessionEntry'
 
-export function PresentationOutline(): React.JSX.Element {
+interface PresentationOutlineProps {
+  onSessionClick?: (sessionId: string) => void
+}
+
+export function PresentationOutline({ onSessionClick }: PresentationOutlineProps): React.JSX.Element {
   const {
     getActivePresentation,
     renamePresentation,
@@ -135,6 +139,7 @@ export function PresentationOutline(): React.JSX.Element {
                 sectionId={section.id}
                 onRename={renameSessionRef}
                 onRemove={removeSession}
+                onClick={onSessionClick ? () => onSessionClick(ref.sessionId) : undefined}
               />
             ))}
           </div>

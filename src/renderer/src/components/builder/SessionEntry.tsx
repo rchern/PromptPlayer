@@ -8,13 +8,15 @@ interface SessionEntryProps {
   sectionId: string
   onRename: (sectionId: string, sessionId: string, name: string) => void
   onRemove: (sectionId: string, sessionId: string) => void
+  onClick?: () => void
 }
 
 export const SessionEntry = React.memo(function SessionEntry({
   sessionRef,
   sectionId,
   onRename,
-  onRemove
+  onRemove,
+  onClick
 }: SessionEntryProps): React.JSX.Element {
   const formattedDate = sessionRef.sortKey
     ? new Date(sessionRef.sortKey).toLocaleString()
@@ -28,8 +30,10 @@ export const SessionEntry = React.memo(function SessionEntry({
         paddingLeft: 'var(--space-8)',
         gap: 'var(--space-3)',
         borderRadius: 'var(--radius-sm)',
+        cursor: onClick ? 'pointer' : undefined,
         transition: 'background-color 150ms ease'
       }}
+      onClick={onClick}
       onMouseEnter={(e) => {
         e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)'
         const btn = e.currentTarget.querySelector<HTMLElement>('[data-remove-btn]')

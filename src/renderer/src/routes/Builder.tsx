@@ -52,11 +52,13 @@ export function Builder(): React.JSX.Element {
     viewMode,
     isImporting,
     importCount,
+    storedSessions,
     selectedSessionIds,
     isSelecting,
     discover,
     browseAndDiscover,
     parseSession,
+    loadStoredSessions,
     clearActiveSession,
     setSearchQuery,
     setDateFilter,
@@ -87,6 +89,7 @@ export function Builder(): React.JSX.Element {
   useEffect(() => {
     discover()
     loadPresentations()
+    loadStoredSessions()
   }, [])
 
   // Import success toast
@@ -221,6 +224,21 @@ export function Builder(): React.JSX.Element {
     if (selectedMeta.length === 0) return
     await addSessions(selectedMeta)
     clearSelection()
+  }
+
+  // Click a session in the assembly outline to preview it
+  const handleOutlineSessionClick = (sessionId: string): void => {
+    // Look up filePath from discoveredSessions first
+    const discovered = discoveredSessions.find((s) => s.sessionId === sessionId)
+    if (discovered) {
+      parseSession(discovered.filePath, sessionId)
+      return
+    }
+    // Fall back to storedSessions (for sessions from imported .promptplay files)
+    const stored = storedSessions.find((s) => s.sessionId === sessionId)
+    if (stored?.originalFilePath) {
+      parseSession(stored.originalFilePath, sessionId)
+    }
   }
 
   // "New Presentation" from PresentationList: switch to browse view in selection mode
@@ -455,7 +473,7 @@ export function Builder(): React.JSX.Element {
             )}
 
             {activePresentationId && <SettingsPanel />}
-            <PresentationOutline />
+            <PresentationOutline onSessionClick={handleOutlineSessionClick} />
 
             {/* Session preview with live filtering + scoped theme */}
             {activeSession && !isParsing && (
