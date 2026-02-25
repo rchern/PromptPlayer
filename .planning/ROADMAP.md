@@ -133,13 +133,13 @@ Plans:
   3. User can select light or dark theme for the presentation
   4. User can export the presentation as a self-contained .promptplay file containing all data
   5. User can open a previously exported .promptplay file in Builder mode and edit it
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 07-01: Tool call visibility configuration UI
-- [ ] 07-02: Presentation settings (timestamp toggle, theme selection)
-- [ ] 07-03: .promptplay file format design and export
-- [ ] 07-04: .promptplay file import and re-editing in Builder
+- [ ] 07-01-PLAN.md -- Types, tool categories, defaults, filterWithToolSettings, settings backfill
+- [ ] 07-02-PLAN.md -- Settings panel UI with tool visibility, timestamp toggle, theme selector, live preview
+- [ ] 07-03-PLAN.md -- Export/import IPC handlers, .promptplay file format, save/open dialogs
+- [ ] 07-04-PLAN.md -- Import workflow, re-edit capabilities, Ctrl+S/Ctrl+Shift+S keyboard shortcuts
 
 ### Phase 8: Player Multi-Session Playback
 **Goal**: Player opens .promptplay files and navigates seamlessly across session boundaries with section support
@@ -224,4 +224,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-24 -- Phase 6 complete (3 plans, 3 waves)*
+*Last updated: 2026-02-24 -- Phase 7 planned (4 plans, 3 waves)*
