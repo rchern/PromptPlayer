@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Single-Session Navigation** - Step forward/back through one conversation with progress tracking
 - [x] **Phase 5: Builder Session Management** - Import, browse, search, and preview conversation sessions
 - [x] **Phase 6: Builder Presentation Assembly** - Create and organize multi-session presentations with sections
-- [ ] **Phase 7: Builder Configuration and Export** - Configure display options, export .promptplay files, re-edit saved files
+- [x] **Phase 7: Builder Configuration and Export** - Configure display options, export .promptplay files, re-edit saved files (completed 2026-02-25)
 - [ ] **Phase 8: Player Multi-Session Playback** - Open .promptplay files, seamless session transitions, section navigation
 - [ ] **Phase 9: Specialized Tool Call Display** - AskUserQuestion and Task management tool call rendering
 - [ ] **Phase 10: Packaging and Release** - Windows installer, GitHub Actions CI/CD, .promptplay file association
@@ -218,7 +218,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 4. Single-Session Navigation | 2/2 | Complete | 2026-02-22 |
 | 5. Builder Session Management | 3/3 | Complete | 2026-02-22 |
 | 6. Builder Presentation Assembly | 3/3 | Complete | 2026-02-24 |
-| 7. Builder Configuration and Export | 0/4 | Not started | - |
+| 7. Builder Configuration and Export | 0/4 | Complete    | 2026-02-25 |
 | 8. Player Multi-Session Playback | 0/4 | Not started | - |
 | 9. Specialized Tool Call Display | 0/2 | Not started | - |
 | 10. Packaging and Release | 0/3 | Not started | - |
