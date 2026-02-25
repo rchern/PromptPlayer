@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { SessionMetadata, StoredSession } from '../types/pipeline'
+import type { SessionMetadata, StitchedSession, StoredSession } from '../types/pipeline'
 import type {
   Presentation,
   PresentationSection,
@@ -37,7 +37,7 @@ interface PresentationState {
   removeSession: (sectionId: string, sessionId: string) => void
 
   // Add more sessions to active presentation
-  addSessions: (sessions: SessionMetadata[]) => void
+  addSessions: (sessions: SessionMetadata[]) => Promise<void>
 
   // Naming
   renamePresentation: (id: string, name: string) => void
@@ -100,6 +100,28 @@ export const usePresentationStore = create<PresentationState>((set, get) => {
 
     createPresentation: async (sessions: SessionMetadata[]): Promise<string> => {
       const newPresentation = createPresentationFromSessions(sessions)
+
+      // Parse each session's JSONL file and save as StoredSession for export
+      for (const session of sessions) {
+        try {
+          const stitched: StitchedSession = await window.electronAPI.parseSession(session.filePath)
+          const storedSession: StoredSession = {
+            sessionId: session.sessionId,
+            projectFolder: session.projectFolder,
+            originalFilePath: session.filePath,
+            messages: stitched.messages,
+            metadata: session,
+            addedAt: Date.now()
+          }
+          await window.electronAPI.saveStoredSession(storedSession)
+        } catch (err) {
+          console.warn(
+            `Failed to parse session ${session.sessionId} (${session.filePath}):`,
+            err
+          )
+        }
+      }
+
       await window.electronAPI.savePresentation(newPresentation)
       set((state) => ({
         presentations: [...state.presentations, newPresentation],
@@ -213,9 +235,30 @@ export const usePresentationStore = create<PresentationState>((set, get) => {
     // Add Sessions
     // -----------------------------------------------------------------------
 
-    addSessions: (sessions: SessionMetadata[]): void => {
+    addSessions: async (sessions: SessionMetadata[]): Promise<void> => {
       const active = get().getActivePresentation()
       if (!active) return
+
+      // Parse each session's JSONL file and save as StoredSession for export
+      for (const session of sessions) {
+        try {
+          const stitched: StitchedSession = await window.electronAPI.parseSession(session.filePath)
+          const storedSession: StoredSession = {
+            sessionId: session.sessionId,
+            projectFolder: session.projectFolder,
+            originalFilePath: session.filePath,
+            messages: stitched.messages,
+            metadata: session,
+            addedAt: Date.now()
+          }
+          await window.electronAPI.saveStoredSession(storedSession)
+        } catch (err) {
+          console.warn(
+            `Failed to parse session ${session.sessionId} (${session.filePath}):`,
+            err
+          )
+        }
+      }
 
       // Create new sections (one per session, matching creation flow)
       const newSections: PresentationSection[] = sessions.map((session) => {

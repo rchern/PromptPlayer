@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { RefreshCw, FolderOpen, FileUp, AlertTriangle, CheckSquare, ArrowLeft, Plus, Download } from 'lucide-react'
+import { RefreshCw, FolderOpen, FileUp, AlertTriangle, CheckSquare, ArrowLeft, Plus, Download, Save, SaveAll } from 'lucide-react'
 import { useSessionStore } from '../stores/sessionStore'
 import { usePresentationStore } from '../stores/presentationStore'
 import { useAppStore } from '../stores/appStore'
@@ -112,6 +112,24 @@ export function Builder(): React.JSX.Element {
     setTimeout(() => setShowExportToast(false), 3000)
   }
 
+  // Save handler: overwrite sourceFilePath if set, otherwise open save dialog
+  const handleSave = async (): Promise<void> => {
+    const active = usePresentationStore.getState().getActivePresentation()
+    if (!active) return
+    if (active.sourceFilePath) {
+      await window.electronAPI.saveToPath(active.id, active.sourceFilePath)
+      const filename = active.sourceFilePath.split(/[/\\]/).pop() ?? active.sourceFilePath
+      showExportSuccess(filename)
+    } else {
+      const result = await window.electronAPI.exportPresentation(active.id)
+      if (!result.canceled) {
+        usePresentationStore.getState().setSourceFilePath(active.id, result.filePath)
+        const filename = result.filePath.split(/[/\\]/).pop() ?? result.filePath
+        showExportSuccess(filename)
+      }
+    }
+  }
+
   // Export handler (reused by button and keyboard shortcuts)
   const handleExport = async (): Promise<void> => {
     const active = usePresentationStore.getState().getActivePresentation()
@@ -198,10 +216,10 @@ export function Builder(): React.JSX.Element {
   }
 
   // Add selected sessions to active presentation (assembly left panel)
-  const handleAddSessions = (): void => {
+  const handleAddSessions = async (): Promise<void> => {
     const selectedMeta = discoveredSessions.filter((s) => selectedSessionIds.has(s.sessionId))
     if (selectedMeta.length === 0) return
-    addSessions(selectedMeta)
+    await addSessions(selectedMeta)
     clearSelection()
   }
 
@@ -362,7 +380,7 @@ export function Builder(): React.JSX.Element {
           >
             <PresentationList onNewPresentation={handleNewPresentation} />
 
-            {/* Export / Open action bar */}
+            {/* Save / Export / Open action bar */}
             {activePresentationId && (
               <div
                 className="flex items-center"
@@ -372,6 +390,28 @@ export function Builder(): React.JSX.Element {
                   marginBottom: 'var(--space-2)'
                 }}
               >
+                <button
+                  onClick={handleSave}
+                  className="flex items-center cursor-pointer"
+                  style={headerButtonStyle}
+                  onMouseEnter={headerButtonHover}
+                  onMouseLeave={headerButtonLeave}
+                  title="Save (Ctrl+S)"
+                >
+                  <Save size={14} />
+                  Save
+                </button>
+                <button
+                  onClick={handleExport}
+                  className="flex items-center cursor-pointer"
+                  style={headerButtonStyle}
+                  onMouseEnter={headerButtonHover}
+                  onMouseLeave={headerButtonLeave}
+                  title="Save As (Ctrl+Shift+S)"
+                >
+                  <SaveAll size={14} />
+                  Save As
+                </button>
                 <button
                   onClick={handleExport}
                   className="flex items-center cursor-pointer"
@@ -672,6 +712,7 @@ export function Builder(): React.JSX.Element {
                 flex: activeSessionId && !isSelecting ? '0 0 50%' : '1 1 100%',
                 overflowY: 'auto',
                 paddingRight: 'var(--space-2)',
+                paddingBottom: isSelecting ? '72px' : undefined,
                 transition: 'flex 200ms ease'
               }}
             >
