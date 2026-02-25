@@ -16,6 +16,7 @@ import {
   savePresentation,
   deletePresentation
 } from './storage/presentationStore'
+import type { PromptPlayFile } from './pipeline/types'
 
 // ---------- Window bounds persistence (JSON file fallback) ----------
 // electron-store v11+ is ESM-only and electron-vite 3.x compiles main to CJS,
@@ -215,6 +216,97 @@ function createWindow(): void {
   ipcMain.handle('presentation:delete', async (_event, id: string) => {
     deletePresentation(id)
   })
+
+  // ---------- IPC: Presentation Export/Import ----------
+  ipcMain.handle('presentation:export', async (_event, presentationId: string) => {
+    const presentations = getPresentations()
+    const presentation = presentations.find((p) => p.id === presentationId)
+    if (!presentation) {
+      throw new Error(`Presentation not found: ${presentationId}`)
+    }
+
+    // Collect all session IDs referenced in the presentation
+    const referencedIds = new Set<string>()
+    for (const section of presentation.sections) {
+      for (const ref of section.sessionRefs) {
+        referencedIds.add(ref.sessionId)
+      }
+    }
+
+    // Read stored sessions and filter to only those referenced
+    const allSessions = getStoredSessions()
+    const sessions = allSessions.filter((s) => referencedIds.has(s.sessionId))
+
+    const exportData: PromptPlayFile = { presentation, sessions }
+
+    const result = await dialog.showSaveDialog(mainWindow, {
+      title: 'Export Presentation',
+      defaultPath: `${presentation.name.replace(/[<>:"/\\|?*]/g, '_')}.promptplay`,
+      filters: [
+        { name: 'PromptPlay Presentations', extensions: ['promptplay'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    })
+
+    if (result.canceled || !result.filePath) {
+      return { canceled: true }
+    }
+
+    writeFileSync(result.filePath, JSON.stringify(exportData, null, 2), 'utf-8')
+    return { filePath: result.filePath, canceled: false }
+  })
+
+  ipcMain.handle('presentation:import', async () => {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      title: 'Open Presentation',
+      filters: [
+        { name: 'PromptPlay Presentations', extensions: ['promptplay'] },
+        { name: 'All Files', extensions: ['*'] }
+      ],
+      properties: ['openFile']
+    })
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return null
+    }
+
+    const data = readFileSync(result.filePaths[0], 'utf-8')
+    const parsed = JSON.parse(data) as PromptPlayFile
+
+    // Basic validation
+    if (!parsed.presentation || !Array.isArray(parsed.sessions)) {
+      throw new Error('Invalid .promptplay file: missing presentation or sessions')
+    }
+
+    return { ...parsed, filePath: result.filePaths[0] }
+  })
+
+  ipcMain.handle(
+    'presentation:saveToPath',
+    async (_event, presentationId: string, filePath: string) => {
+      const presentations = getPresentations()
+      const presentation = presentations.find((p) => p.id === presentationId)
+      if (!presentation) {
+        throw new Error(`Presentation not found: ${presentationId}`)
+      }
+
+      // Collect referenced session IDs
+      const referencedIds = new Set<string>()
+      for (const section of presentation.sections) {
+        for (const ref of section.sessionRefs) {
+          referencedIds.add(ref.sessionId)
+        }
+      }
+
+      const allSessions = getStoredSessions()
+      const sessions = allSessions.filter((s) => referencedIds.has(s.sessionId))
+
+      const exportData: PromptPlayFile = { presentation, sessions }
+      writeFileSync(filePath, JSON.stringify(exportData, null, 2), 'utf-8')
+
+      return { success: true }
+    }
+  )
 
   // ---------- Load renderer ----------
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
