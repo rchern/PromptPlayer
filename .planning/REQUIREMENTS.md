@@ -27,8 +27,8 @@
 - [ ] **BLDR-08**: User can configure which tool call types are visible vs hidden per presentation
 - [ ] **BLDR-09**: User can toggle timestamp display on/off per presentation
 - [ ] **BLDR-10**: User can select light or dark theme for the presentation
-- [ ] **BLDR-11**: User can export a self-contained `.promptplay` file containing all presentation data
-- [ ] **BLDR-12**: User can open and edit previously saved `.promptplay` files
+- [x] **BLDR-11**: User can export a self-contained `.promptplay` file containing all presentation data
+- [x] **BLDR-12**: User can open and edit previously saved `.promptplay` files
 
 ### Player
 
@@ -118,8 +118,8 @@
 | BLDR-08 | Phase 7 | Pending |
 | BLDR-09 | Phase 7 | Pending |
 | BLDR-10 | Phase 7 | Pending |
-| BLDR-11 | Phase 7 | Pending |
-| BLDR-12 | Phase 7 | Pending |
+| BLDR-11 | Phase 7 | Complete |
+| BLDR-12 | Phase 7 | Complete |
 | PLAY-01 | Phase 8 | Pending |
 | PLAY-02 | Phase 4 | Complete |
 | PLAY-03 | Phase 4 | Complete |
