@@ -257,6 +257,13 @@ function createWindow(): void {
     const allSessions = getStoredSessions()
     const sessions = allSessions.filter((s) => referencedIds.has(s.sessionId))
 
+    // Warn if any referenced sessions are missing from storage
+    const foundIds = new Set(sessions.map((s) => s.sessionId))
+    const missingIds = [...referencedIds].filter((id) => !foundIds.has(id))
+    if (missingIds.length > 0) {
+      console.warn(`Export warning: ${missingIds.length} session(s) not found in storage: ${missingIds.join(', ')}`)
+    }
+
     const exportData: PromptPlayFile = { presentation, sessions }
 
     const result = await dialog.showSaveDialog(mainWindow, {
@@ -320,6 +327,13 @@ function createWindow(): void {
 
       const allSessions = getStoredSessions()
       const sessions = allSessions.filter((s) => referencedIds.has(s.sessionId))
+
+      // Warn if any referenced sessions are missing from storage
+      const foundIds = new Set(sessions.map((s) => s.sessionId))
+      const missingIds = [...referencedIds].filter((id) => !foundIds.has(id))
+      if (missingIds.length > 0) {
+        console.warn(`Export warning: ${missingIds.length} session(s) not found in storage: ${missingIds.join(', ')}`)
+      }
 
       const exportData: PromptPlayFile = { presentation, sessions }
       writeFileSync(filePath, JSON.stringify(exportData, null, 2), 'utf-8')
