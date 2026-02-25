@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 6 - Builder Presentation Assembly (plan 2 of 3 complete)
+**Current focus:** Phase 6 - Builder Presentation Assembly (complete)
 
 ## Current Position
 
 Phase: 6 of 11 (Builder Presentation Assembly)
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-02-22 - Completed 06-02-PLAN.md (presentation store and session selection)
+Plan: 3 of 3 complete
+Status: Phase complete
+Last activity: 2026-02-24 - Completed 06-03-PLAN.md (assembly UI components and two-view Builder)
 
-Progress: [███████████████████████████████████████░░] 17/36 plans (~47%)
+Progress: [████████████████████████████████████████░░] 18/36 plans (50%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
+- Total plans completed: 18
 - Average duration: 7min
-- Total execution time: 1.82 hours
+- Total execution time: 1.9 hours
 
 **By Phase:**
 
@@ -32,11 +32,11 @@ Progress: [███████████████████████
 | 3. Message Rendering | 3/3 | 36min | 12min |
 | 4. Single-Session Nav | 2/2 | 42min | 21min |
 | 5. Builder Session Mgmt | 3/3 | 12min | 4min |
-| 6. Builder Presentation Assembly | 2/3 | 7min | 3.5min |
+| 6. Builder Presentation Assembly | 3/3 | 12min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 5min, 3min, 3min, 4min
-- Trend: Data layer plans consistently fast (~3-4min)
+- Last 5 plans: 5min, 3min, 3min, 4min, 5min
+- Trend: UI component plans slightly longer than data-layer plans (~4-5min vs ~3-4min)
 
 *Updated after each plan completion*
 
@@ -106,6 +106,13 @@ Recent decisions affecting current work:
 - 06-02: persistPresentation helper encapsulates IPC save + local state update for all mutations
 - 06-02: setSelecting(false) auto-clears selectedSessionIds to prevent stale selections
 - 06-02: Selected cards reuse accent-subtle bg + accent border from active session highlight pattern
+- 06-03: InlineEdit uses input toggle pattern, not contentEditable (per research pitfall)
+- 06-03: SessionEntry uses onMouseDown with preventDefault on remove button to prevent InlineEdit blur conflicts
+- 06-03: SectionHeader and SessionEntry wrapped with React.memo for performance
+- 06-03: Merge selection uses local component state (selectedSectionIds), not global store
+- 06-03: PresentationList uses compact tab-style layout above outline
+- 06-03: Builder defaults to browse view on fresh start; assembly view entered via creation flow or Presentations button
+- 06-03: Checkpoint feedback: checkbox placement and split-to-new-section logged as future todos
 
 ### Pending Todos
 
@@ -115,8 +122,10 @@ Recent decisions affecting current work:
   - System-generated messages showing as "YOU"
   - Consecutive solo Claude steps could be combined
   - Step sequencing needs design thought
-- Builder UX feedback (1 item) — see `.planning/todos/pending/builder-ux-feedback.md`
+- Builder UX feedback (3 items) — see `.planning/todos/pending/builder-ux-feedback.md`
   - Date filter presets: "This Week"/"This Month" vs "Last 7 days"/"Last 30 days" naming
+  - Session checkbox placement in assembly outline could use better positioning
+  - Split session to new section (complement to merge)
 
 ### Blockers/Concerns
 
@@ -133,6 +142,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-22
-Stopped at: Completed 06-02-PLAN.md (presentation store and session selection)
+Last session: 2026-02-24
+Stopped at: Completed 06-03-PLAN.md (assembly UI) -- Phase 6 complete
 Resume file: none
