@@ -1,19 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { PanelLeftOpen } from 'lucide-react'
 import { usePlaybackStore } from '../../stores/playbackStore'
 import { usePlaybackKeyboardNavigation } from '../../hooks/usePlaybackKeyboardNavigation'
 import { PresentationOverview } from './PresentationOverview'
 import { SeparatorCard } from './SeparatorCard'
 import { StepView } from './StepView'
 import { NavigationControls } from './NavigationControls'
-import { ProgressIndicator } from './ProgressIndicator'
+import { SectionSidebar } from './SectionSidebar'
+import { SegmentedProgress } from './SegmentedProgress'
 
 /**
  * Multi-session playback wrapper component.
  *
  * Renders the correct component for each step type in the unified playback
  * step array: overview, section-separator, session-separator, and navigation
- * steps. Includes sidebar placeholder (Plan 03), fade transitions, keyboard
- * navigation, and progress indicator.
+ * steps. Includes section sidebar, fade transitions, keyboard navigation,
+ * and segmented progress bar.
  *
  * Data flow:
  *   playbackStore.steps -> PlaybackStep[] -> type-discriminated rendering
@@ -29,6 +31,7 @@ export function PlaybackPlayer(): React.JSX.Element {
   const nextStep = usePlaybackStore((s) => s.nextStep)
   const prevStep = usePlaybackStore((s) => s.prevStep)
   const toggleExpand = usePlaybackStore((s) => s.toggleExpand)
+  const toggleSidebar = usePlaybackStore((s) => s.toggleSidebar)
 
   // Activate playback keyboard bindings (arrows, Home/End, S sidebar toggle)
   usePlaybackKeyboardNavigation()
@@ -37,6 +40,7 @@ export function PlaybackPlayer(): React.JSX.Element {
   const [visible, setVisible] = useState(true)
   const prevIndexRef = useRef(currentStepIndex)
   const containerRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   // Fade transition and scroll reset on step change
   useEffect(() => {
@@ -84,22 +88,60 @@ export function PlaybackPlayer(): React.JSX.Element {
 
   return (
     <div style={{ display: 'flex', height: '100%' }}>
-      {/* Sidebar placeholder -- Plan 03 will add SectionSidebar here */}
+      {/* Section sidebar */}
       <aside
         style={{
           width: sidebarOpen ? 280 : 0,
           transition: 'width 200ms ease',
           overflow: 'hidden',
-          flexShrink: 0
+          flexShrink: 0,
+          borderRight: sidebarOpen ? '1px solid var(--color-border)' : 'none'
         }}
       >
-        <div style={{ width: 280, padding: 'var(--space-4)' }}>
-          {/* Plan 03 will add SectionSidebar here */}
+        <div style={{ width: 280, padding: 'var(--space-4)', height: '100%' }}>
+          <SectionSidebar contentRef={contentRef} />
         </div>
       </aside>
 
       {/* Main content area */}
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+      <div
+        ref={contentRef}
+        tabIndex={-1}
+        style={{ flex: 1, position: 'relative', overflow: 'hidden', outline: 'none' }}
+      >
+        {/* Sidebar toggle button (visible when sidebar is closed) */}
+        {!sidebarOpen && (
+          <button
+            onClick={toggleSidebar}
+            aria-label="Open sidebar"
+            style={{
+              position: 'absolute',
+              top: 'var(--space-3)',
+              left: 'var(--space-3)',
+              zIndex: 15,
+              background: 'var(--color-bg-elevated)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-md)',
+              padding: 6,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--color-text-muted)',
+              opacity: 0.5,
+              transition: 'opacity 200ms ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '0.9'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = '0.5'
+            }}
+          >
+            <PanelLeftOpen size={18} />
+          </button>
+        )}
+
         {/* Step content with fade transition */}
         <div
           ref={containerRef}
@@ -140,11 +182,8 @@ export function PlaybackPlayer(): React.JSX.Element {
           onForward={nextStep}
         />
 
-        {/* Progress placeholder -- Plan 03 will replace with SegmentedProgress */}
-        <ProgressIndicator
-          currentStep={currentStepIndex}
-          totalSteps={steps.length}
-        />
+        {/* Segmented section progress bar */}
+        <SegmentedProgress />
       </div>
     </div>
   )
