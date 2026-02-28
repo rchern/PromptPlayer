@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 8 - Player Multi-Session Playback (plan 01 complete)
+**Current focus:** Phase 8 - Player Multi-Session Playback (plan 02 complete)
 
 ## Current Position
 
 Phase: 8 of 11 (Player Multi-Session Playback)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: Executing plans
-Last activity: 2026-02-28 - Completed 08-01 playback data layer
+Last activity: 2026-02-28 - Completed 08-02 playback UI core
 
-Progress: [████████████████████████████████████████████████░] 25/26 plans (96%)
+Progress: [█████████████████████████████████████████████████░] 26/27 plans (96%)
 
 ## Performance Metrics
 
@@ -35,11 +35,11 @@ Progress: [███████████████████████
 | 6. Builder Presentation Assembly | 3/3 | 12min | 4min |
 | 7. Builder Config & Export | 6/6 | 21min | 3.5min |
 
-| 8. Player Multi-Session Playback | 1/3 | 2min | 2min |
+| 8. Player Multi-Session Playback | 2/3 | 5min | 2.5min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 3min, 3min, 4min, 2min
-- Trend: Phase 8 execution started; playback data layer complete
+- Last 5 plans: 3min, 3min, 4min, 2min, 3min
+- Trend: Phase 8 plans 01-02 complete; playback UI core in place
 
 *Updated after each plan completion*
 
@@ -138,6 +138,9 @@ Recent decisions affecting current work:
 - 08-01: Separator cards are real navigable steps (no skip logic in next/prev) for exact forward/back inverse behavior
 - 08-01: computeSectionProgress excludes separator cards from numerator and denominator
 - 08-01: Playback store separate from navigation store (multi-session vs single-session Builder preview)
+- 08-02: SingleSessionPlayer extracted as separate component to avoid React hooks-after-conditional-return violation
+- 08-02: Multi-session toolUseMap built inline from all sessions (not via single-session buildToolUseMap)
+- 08-02: Temporary dev import trigger in Player.tsx for end-to-end testing of .promptplay files
 
 ### Pending Todos
 
@@ -173,5 +176,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-28
-Stopped at: Completed 08-01-PLAN.md (playback data layer)
-Resume file: .planning/phases/08-player-multi-session-playback/08-02-PLAN.md
+Stopped at: Completed 08-02-PLAN.md (playback UI core)
+Resume file: .planning/phases/08-player-multi-session-playback/08-03-PLAN.md
