@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 8 - Player Multi-Session Playback (research complete, pre-planning)
+**Current focus:** Phase 8 - Player Multi-Session Playback (plan 01 complete)
 
 ## Current Position
 
 Phase: 8 of 11 (Player Multi-Session Playback)
-Plan: 0 of 4 complete
-Status: Research complete, ready for planning
-Last activity: 2026-02-25 - Completed 08-RESEARCH.md
+Plan: 1 of 3 complete
+Status: Executing plans
+Last activity: 2026-02-28 - Completed 08-01 playback data layer
 
-Progress: [███████████████████████████████████████████████░] 24/36 plans (67%)
+Progress: [████████████████████████████████████████████████░] 25/26 plans (96%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 24
+- Total plans completed: 25
 - Average duration: 6min
-- Total execution time: 2.27 hours
+- Total execution time: 2.30 hours
 
 **By Phase:**
 
@@ -35,9 +35,11 @@ Progress: [███████████████████████
 | 6. Builder Presentation Assembly | 3/3 | 12min | 4min |
 | 7. Builder Config & Export | 6/6 | 21min | 3.5min |
 
+| 8. Player Multi-Session Playback | 1/3 | 2min | 2min |
+
 **Recent Trend:**
-- Last 5 plans: 1min, 4min, 3min, 3min, 4min
-- Trend: Phase 7 fully complete including gap closures; ready for Phase 8
+- Last 5 plans: 4min, 3min, 3min, 4min, 2min
+- Trend: Phase 8 execution started; playback data layer complete
 
 *Updated after each plan completion*
 
@@ -133,6 +135,9 @@ Recent decisions affecting current work:
 - 07-06: Save button reuses sourceFilePath overwrite logic; Save As always shows save dialog (same as Export)
 - 07-06: SessionEntry onClick fires alongside InlineEdit click (non-destructive: preview loads while name can be edited)
 - 07-06: Dual-source session lookup for outline click-to-preview: discoveredSessions for JSONL, storedSessions for imported .promptplay
+- 08-01: Separator cards are real navigable steps (no skip logic in next/prev) for exact forward/back inverse behavior
+- 08-01: computeSectionProgress excludes separator cards from numerator and denominator
+- 08-01: Playback store separate from navigation store (multi-session vs single-session Builder preview)
 
 ### Pending Todos
 
@@ -167,6 +172,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-25
-Stopped at: Phase 8 research complete; ready for /gsd:plan-phase 8
-Resume file: .planning/phases/08-player-multi-session-playback/.continue-here.md
+Last session: 2026-02-28
+Stopped at: Completed 08-01-PLAN.md (playback data layer)
+Resume file: .planning/phases/08-player-multi-session-playback/08-02-PLAN.md

@@ -32,7 +32,7 @@
 
 ### Player
 
-- [ ] **PLAY-01**: Player opens `.promptplay` files and renders the presentation
+- [x] **PLAY-01**: Player opens `.promptplay` files and renders the presentation
 - [ ] **PLAY-02**: User can step forward through messages with right arrow, spacebar, or click
 - [ ] **PLAY-03**: User can step backward through messages with left arrow
 - [ ] **PLAY-04**: User messages are visually distinct from Claude responses (different styling/layout)
@@ -41,7 +41,7 @@
 - [ ] **PLAY-07**: AskUserQuestion tool calls display as interactive-looking prompts showing the question, options, and the user's selection
 - [ ] **PLAY-08**: Task management tool calls (TaskCreate, TaskUpdate, TaskList) display inline with meaningful formatting
 - [ ] **PLAY-09**: Plumbing tool calls (Read, Grep, Glob, Write, Edit, Bash, etc.) are hidden by default
-- [ ] **PLAY-10**: Player transitions seamlessly between sessions in the chain (no jarring reloads)
+- [x] **PLAY-10**: Player transitions seamlessly between sessions in the chain (no jarring reloads)
 - [ ] **PLAY-11**: Progress indicator shows current position: section name, step N of M, overall progress bar
 - [ ] **PLAY-12**: Section/chapter markers are visible; user can jump to a section
 - [ ] **PLAY-13**: Timestamps display between steps when enabled (showing original time and/or elapsed time)
@@ -120,7 +120,7 @@
 | BLDR-10 | Phase 7 | Complete |
 | BLDR-11 | Phase 7 | Complete |
 | BLDR-12 | Phase 7 | Complete |
-| PLAY-01 | Phase 8 | Pending |
+| PLAY-01 | Phase 8 | Complete |
 | PLAY-02 | Phase 4 | Complete |
 | PLAY-03 | Phase 4 | Complete |
 | PLAY-04 | Phase 3 | Complete |
@@ -129,7 +129,7 @@
 | PLAY-07 | Phase 9 | Pending |
 | PLAY-08 | Phase 9 | Pending |
 | PLAY-09 | Phase 3 | Complete |
-| PLAY-10 | Phase 8 | Pending |
+| PLAY-10 | Phase 8 | Complete |
 | PLAY-11 | Phase 4 | Complete |
 | PLAY-12 | Phase 8 | Pending |
 | PLAY-13 | Phase 11 | Pending |
