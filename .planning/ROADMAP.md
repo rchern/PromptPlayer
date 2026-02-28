@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: Builder Session Management** - Import, browse, search, and preview conversation sessions
 - [x] **Phase 6: Builder Presentation Assembly** - Create and organize multi-session presentations with sections
 - [x] **Phase 7: Builder Configuration and Export** - Configure display options, export .promptplay files, re-edit saved files (completed 2026-02-25)
-- [ ] **Phase 8: Player Multi-Session Playback** - Open .promptplay files, seamless session transitions, section navigation
+- [x] **Phase 8: Player Multi-Session Playback** - Open .promptplay files, seamless session transitions, section navigation
 - [ ] **Phase 9: Specialized Tool Call Display** - AskUserQuestion and Task management tool call rendering
 - [ ] **Phase 10: Packaging and Release** - Windows installer, GitHub Actions CI/CD, .promptplay file association
 - [ ] **Phase 11: Player Polish** - Timestamps and theme application
@@ -157,8 +157,8 @@ Plans:
 
 Plans:
 - [x] 08-01-PLAN.md -- Playback types (PlaybackStep union) and Zustand playback store with buildPlaybackSteps, navigation, sidebar state
-- [ ] 08-02-PLAN.md -- PlaybackPlayer, PresentationOverview, SeparatorCard, playback keyboard hook, Player route multi-session dispatch
-- [ ] 08-03-PLAN.md -- SectionSidebar with jump navigation, SegmentedProgress bar, PlaybackPlayer integration
+- [x] 08-02-PLAN.md -- PlaybackPlayer, PresentationOverview, SeparatorCard, playback keyboard hook, Player route multi-session dispatch
+- [x] 08-03-PLAN.md -- SectionSidebar with jump navigation, SegmentedProgress bar, PlaybackPlayer integration
 
 ### Phase 9: Specialized Tool Call Display
 **Goal**: Narrative tool calls (AskUserQuestion, Task management) render with meaningful, presentation-quality formatting
@@ -218,7 +218,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 5. Builder Session Management | 3/3 | Complete | 2026-02-22 |
 | 6. Builder Presentation Assembly | 3/3 | Complete | 2026-02-24 |
 | 7. Builder Configuration and Export | 0/4 | Complete    | 2026-02-25 |
-| 8. Player Multi-Session Playback | 1/3 | In progress | - |
+| 8. Player Multi-Session Playback | 3/3 | Complete | - |
 | 9. Specialized Tool Call Display | 0/2 | Not started | - |
 | 10. Packaging and Release | 0/3 | Not started | - |
 | 11. Player Polish | 0/2 | Not started | - |

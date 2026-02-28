@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 8 - Player Multi-Session Playback (plan 02 complete)
+**Current focus:** Phase 8 - Player Multi-Session Playback (COMPLETE - all 3 plans)
 
 ## Current Position
 
 Phase: 8 of 11 (Player Multi-Session Playback)
-Plan: 2 of 3 complete
-Status: Executing plans
-Last activity: 2026-02-28 - Completed 08-02 playback UI core
+Plan: 3 of 3 complete
+Status: Phase complete
+Last activity: 2026-02-28 - Completed 08-03 section sidebar and segmented progress
 
-Progress: [█████████████████████████████████████████████████░] 26/27 plans (96%)
+Progress: [██████████████████████████████████████████████████] 27/27 plans (100%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 25
+- Total plans completed: 26
 - Average duration: 6min
-- Total execution time: 2.30 hours
+- Total execution time: 2.33 hours
 
 **By Phase:**
 
@@ -35,11 +35,11 @@ Progress: [███████████████████████
 | 6. Builder Presentation Assembly | 3/3 | 12min | 4min |
 | 7. Builder Config & Export | 6/6 | 21min | 3.5min |
 
-| 8. Player Multi-Session Playback | 2/3 | 5min | 2.5min |
+| 8. Player Multi-Session Playback | 3/3 | 8min | 2.7min |
 
 **Recent Trend:**
-- Last 5 plans: 3min, 3min, 4min, 2min, 3min
-- Trend: Phase 8 plans 01-02 complete; playback UI core in place
+- Last 5 plans: 3min, 4min, 2min, 3min, 3min
+- Trend: Phase 8 complete; all playback navigation and progress UI delivered
 
 *Updated after each plan completion*
 
@@ -141,6 +141,10 @@ Recent decisions affecting current work:
 - 08-02: SingleSessionPlayer extracted as separate component to avoid React hooks-after-conditional-return violation
 - 08-02: Multi-session toolUseMap built inline from all sessions (not via single-session buildToolUseMap)
 - 08-02: Temporary dev import trigger in Player.tsx for end-to-end testing of .promptplay files
+- 08-03: SectionSidebarEntry uses separate click targets for chevron (expand/collapse) and section name (jump to section)
+- 08-03: SegmentedProgress uses flex percentages for proportional section widths (resilient to resize)
+- 08-03: Focus returns to content via requestAnimationFrame after sidebar jumps (Pitfall 4 mitigation)
+- 08-03: PanelLeftOpen/PanelLeftClose icons for sidebar toggle (consistent lucide-react usage)
 
 ### Pending Todos
 
@@ -176,5 +180,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-28
-Stopped at: Completed 08-02-PLAN.md (playback UI core)
-Resume file: .planning/phases/08-player-multi-session-playback/08-03-PLAN.md
+Stopped at: Completed 08-03-PLAN.md (section sidebar and segmented progress - Phase 8 complete)
+Resume file: Phase 8 complete - ready for next phase
