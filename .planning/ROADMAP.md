@@ -153,13 +153,12 @@ Plans:
   3. Section/chapter markers are visible during playback
   4. User can jump directly to any section from a section navigation control
   5. Progress indicator shows section name and overall progress across the full presentation
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 08-01: .promptplay file loading and presentation hydration in Player
-- [ ] 08-02: Cross-session navigation (seamless transition between sessions in chain)
-- [ ] 08-03: Section markers and jump-to-section navigation
-- [ ] 08-04: Multi-session progress indicator (section name, overall progress bar)
+- [ ] 08-01-PLAN.md -- Playback types (PlaybackStep union) and Zustand playback store with buildPlaybackSteps, navigation, sidebar state
+- [ ] 08-02-PLAN.md -- PlaybackPlayer, PresentationOverview, SeparatorCard, playback keyboard hook, Player route multi-session dispatch
+- [ ] 08-03-PLAN.md -- SectionSidebar with jump navigation, SegmentedProgress bar, PlaybackPlayer integration
 
 ### Phase 9: Specialized Tool Call Display
 **Goal**: Narrative tool calls (AskUserQuestion, Task management) render with meaningful, presentation-quality formatting
