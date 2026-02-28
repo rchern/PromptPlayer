@@ -1,24 +1,66 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useSessionStore } from '../stores/sessionStore'
 import { useNavigationStore } from '../stores/navigationStore'
+import { usePlaybackStore } from '../stores/playbackStore'
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation'
 import { buildToolUseMap } from '../utils/messageFiltering'
 import { StepView } from '../components/player/StepView'
 import { NavigationControls } from '../components/player/NavigationControls'
 import { ProgressIndicator } from '../components/player/ProgressIndicator'
+import { PlaybackPlayer } from '../components/player/PlaybackPlayer'
 
 /**
- * Player route: slideshow-style single-session navigation.
+ * Player route: dispatches between single-session and multi-session modes.
  *
- * Shows one user+Claude message pair at a time with keyboard and mouse
- * navigation. Content starts collapsed by default and can be expanded.
- * Expand/collapse state is remembered across step navigation.
+ * When a presentation is loaded in the playback store, renders PlaybackPlayer
+ * for multi-session playback. Otherwise, falls through to the existing
+ * single-session slideshow navigation via SingleSessionPlayer.
  *
- * Data flow:
+ * The dispatch is a conditional render (not an early return with hooks after)
+ * to comply with React's rules of hooks.
+ *
+ * Data flow (multi-session):
+ *   playbackStore.presentation -> PlaybackPlayer
+ *
+ * Data flow (single-session):
  *   sessionStore.activeSession -> navigationStore.initializeSteps -> steps[]
  *   steps[currentStepIndex] -> StepView -> CollapsibleContent -> MessageBubble
  */
 export function Player(): React.JSX.Element {
+  const presentation = usePlaybackStore((s) => s.presentation)
+  const loadPresentation = usePlaybackStore((s) => s.loadPresentation)
+  const activeSession = useSessionStore((s) => s.activeSession)
+
+  // Temporary dev import trigger: when player mounts with no session and no
+  // presentation, prompt the user to open a .promptplay file for testing.
+  const importTriggered = useRef(false)
+  useEffect(() => {
+    if (presentation || activeSession || importTriggered.current) return
+    importTriggered.current = true
+    window.electronAPI.importPresentation().then((result) => {
+      if (result) {
+        loadPresentation(result.presentation, result.sessions)
+      }
+    })
+  }, [presentation, activeSession, loadPresentation])
+
+  // Dispatch: multi-session playback vs single-session preview
+  if (presentation) {
+    return <PlaybackPlayer />
+  }
+
+  return <SingleSessionPlayer />
+}
+
+// ---------------------------------------------------------------------------
+// Single-Session Player (extracted to its own component for hook safety)
+// ---------------------------------------------------------------------------
+
+/**
+ * Original single-session slideshow player, extracted as a component so that
+ * its hooks are not called conditionally after the presentation dispatch check.
+ */
+function SingleSessionPlayer(): React.JSX.Element {
   const activeSession = useSessionStore((s) => s.activeSession)
 
   const steps = useNavigationStore((s) => s.steps)
