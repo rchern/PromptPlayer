@@ -9,6 +9,8 @@ interface ContentBlockRendererProps {
   showPlumbing: boolean
   /** If true, render text as plain pre-wrapped text instead of markdown */
   plainText?: boolean
+  /** Paired tool_result content for AskUserQuestion answer display */
+  answerText?: string | null
 }
 
 /**
@@ -24,7 +26,8 @@ export function ContentBlockRenderer({
   block,
   toolVisibility,
   showPlumbing,
-  plainText = false
+  plainText = false,
+  answerText
 }: ContentBlockRendererProps): React.JSX.Element | null {
   switch (block.type) {
     case 'text':
@@ -47,6 +50,7 @@ export function ContentBlockRenderer({
           name={block.name}
           input={block.input}
           toolUseId={block.id}
+          answerText={answerText}
         />
       )
 

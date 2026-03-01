@@ -6,6 +6,8 @@ interface MessageBubbleProps {
   message: ParsedMessage
   showPlumbing: boolean
   toolUseMap?: Map<string, { name: string; input: Record<string, unknown> }>
+  /** Follow-up messages (e.g. tool_result-only user messages with AskUserQuestion answers) */
+  followUpMessages?: ParsedMessage[]
 }
 
 /** Summarize a tool's input for display (e.g., the command or file path) */
@@ -35,8 +37,40 @@ function summarizeToolInput(name: string, input: Record<string, unknown>): strin
  * Content blocks are rendered via ContentBlockRenderer which handles
  * block-level plumbing filtering and type dispatch.
  */
-export function MessageBubble({ message, showPlumbing, toolUseMap }: MessageBubbleProps): React.JSX.Element {
+/**
+ * Normalize tool_result content to a plain string.
+ * Content can be a string, array of {type:"text", text:"..."}, or other shapes.
+ */
+function normalizeContent(raw: unknown): string {
+  if (typeof raw === 'string') return raw
+  if (Array.isArray(raw)) {
+    return (raw as Array<Record<string, unknown>>)
+      .map((item) => (typeof item === 'string' ? item : typeof item?.text === 'string' ? item.text : ''))
+      .filter(Boolean)
+      .join('\n')
+  }
+  if (raw != null) return String(raw)
+  return ''
+}
+
+export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessages }: MessageBubbleProps): React.JSX.Element {
   const isUser = message.role === 'user'
+
+  // Build a lookup from tool_use_id -> answer text for AskUserQuestion answer pairing.
+  // Only for assistant messages that have follow-up tool_result answers.
+  const followUpAnswerMap = new Map<string, string>()
+  if (!isUser && followUpMessages) {
+    for (const fMsg of followUpMessages) {
+      for (const block of fMsg.contentBlocks) {
+        if (block.type === 'tool_result') {
+          const content = normalizeContent(block.content)
+          if (content) {
+            followUpAnswerMap.set(block.tool_use_id, content)
+          }
+        }
+      }
+    }
+  }
 
   return (
     <div
@@ -145,12 +179,18 @@ export function MessageBubble({ message, showPlumbing, toolUseMap }: MessageBubb
             )
           }
 
+          // For tool_use blocks, pass the paired answer text if available
+          const blockAnswerText = block.type === 'tool_use'
+            ? followUpAnswerMap.get(block.id) ?? null
+            : null
+
           return (
             <ContentBlockRenderer
               key={index}
               block={block}
               toolVisibility={message.toolVisibility}
               showPlumbing={showPlumbing}
+              answerText={blockAnswerText}
             />
           )
         })}

@@ -66,20 +66,35 @@ export function StepView({
             message={step.assistantMessage}
             showPlumbing={false}
             toolUseMap={toolUseMap}
+            followUpMessages={step.followUpMessages}
           />
         </CollapsibleContent>
       )}
 
-      {/* Follow-up messages (e.g. AskUserQuestion answers, tool rejections) */}
+      {/* Follow-up messages — suppress AskUserQuestion answers (displayed inline in question block) */}
       {step.followUpMessages.length > 0 &&
-        step.followUpMessages.map((msg, idx) => (
-          <MessageBubble
-            key={`followup-${idx}`}
-            message={msg}
-            showPlumbing={false}
-            toolUseMap={toolUseMap}
-          />
-        ))}
+        step.followUpMessages
+          .filter((msg) => {
+            // Keep followUp messages that have at least one tool_result block
+            // NOT belonging to an AskUserQuestion tool_use
+            const toolResultBlocks = msg.contentBlocks.filter((b) => b.type === 'tool_result')
+            if (toolResultBlocks.length === 0) return true // non-tool-result followUps always shown
+            // If ALL tool_result blocks map to AskUserQuestion, suppress this message
+            const allAskUser = toolResultBlocks.every((b) => {
+              if (b.type !== 'tool_result') return false
+              const toolInfo = toolUseMap.get(b.tool_use_id)
+              return toolInfo?.name === 'AskUserQuestion'
+            })
+            return !allAskUser
+          })
+          .map((msg, idx) => (
+            <MessageBubble
+              key={`followup-${idx}`}
+              message={msg}
+              showPlumbing={false}
+              toolUseMap={toolUseMap}
+            />
+          ))}
     </div>
   )
 }

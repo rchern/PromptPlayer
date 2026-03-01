@@ -1,3 +1,5 @@
+import { AskUserQuestionBlock } from './AskUserQuestionBlock'
+
 /**
  * Summarize tool input into a short display string.
  * Picks the most informative field from the tool's input object.
@@ -41,67 +43,19 @@ interface ToolCallBlockProps {
   name: string
   input: Record<string, unknown>
   toolUseId: string
-}
-
-/** Extract AskUserQuestion options for richer display */
-function extractAskOptions(input: Record<string, unknown>): { question: string; options: string[] } | null {
-  const questions = Array.isArray(input.questions) ? input.questions : []
-  if (questions.length === 0) return null
-  const first = questions[0] as Record<string, unknown>
-  const question = typeof first.question === 'string' ? first.question : ''
-  const opts = Array.isArray(first.options)
-    ? (first.options as Array<Record<string, unknown>>)
-        .map((o) => (typeof o.label === 'string' ? o.label : ''))
-        .filter(Boolean)
-    : []
-  if (!question) return null
-  return { question, options: opts }
+  answerText?: string | null
 }
 
 /**
  * Compact card showing a tool call's name and a brief input summary.
+ * Dispatches to specialized renderers for supported tools (AskUserQuestion).
  * Rendered for narrative/unknown tools; plumbing tools are filtered upstream.
  */
-export function ToolCallBlock({ name, input }: ToolCallBlockProps): React.JSX.Element {
-  // Rich rendering for AskUserQuestion
+export function ToolCallBlock({ name, input, toolUseId, answerText }: ToolCallBlockProps): React.JSX.Element {
+  // Specialized rendering for AskUserQuestion
   if (name === 'AskUserQuestion') {
-    const ask = extractAskOptions(input)
-    if (ask) {
-      return (
-        <div
-          style={{
-            background: 'var(--color-bg-tertiary)',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-md)',
-            padding: 'var(--space-3)',
-            margin: 'var(--space-2) 0'
-          }}
-        >
-          <div style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-2)' }}>
-            {ask.question}
-          </div>
-          {ask.options.length > 0 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
-              {ask.options.map((opt, i) => (
-                <span
-                  key={i}
-                  style={{
-                    fontSize: 'var(--text-sm)',
-                    padding: '0.2em 0.6em',
-                    borderRadius: 'var(--radius-sm)',
-                    border: '1px solid var(--color-border)',
-                    color: 'var(--color-text-muted)',
-                    background: 'var(--color-bg-secondary)'
-                  }}
-                >
-                  {opt}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-      )
-    }
+    const specialized = AskUserQuestionBlock({ input, toolUseId, answerText: answerText ?? null })
+    if (specialized) return specialized
   }
 
   // Generic tool call display
