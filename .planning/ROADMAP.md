@@ -169,11 +169,11 @@ Plans:
   2. TaskCreate tool calls display with the task description and any relevant metadata
   3. TaskUpdate tool calls display showing what changed (status updates, completions)
   4. TaskList tool calls display as a formatted task summary
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 09-01: AskUserQuestion renderer (question, options, selected answer)
-- [ ] 09-02: Task management renderers (TaskCreate, TaskUpdate, TaskList)
+- [ ] 09-01-PLAN.md -- AskUserQuestionBlock with header labels, expandable options, selected answer highlighting, multi-question support
+- [ ] 09-02-PLAN.md -- TaskCreateBlock, TaskUpdateBlock, TaskListBlock with status-aware formatting and dispatch wiring
 
 ### Phase 10: Packaging and Release
 **Goal**: App is packaged as a distributable Windows installer with CI/CD pipeline and OS file association
