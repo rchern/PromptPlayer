@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 9 - Specialized Tool Call Display (1 of 2 plans complete)
+**Current focus:** Phase 9 - Specialized Tool Call Display (2 of 2 plans complete)
 
 ## Current Position
 
 Phase: 9 of 11 (Specialized Tool Call Display)
-Plan: 1 of 2 complete
-Status: In progress
-Last activity: 2026-02-28 - Completed 09-01 AskUserQuestionBlock with header labels, expandable options, selected answer highlighting
+Plan: 2 of 2 complete
+Status: Phase complete
+Last activity: 2026-02-28 - Completed 09-02 TaskCreateBlock, TaskUpdateBlock, TaskListBlock with dispatch wiring
 
-Progress: [██████████████████████████████████████████████████] 28/29 plans (97%)
+Progress: [██████████████████████████████████████████████████] 29/29 plans (100%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26
+- Total plans completed: 27
 - Average duration: 6min
-- Total execution time: 2.33 hours
+- Total execution time: 2.38 hours
 
 **By Phase:**
 
@@ -36,11 +36,11 @@ Progress: [███████████████████████
 | 7. Builder Config & Export | 6/6 | 21min | 3.5min |
 
 | 8. Player Multi-Session Playback | 3/3 | 8min | 2.7min |
-| 9. Specialized Tool Call Display | 1/2 | 6min | 6min |
+| 9. Specialized Tool Call Display | 2/2 | 9min | 4.5min |
 
 **Recent Trend:**
-- Last 5 plans: 4min, 2min, 3min, 3min, 6min
-- Trend: Phase 9 started; AskUserQuestion renderer complete
+- Last 5 plans: 2min, 3min, 3min, 6min, 3min
+- Trend: Phase 9 complete; all task management renderers done
 
 *Updated after each plan completion*
 
@@ -150,6 +150,10 @@ Recent decisions affecting current work:
 - 09-01: followUpAnswerMap built in MessageBubble from followUpMessages prop (not prop-drilled from StepView)
 - 09-01: AskUserQuestion followUp messages filtered in StepView by checking all tool_result blocks against toolUseMap
 - 09-01: Module-level style constants for all static styles in AskUserQuestionBlock (per Pitfall 4)
+- 09-02: Input validation in ToolCallBlock dispatcher (typeof checks before JSX render) instead of calling hooks-using components as plain functions
+- 09-02: AskUserQuestion dispatch refactored from function-call to JSX with Array.isArray guard (fixes potential hooks violation)
+- 09-02: TaskListBlock parses multiple line formats with monospace fallback for unparseable tool_result output
+- 09-02: STATUS_COLORS/STATUS_LABELS as module-level constants in each component (not shared file)
 
 ### Pending Todos
 
@@ -185,5 +189,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-28
-Stopped at: Completed 09-01-PLAN.md (AskUserQuestionBlock with header labels, expandable options, selected answer highlighting)
-Resume file: .planning/phases/09-specialized-tool-call-display/09-02-PLAN.md
+Stopped at: Completed 09-02-PLAN.md (TaskCreateBlock, TaskUpdateBlock, TaskListBlock with dispatch wiring; Phase 9 complete)
+Resume file: .planning/phases/10-*/10-01-PLAN.md

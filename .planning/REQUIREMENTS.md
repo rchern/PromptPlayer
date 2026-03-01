@@ -39,7 +39,7 @@
 - [ ] **PLAY-05**: Claude's markdown responses render with proper formatting (headings, lists, bold, italic, links, tables)
 - [ ] **PLAY-06**: Code blocks render with syntax highlighting appropriate to the language
 - [x] **PLAY-07**: AskUserQuestion tool calls display as interactive-looking prompts showing the question, options, and the user's selection
-- [ ] **PLAY-08**: Task management tool calls (TaskCreate, TaskUpdate, TaskList) display inline with meaningful formatting
+- [x] **PLAY-08**: Task management tool calls (TaskCreate, TaskUpdate, TaskList) display inline with meaningful formatting
 - [ ] **PLAY-09**: Plumbing tool calls (Read, Grep, Glob, Write, Edit, Bash, etc.) are hidden by default
 - [x] **PLAY-10**: Player transitions seamlessly between sessions in the chain (no jarring reloads)
 - [ ] **PLAY-11**: Progress indicator shows current position: section name, step N of M, overall progress bar
@@ -127,7 +127,7 @@
 | PLAY-05 | Phase 3 | Complete |
 | PLAY-06 | Phase 3 | Complete |
 | PLAY-07 | Phase 9 | Complete |
-| PLAY-08 | Phase 9 | Pending |
+| PLAY-08 | Phase 9 | Complete |
 | PLAY-09 | Phase 3 | Complete |
 | PLAY-10 | Phase 8 | Complete |
 | PLAY-11 | Phase 4 | Complete |
