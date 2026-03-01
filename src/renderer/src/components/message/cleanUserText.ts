@@ -133,3 +133,53 @@ export function parseUserAnswer(text: string): { answers: string[] } | null {
   const answers = answerStr.split(',').map((a) => a.trim()).filter(Boolean)
   return { answers }
 }
+
+/**
+ * Parse ALL question-answer pairs from a "User has answered" tool_result content string.
+ * Handles single and multi-question formats:
+ *   Single: 'User has answered your questions: "Q1"="A1". You can now continue...'
+ *   Multi:  'User has answered your questions: "Q1"="A1", "Q2"="A2". You can now continue...'
+ *   With notes: '... "Q"="A" user notes: free text here. You can now continue...'
+ *
+ * Returns null if the text doesn't match the expected format.
+ */
+export function parseUserAnswerPairs(text: string): {
+  pairs: Array<{ question: string; answer: string }>
+  userNotes: string | null
+} | null {
+  // Try raw text first, then strip XML tags and retry
+  let source = text
+  if (!source.match(/User has answered your questions?:/)) {
+    source = text.replace(/<[^>]*>/g, ' ').trim()
+  }
+  if (!source.match(/User has answered your questions?:/)) return null
+
+  // Extract the section after "User has answered your question(s):" up to "You can now continue"
+  const bodyMatch = source.match(
+    /User has answered your questions?:\s*([\s\S]*?)(?:\.\s*You can now continue|$)/
+  )
+  if (!bodyMatch) return null
+
+  const body = bodyMatch[1].trim()
+
+  // Check for user notes suffix: content may contain 'user notes: ...' before the final period
+  let pairsSection = body
+  let userNotes: string | null = null
+  const notesMatch = body.match(/^([\s\S]*?)\s+user notes:\s*([\s\S]+)$/)
+  if (notesMatch) {
+    pairsSection = notesMatch[1].trim()
+    userNotes = notesMatch[2].trim()
+  }
+
+  // Match all "question"="answer" pairs using global regex
+  const pairRegex = /"([^"]*?)"="([^"]*?)"/g
+  const pairs: Array<{ question: string; answer: string }> = []
+  let match: RegExpExecArray | null
+  while ((match = pairRegex.exec(pairsSection)) !== null) {
+    pairs.push({ question: match[1], answer: match[2] })
+  }
+
+  if (pairs.length === 0) return null
+
+  return { pairs, userNotes }
+}
