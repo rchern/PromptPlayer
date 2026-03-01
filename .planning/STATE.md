@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 8 - Player Multi-Session Playback (COMPLETE - all 3 plans)
+**Current focus:** Phase 9 - Specialized Tool Call Display (1 of 2 plans complete)
 
 ## Current Position
 
-Phase: 8 of 11 (Player Multi-Session Playback)
-Plan: 3 of 3 complete
-Status: Phase complete
-Last activity: 2026-02-28 - Completed 08-03 section sidebar and segmented progress
+Phase: 9 of 11 (Specialized Tool Call Display)
+Plan: 1 of 2 complete
+Status: In progress
+Last activity: 2026-02-28 - Completed 09-01 AskUserQuestionBlock with header labels, expandable options, selected answer highlighting
 
-Progress: [██████████████████████████████████████████████████] 27/27 plans (100%)
+Progress: [██████████████████████████████████████████████████] 28/29 plans (97%)
 
 ## Performance Metrics
 
@@ -36,10 +36,11 @@ Progress: [███████████████████████
 | 7. Builder Config & Export | 6/6 | 21min | 3.5min |
 
 | 8. Player Multi-Session Playback | 3/3 | 8min | 2.7min |
+| 9. Specialized Tool Call Display | 1/2 | 6min | 6min |
 
 **Recent Trend:**
-- Last 5 plans: 3min, 4min, 2min, 3min, 3min
-- Trend: Phase 8 complete; all playback navigation and progress UI delivered
+- Last 5 plans: 4min, 2min, 3min, 3min, 6min
+- Trend: Phase 9 started; AskUserQuestion renderer complete
 
 *Updated after each plan completion*
 
@@ -145,6 +146,10 @@ Recent decisions affecting current work:
 - 08-03: SegmentedProgress uses flex percentages for proportional section widths (resilient to resize)
 - 08-03: Focus returns to content via requestAnimationFrame after sidebar jumps (Pitfall 4 mitigation)
 - 08-03: PanelLeftOpen/PanelLeftClose icons for sidebar toggle (consistent lucide-react usage)
+- 09-01: AskUserQuestionBlock called as function (not JSX) from ToolCallBlock for null-return fallback to generic display
+- 09-01: followUpAnswerMap built in MessageBubble from followUpMessages prop (not prop-drilled from StepView)
+- 09-01: AskUserQuestion followUp messages filtered in StepView by checking all tool_result blocks against toolUseMap
+- 09-01: Module-level style constants for all static styles in AskUserQuestionBlock (per Pitfall 4)
 
 ### Pending Todos
 
@@ -180,5 +185,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-28
-Stopped at: Completed 08-03-PLAN.md (section sidebar and segmented progress - Phase 8 complete)
-Resume file: Phase 8 complete - ready for next phase
+Stopped at: Completed 09-01-PLAN.md (AskUserQuestionBlock with header labels, expandable options, selected answer highlighting)
+Resume file: .planning/phases/09-specialized-tool-call-display/09-02-PLAN.md

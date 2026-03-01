@@ -172,7 +172,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 09-01-PLAN.md -- AskUserQuestionBlock with header labels, expandable options, selected answer highlighting, multi-question support
+- [x] 09-01-PLAN.md -- AskUserQuestionBlock with header labels, expandable options, selected answer highlighting, multi-question support
 - [ ] 09-02-PLAN.md -- TaskCreateBlock, TaskUpdateBlock, TaskListBlock with status-aware formatting and dispatch wiring
 
 ### Phase 10: Packaging and Release
@@ -219,10 +219,10 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 6. Builder Presentation Assembly | 3/3 | Complete | 2026-02-24 |
 | 7. Builder Configuration and Export | 0/4 | Complete    | 2026-02-25 |
 | 8. Player Multi-Session Playback | 3/3 | Complete | - |
-| 9. Specialized Tool Call Display | 0/2 | Not started | - |
+| 9. Specialized Tool Call Display | 1/2 | In progress | - |
 | 10. Packaging and Release | 0/3 | Not started | - |
 | 11. Player Polish | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-28 -- Phase 8 plan 01 complete (playback data layer)*
+*Last updated: 2026-02-28 -- Phase 9 plan 01 complete (AskUserQuestionBlock)*
