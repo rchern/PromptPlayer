@@ -1,4 +1,7 @@
 import { AskUserQuestionBlock } from './AskUserQuestionBlock'
+import { TaskCreateBlock } from './TaskCreateBlock'
+import { TaskUpdateBlock } from './TaskUpdateBlock'
+import { TaskListBlock } from './TaskListBlock'
 
 /**
  * Summarize tool input into a short display string.
@@ -48,17 +51,39 @@ interface ToolCallBlockProps {
 
 /**
  * Compact card showing a tool call's name and a brief input summary.
- * Dispatches to specialized renderers for supported tools (AskUserQuestion).
+ * Dispatches to specialized renderers for supported tools:
+ *   1. AskUserQuestion -> AskUserQuestionBlock
+ *   2. TaskCreate -> TaskCreateBlock
+ *   3. TaskUpdate -> TaskUpdateBlock
+ *   4. TaskList -> TaskListBlock
+ *   5. Generic fallback (all other tools)
+ *
+ * Input shape is validated in the dispatcher before rendering specialized
+ * components via JSX (never called as plain functions to avoid React hooks violations).
  * Rendered for narrative/unknown tools; plumbing tools are filtered upstream.
  */
 export function ToolCallBlock({ name, input, toolUseId, answerText }: ToolCallBlockProps): React.JSX.Element {
-  // Specialized rendering for AskUserQuestion
-  if (name === 'AskUserQuestion') {
-    const specialized = AskUserQuestionBlock({ input, toolUseId, answerText: answerText ?? null })
-    if (specialized) return specialized
+  // 1. AskUserQuestion — validate that input.questions is an array
+  if (name === 'AskUserQuestion' && Array.isArray(input.questions)) {
+    return <AskUserQuestionBlock input={input} toolUseId={toolUseId} answerText={answerText ?? null} />
   }
 
-  // Generic tool call display
+  // 2. TaskCreate — validate that input.subject is a string
+  if (name === 'TaskCreate' && typeof input.subject === 'string') {
+    return <TaskCreateBlock input={input} />
+  }
+
+  // 3. TaskUpdate — validate that input.taskId is a string
+  if (name === 'TaskUpdate' && typeof input.taskId === 'string') {
+    return <TaskUpdateBlock input={input} />
+  }
+
+  // 4. TaskList — no input validation needed (empty input is normal)
+  if (name === 'TaskList') {
+    return <TaskListBlock input={input} resultText={answerText ?? null} />
+  }
+
+  // 5. Generic fallback for all other tools
   const summary = summarizeToolInput(name, input)
 
   return (
