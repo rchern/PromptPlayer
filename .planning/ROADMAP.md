@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: Builder Presentation Assembly** - Create and organize multi-session presentations with sections
 - [x] **Phase 7: Builder Configuration and Export** - Configure display options, export .promptplay files, re-edit saved files (completed 2026-02-25)
 - [x] **Phase 8: Player Multi-Session Playback** - Open .promptplay files, seamless session transitions, section navigation
-- [ ] **Phase 9: Specialized Tool Call Display** - AskUserQuestion and Task management tool call rendering
+- [x] **Phase 9: Specialized Tool Call Display** - AskUserQuestion and Task management tool call rendering (completed 2026-03-01)
 - [ ] **Phase 10: Packaging and Release** - Windows installer, GitHub Actions CI/CD, .promptplay file association
 - [ ] **Phase 11: Player Polish** - Timestamps and theme application
 
@@ -173,7 +173,7 @@ Plans:
 
 Plans:
 - [x] 09-01-PLAN.md -- AskUserQuestionBlock with header labels, expandable options, selected answer highlighting, multi-question support
-- [ ] 09-02-PLAN.md -- TaskCreateBlock, TaskUpdateBlock, TaskListBlock with status-aware formatting and dispatch wiring
+- [x] 09-02-PLAN.md -- TaskCreateBlock, TaskUpdateBlock, TaskListBlock with status-aware formatting and dispatch wiring
 
 ### Phase 10: Packaging and Release
 **Goal**: App is packaged as a distributable Windows installer with CI/CD pipeline and OS file association
@@ -219,7 +219,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 6. Builder Presentation Assembly | 3/3 | Complete | 2026-02-24 |
 | 7. Builder Configuration and Export | 0/4 | Complete    | 2026-02-25 |
 | 8. Player Multi-Session Playback | 3/3 | Complete | - |
-| 9. Specialized Tool Call Display | 1/2 | In progress | - |
+| 9. Specialized Tool Call Display | 2/2 | Complete | 2026-03-01 |
 | 10. Packaging and Release | 0/3 | Not started | - |
 | 11. Player Polish | 0/2 | Not started | - |
 
