@@ -44,6 +44,7 @@ Progress: [███████████████████████
 
 *Updated after each plan completion*
 | Phase 10 P02 | 9min | 2 tasks | 5 files |
+| Phase 10 P01 | 10min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -157,6 +158,9 @@ Recent decisions affecting current work:
 - 09-02: STATUS_COLORS/STATUS_LABELS as module-level constants in each component (not shared file)
 - [Phase 10]: autoUpdater.autoDownload=true and autoInstallOnAppQuit=true for VS Code-like silent update UX
 - [Phase 10]: presentation:readFile is a separate IPC handler from presentation:import (no dialog, reads by path only)
+- [Phase 10]: NSIS assisted installer (oneClick: false) for desktop shortcut opt-out
+- [Phase 10]: Draft GitHub Releases via releaseType: draft for review-before-publish workflow
+- [Phase 10]: Programmatic ICO generation via Node.js script (no external tooling dependency)
 
 ### Pending Todos
 
@@ -182,7 +186,7 @@ Recent decisions affecting current work:
 - ~~npm package versions need verification before project scaffold (Phase 1)~~ RESOLVED: versions verified during 01-01 execution
 - AskUserQuestion tool call schema assumed but unverified (Phase 9)
 - electron-store v11 ESM-only incompatible with electron-vite 3.x CJS output -- using JSON file fallback
-- npm audit reports 10 high severity vulnerabilities in eslint dependency chain -- review before packaging
+- npm audit reports 2 high severity vulnerabilities in eslint dependency chain -- down from 10 after clean reinstall
 - ~~Stitcher orphan count always equals message count~~ FIXED (16a2857): Root cause was assistant turn reassembly destroying intermediate UUIDs, not childOf overwrite. Fix splits reassembly at user-message boundaries and adds multi-child support to stitcher. 0 orphans across all 15 test sessions.
 - Metadata scan message count differs from full parse count (expected: scan approximates, full parse does assistant turn reassembly). Not a bug, but worth documenting for users.
 - Renderer bundle at 810KB includes all shiki grammars -- consider fine-grained bundling if size becomes a concern
