@@ -48,6 +48,17 @@ export interface ElectronAPI {
   // Menu events
   onMenuSave: (callback: () => void) => () => void
   onMenuSaveAs: (callback: () => void) => () => void
+
+  // File opening (OS file association)
+  onOpenFile: (callback: (filePath: string) => void) => () => void
+  readPromptPlayFile: (filePath: string) => Promise<{
+    presentation: Presentation
+    sessions: StoredSession[]
+  }>
+
+  // Auto-update
+  onUpdateReady: (callback: (version: string) => void) => () => void
+  installUpdate: () => void
 }
 
 declare global {

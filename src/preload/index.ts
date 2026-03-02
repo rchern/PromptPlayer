@@ -73,5 +73,24 @@ contextBridge.exposeInMainWorld('electronAPI', {
     const handler = (): void => callback()
     ipcRenderer.on('menu:saveAs', handler)
     return () => ipcRenderer.removeListener('menu:saveAs', handler)
-  }
+  },
+
+  // File opening (from OS file association)
+  onOpenFile: (callback: (filePath: string) => void): (() => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, filePath: string): void =>
+      callback(filePath)
+    ipcRenderer.on('open-file', handler)
+    return () => ipcRenderer.removeListener('open-file', handler)
+  },
+  readPromptPlayFile: (filePath: string): Promise<unknown> =>
+    ipcRenderer.invoke('presentation:readFile', filePath),
+
+  // Auto-update notifications
+  onUpdateReady: (callback: (version: string) => void): (() => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, version: string): void =>
+      callback(version)
+    ipcRenderer.on('update:ready', handler)
+    return () => ipcRenderer.removeListener('update:ready', handler)
+  },
+  installUpdate: (): void => ipcRenderer.send('update:installAndRestart')
 })
