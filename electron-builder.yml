@@ -43,7 +43,7 @@ fileAssociations:
 
 publish:
   provider: github
-  owner: OWNER_PLACEHOLDER
+  owner: rchern
   repo: PromptPlayer
   releaseType: draft
 
