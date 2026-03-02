@@ -84,6 +84,8 @@ if (!gotTheLock) {
     if (filePath && mainWindow) {
       mainWindow.webContents.send('open-file', filePath)
       if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.setAlwaysOnTop(true)
+      mainWindow.setAlwaysOnTop(false)
       mainWindow.focus()
     }
   })
