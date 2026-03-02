@@ -52,7 +52,7 @@
 
 - [x] **SHELL-01**: Electron app runs on Windows 10/11
 - [x] **SHELL-02**: App opens to a home screen where user can choose Builder or Player mode
-- [ ] **SHELL-03**: App can open `.promptplay` files directly (double-click or "Open with")
+- [x] **SHELL-03**: App can open `.promptplay` files directly (double-click or "Open with")
 - [x] **SHELL-04**: App persists imported sessions and saved presentations between launches
 
 ## v2 Requirements
@@ -137,7 +137,7 @@
 | PLAY-15 | Phase 3 | Complete |
 | SHELL-01 | Phase 1 | Complete |
 | SHELL-02 | Phase 1 | Complete |
-| SHELL-03 | Phase 10 (Packaging) | Pending |
+| SHELL-03 | Phase 10 (Packaging) | Complete |
 | SHELL-04 | Phase 2 | Complete |
 
 **Coverage:**
