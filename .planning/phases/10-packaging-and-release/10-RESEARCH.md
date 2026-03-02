@@ -326,10 +326,10 @@ This approach keeps version as the single source of truth in `package.json` and 
 **Warning signs:** Second instance launches briefly then closes; nothing happens in the first window.
 
 ### Pitfall 8: Shiki bundle size in ASAR
-**What goes wrong:** The bundled app is excessively large (100MB+).
-**Why it happens:** Shiki bundles all language grammars (~800KB renderer bundle as noted in STATE.md). Combined with Electron itself (~200MB), this creates a large installer.
-**How to avoid:** This is acceptable for v1. The renderer bundle at 810KB is reasonable. If size becomes a concern later, use fine-grained shiki imports (`@shikijs/langs-*`) to include only needed languages. The Electron runtime itself is the dominant size factor and can't be reduced.
-**Warning signs:** Installer exceeds 300MB (would indicate something extra being bundled).
+**What goes wrong:** The installer is unexpectedly large (300MB+).
+**Why it happens:** The Electron runtime is ~200MB (unavoidable baseline for any Electron app). Shiki adds ~800KB for language grammars (per STATE.md). The expected total installer size is ~200MB. If it balloons to 300MB+, something is pulling in extra shiki grammars/themes or other unexpected assets.
+**How to avoid:** This is acceptable for v1. The renderer bundle at 810KB is reasonable. If size becomes a concern later, use fine-grained shiki imports (`@shikijs/langs-*`) to include only needed languages.
+**Warning signs:** Installer exceeds 300MB (expected ~200MB baseline + ~1MB app code).
 
 ## Code Examples
 
