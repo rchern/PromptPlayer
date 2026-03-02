@@ -184,12 +184,12 @@ Plans:
   2. GitHub Actions workflow builds the app on push/tag and publishes release artifacts
   3. Packaged app runs correctly (CSP, asset paths, shiki WASM bundling all work in production)
   4. User can double-click a .promptplay file in Windows Explorer to open it directly in the Player
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 10-01: electron-builder configuration and Windows packaging
-- [ ] 10-02: GitHub Actions CI/CD workflow (build, test, release)
-- [ ] 10-03: .promptplay file association and OS integration (SHELL-03)
+- [ ] 10-01-PLAN.md -- electron-builder config, dependencies, build scripts, placeholder icon
+- [ ] 10-02-PLAN.md -- Single-instance lock, .promptplay file opening (SHELL-03), auto-updater
+- [ ] 10-03-PLAN.md -- GitHub Actions CI/CD workflows, packaged app verification checkpoint
 
 ### Phase 11: Player Polish
 **Goal**: Player delivers a fully polished presentation experience with timestamps and themes
@@ -225,4 +225,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-02-28 -- Phase 9 plan 01 complete (AskUserQuestionBlock)*
+*Last updated: 2026-03-01 -- Phase 10 planned (3 plans)*
