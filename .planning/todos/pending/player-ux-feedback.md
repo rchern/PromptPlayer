@@ -28,5 +28,12 @@ Captured during Phase 4 checkpoint testing after stitcher fix.
 - Some steps feel like they should be grouped differently
 - May need a higher-level "combine adjacent assistant-only steps" pass after buildNavigationSteps
 
+## 6. No way to open a different presentation once one is loaded
+- Player has no "Open File" button or menu action to switch presentations
+- RecentFiles on the home screen has no onClick handler (items aren't clickable)
+- The only way to open a different .promptplay file is to restart the app
+- The auto-import trigger in Player.tsx only fires when there's no existing presentation loaded
+- Need: an "Open File" action in the Player (e.g., home button clears playback store, or a file-open button in the nav)
+
 ## Priority
-Items 1 and 4 are likely quick wins. Item 3 needs investigation. Items 2 and 5 need design thought.
+Items 1 and 4 are likely quick wins. Item 3 needs investigation. Items 2, 5, and 6 need design thought.

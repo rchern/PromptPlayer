@@ -42,9 +42,19 @@ export function filterVisibleMessages(
     if (isEmptyAfterCleaning(msg)) return false
 
     // Non-tool messages, narrative, and unknown are always visible
-    if (msg.toolVisibility === null) return true
-    if (msg.toolVisibility === 'narrative') return true
-    if (msg.toolVisibility === 'unknown') return true
+    // But skip assistant messages with no renderable content (empty text blocks)
+    if (msg.toolVisibility === null || msg.toolVisibility === 'narrative' || msg.toolVisibility === 'unknown') {
+      if (msg.role === 'assistant') {
+        const hasContent = msg.contentBlocks.some((b) => {
+          if (b.type === 'text' && b.text.trim().length > 0) return true
+          if (b.type === 'thinking') return true
+          if (b.type === 'tool_use') return msg.toolVisibility !== 'plumbing' || showPlumbing
+          return false
+        })
+        return hasContent
+      }
+      return true
+    }
 
     // Plumbing messages
     if (msg.toolVisibility === 'plumbing') {
@@ -100,6 +110,18 @@ export function filterWithToolSettings(
     }
   }
 
+  // Block-level visibility check: would this block actually render?
+  function isBlockVisible(block: ParsedMessage['contentBlocks'][0]): boolean {
+    if (block.type === 'text' && block.text.trim().length > 0) return true
+    if (block.type === 'thinking') return true
+    if (block.type === 'tool_use') {
+      const toolVisible = visibilityMap.get(block.name)
+      // Explicit setting wins; if not in map, use "Other" category default
+      return toolVisible ?? otherCategoryVisible
+    }
+    return false
+  }
+
   return messages.filter((msg) => {
     // Skip internal meta messages
     if (msg.isMeta) return false
@@ -121,6 +143,8 @@ export function filterWithToolSettings(
           }
         }
       }
+      // Final guard: verify at least one block would actually render
+      if (msg.role === 'assistant' && !msg.contentBlocks.some(isBlockVisible)) return false
       return true
     }
 
@@ -129,6 +153,7 @@ export function filterWithToolSettings(
       if (!otherCategoryVisible) {
         return hasMeaningfulText(msg)
       }
+      if (msg.role === 'assistant' && !msg.contentBlocks.some(isBlockVisible)) return false
       return true
     }
 

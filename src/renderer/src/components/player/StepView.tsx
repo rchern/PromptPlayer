@@ -71,21 +71,19 @@ export function StepView({
         </CollapsibleContent>
       )}
 
-      {/* Follow-up messages — suppress AskUserQuestion answers (displayed inline in question block) */}
+      {/* Follow-up messages — suppress results for specialized tool blocks (displayed inline) */}
       {step.followUpMessages.length > 0 &&
         step.followUpMessages
           .filter((msg) => {
-            // Keep followUp messages that have at least one tool_result block
-            // NOT belonging to an AskUserQuestion tool_use
             const toolResultBlocks = msg.contentBlocks.filter((b) => b.type === 'tool_result')
-            if (toolResultBlocks.length === 0) return true // non-tool-result followUps always shown
-            // If ALL tool_result blocks map to AskUserQuestion, suppress this message
-            const allAskUser = toolResultBlocks.every((b) => {
+            if (toolResultBlocks.length === 0) return true
+            const specializedTools = new Set(['AskUserQuestion', 'TaskCreate', 'TaskUpdate', 'TaskList'])
+            const allSpecialized = toolResultBlocks.every((b) => {
               if (b.type !== 'tool_result') return false
               const toolInfo = toolUseMap.get(b.tool_use_id)
-              return toolInfo?.name === 'AskUserQuestion'
+              return toolInfo?.name != null && specializedTools.has(toolInfo.name)
             })
-            return !allAskUser
+            return !allSpecialized
           })
           .map((msg, idx) => (
             <MessageBubble

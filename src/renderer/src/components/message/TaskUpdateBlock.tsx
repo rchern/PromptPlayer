@@ -86,34 +86,53 @@ const secondarySectionStyle: React.CSSProperties = {
 // Component
 // ---------------------------------------------------------------------------
 
-interface TaskUpdateBlockProps {
-  input: Record<string, unknown>
+const subjectStyle: React.CSSProperties = {
+  fontSize: 'var(--text-sm)',
+  color: 'var(--color-text-primary)',
+  fontWeight: 600,
+  lineHeight: 1.4
 }
 
-/** Fields that can appear in a TaskUpdate besides taskId and status */
+interface TaskUpdateBlockProps {
+  input: Record<string, unknown>
+  resultText: string | null
+}
+
+/** Fields that can appear in a TaskUpdate besides taskId, status, and subject */
 const SECONDARY_FIELDS: Array<{ key: string; label: string }> = [
-  { key: 'subject', label: 'Subject' },
   { key: 'description', label: 'Description' },
   { key: 'activeForm', label: 'Spinner' },
   { key: 'owner', label: 'Owner' }
 ]
 
+/** Try to extract subject from tool_result text (e.g., "Updated task #2 subject") */
+function parseSubjectFromResult(resultText: string | null): string | null {
+  if (!resultText) return null
+  // Look for "subject: ..." or the task subject echoed in the result
+  const match = resultText.match(/subject[:\s]+"([^"]+)"|subject[:\s]+(.+?)(?:\.|$)/i)
+  return match ? (match[1] || match[2]?.trim()) || null : null
+}
+
 /**
  * Specialized renderer for TaskUpdate tool calls.
  * Status changes are the most prominent element (filled badge with status color).
+ * Subject is shown prominently when available (from input or result text).
  * Other field changes render in a quieter secondary section.
  *
  * Returns null if input.taskId is not a string (last-resort safety net;
  * primary guard is in ToolCallBlock dispatcher).
  */
-export function TaskUpdateBlock({ input }: TaskUpdateBlockProps): React.JSX.Element | null {
+export function TaskUpdateBlock({ input, resultText }: TaskUpdateBlockProps): React.JSX.Element | null {
   if (typeof input.taskId !== 'string') return null
 
   const taskId = input.taskId
   const hasStatus = isValidStatus(input.status)
   const status = hasStatus ? input.status : null
 
-  // Collect secondary field changes (only fields that are present)
+  // Subject: prefer from input (being changed), fall back to result text
+  const subject = typeof input.subject === 'string' ? input.subject : parseSubjectFromResult(resultText)
+
+  // Collect secondary field changes (only fields that are present, excluding subject which is shown prominently)
   const secondaryChanges: Array<{ label: string; value: string }> = []
   for (const field of SECONDARY_FIELDS) {
     const val = input[field.key]
@@ -140,6 +159,9 @@ export function TaskUpdateBlock({ input }: TaskUpdateBlockProps): React.JSX.Elem
         </div>
         <span style={taskIdStyle}>#{taskId}</span>
       </div>
+
+      {/* Subject line (when available) */}
+      {subject && <div style={subjectStyle}>{subject}</div>}
 
       {/* Status badge (primary element when present) */}
       {status && (

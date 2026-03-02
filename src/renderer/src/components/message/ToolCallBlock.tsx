@@ -70,12 +70,12 @@ export function ToolCallBlock({ name, input, toolUseId, answerText }: ToolCallBl
 
   // 2. TaskCreate — validate that input.subject is a string
   if (name === 'TaskCreate' && typeof input.subject === 'string') {
-    return <TaskCreateBlock input={input} />
+    return <TaskCreateBlock input={input} resultText={answerText ?? null} />
   }
 
   // 3. TaskUpdate — validate that input.taskId is a string
   if (name === 'TaskUpdate' && typeof input.taskId === 'string') {
-    return <TaskUpdateBlock input={input} />
+    return <TaskUpdateBlock input={input} resultText={answerText ?? null} />
   }
 
   // 4. TaskList — no input validation needed (empty input is normal)
