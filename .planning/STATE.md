@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 10 - Packaging and Release (next phase)
+**Current focus:** Phase 11 - Player Polish (next phase)
 
 ## Current Position
 
-Phase: 10 of 11 (Packaging and Release)
+Phase: 10 of 11 (Packaging and Release) — COMPLETE
 Plan: 3 of 3
-Status: Complete — all plans executed, UAT passed, CI lint deferred
-Last activity: 2026-03-02 - Lint step removed from CI (deferred alongside testing)
+Status: Done — all plans executed, UAT 9/9, CI + release workflows verified, v0.9.0 draft release published
+Last activity: 2026-03-03 - Phase 10 complete. PR merged to main, release workflow verified.
 
 Progress: [██████████████████████████████████████████████████] 32/32 plans (100%)
 
@@ -196,6 +196,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-02
-Stopped at: Phase 10 closed out — lint deferred, CI runs typecheck + build only
-Resume file: .planning/phases/10-packaging-and-release/ (phase complete)
+Last session: 2026-03-03
+Stopped at: Phase 10 complete — merged to main, v0.9.0 draft release verified
+Resume file: Phase 11 (Player Polish) not yet started — no artifacts
