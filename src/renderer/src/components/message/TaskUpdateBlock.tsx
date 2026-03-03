@@ -126,8 +126,7 @@ export function TaskUpdateBlock({ input, resultText }: TaskUpdateBlockProps): Re
   if (typeof input.taskId !== 'string') return null
 
   const taskId = input.taskId
-  const hasStatus = isValidStatus(input.status)
-  const status = hasStatus ? input.status : null
+  const status: TaskStatus | null = isValidStatus(input.status) ? input.status : null
 
   // Subject: prefer from input (being changed), fall back to result text
   const subject = typeof input.subject === 'string' ? input.subject : parseSubjectFromResult(resultText)

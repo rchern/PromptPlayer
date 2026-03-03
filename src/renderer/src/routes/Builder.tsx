@@ -77,8 +77,7 @@ export function Builder(): React.JSX.Element {
     activePresentationId,
     addSessions,
     getActivePresentation,
-    importFromPromptPlay,
-    setSourceFilePath
+    importFromPromptPlay
   } = usePresentationStore()
 
   const isDarkMode = useAppStore((s) => s.isDarkMode)
@@ -101,8 +100,9 @@ export function Builder(): React.JSX.Element {
       setToastCount(importCount)
       setShowImportToast(true)
       const timer = setTimeout(() => setShowImportToast(false), 3000)
-      return () => clearTimeout(timer)
+      return (): void => { clearTimeout(timer) }
     }
+    return undefined
   }, [importCount, isImporting])
 
   // Export success toast
