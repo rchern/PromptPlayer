@@ -1,0 +1,149 @@
+/* ==============================
+   PRESENTATION TYPOGRAPHY
+   Optimized for projector/screen-share readability.
+   Base: 20px body text, 900px max-width, generous spacing.
+   ============================== */
+
+:root {
+  --text-presentation-base: 1.25rem; /* 20px — Player presentation mode */
+  --text-preview-base: 0.875rem; /* 14px — Builder preview mode */
+}
+
+/* Message view container — defaults to preview scale for Builder.
+   Player will add .presentation-mode class for projector-size text. */
+.message-view {
+  max-width: 900px;
+  margin: 0 auto;
+  font-size: var(--text-preview-base);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Full presentation scale (Player mode, projector distance) */
+.message-view.presentation-mode {
+  font-size: var(--text-presentation-base);
+  line-height: 1.7;
+}
+
+/* Heading scale — preview (Builder) */
+.message-view h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-top: 1em;
+  margin-bottom: 0.4em;
+}
+
+.message-view h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 0.8em;
+  margin-bottom: 0.4em;
+}
+
+.message-view h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0.6em;
+  margin-bottom: 0.3em;
+}
+
+.message-view h4,
+.message-view h5,
+.message-view h6 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.5em;
+  margin-bottom: 0.3em;
+}
+
+/* Heading scale — presentation (Player) */
+.message-view.presentation-mode h1 { font-size: 2rem; margin-top: 1.5em; margin-bottom: 0.5em; }
+.message-view.presentation-mode h2 { font-size: 1.75rem; margin-top: 1.25em; margin-bottom: 0.5em; }
+.message-view.presentation-mode h3 { font-size: 1.5rem; margin-top: 1em; margin-bottom: 0.5em; }
+.message-view.presentation-mode h4,
+.message-view.presentation-mode h5,
+.message-view.presentation-mode h6 { font-size: 1.25rem; margin-top: 0.75em; margin-bottom: 0.5em; }
+
+/* Paragraphs */
+.message-view p {
+  margin-bottom: 0.75em;
+}
+
+/* Lists */
+.message-view ul,
+.message-view ol {
+  padding-left: 1.5em;
+  margin-bottom: 0.75em;
+}
+
+.message-view li {
+  margin-bottom: 0.25em;
+}
+
+/* Links */
+.message-view a {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+/* Blockquotes */
+.message-view blockquote {
+  border-left: 3px solid var(--color-border);
+  padding-left: 1em;
+  color: var(--color-text-secondary);
+  margin: 0.75em 0;
+}
+
+/* Tables */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.message-view table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.message-view th {
+  font-weight: 600;
+  text-align: left;
+  padding: 0.5em 0.75em;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.message-view td {
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+/* Inline code */
+.message-view code {
+  background-color: var(--color-bg-tertiary);
+  padding: 0.15em 0.35em;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+/* Reset inline code styles when inside a pre (block code) */
+.message-view pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Bold and italic */
+.message-view strong {
+  font-weight: 700;
+}
+
+.message-view em {
+  font-style: italic;
+}
+
+/* Horizontal rule */
+.message-view hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 1.5em 0;
+}

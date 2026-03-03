@@ -1,0 +1,50 @@
+appId: com.promptplayer.app
+productName: PromptPlayer
+
+directories:
+  buildResources: build
+
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!.planning/*'
+  - '!test-data/*'
+  - '!.agents/*'
+  - '!.claude/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml}'
+  - '!{.env,.env.*,.npmrc}'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+  - '!{*.tsbuildinfo}'
+  - '!{package-lock.json}'
+
+asarUnpack:
+  - resources/**
+
+win:
+  executableName: PromptPlayer
+  icon: build/icon.ico
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: PromptPlayer
+  artifactName: ${name}-${version}-setup.${ext}
+  uninstallDisplayName: ${productName}
+
+fileAssociations:
+  - ext: promptplay
+    name: PromptPlayPresentation
+    description: PromptPlayer Presentation File
+    icon: build/icon.ico
+
+publish:
+  provider: github
+  owner: rchern
+  repo: PromptPlayer
+  releaseType: draft
+
+npmRebuild: false
