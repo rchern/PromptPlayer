@@ -17,9 +17,6 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - name: Set version from tag
-        run: npm version "${GITHUB_REF#refs/tags/v}" --no-git-tag-version
-        shell: bash
       - run: npm run build
       - name: Build Windows installer
         env:
