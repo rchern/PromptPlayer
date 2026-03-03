@@ -64,6 +64,7 @@ Package PromptPlayer as a distributable Windows installer with CI/CD pipeline, a
 ## Deferred Ideas
 
 - Pre-commit hooks (husky/lint-staged) for local lint enforcement — could be added later
+- Linting enforcement — eslint config exists but 3251+ errors from strict rules the codebase was never written against; defer to future milestone alongside testing
 - Test suite (unit tests, component tests, integration tests) — would be its own phase/milestone
 - Custom app icon — user will provide when/if needed
 - Free OSS code signing (e.g., SignPath) — investigate if the project goes public

@@ -27,11 +27,11 @@ key-files:
 
 key-decisions:
   - "Draft GitHub Releases via releaseType: draft for review-before-publish workflow"
-  - "CI runs lint + typecheck + build (no test suite per user decision)"
+  - "CI runs typecheck + build (lint and testing deferred to future milestone)"
   - "Release uses --publish always with draft releaseType for automatic artifact upload"
 
 patterns-established:
-  - "CI workflow pattern: checkout -> setup-node -> npm ci -> lint -> typecheck -> build"
+  - "CI workflow pattern: checkout -> setup-node -> npm ci -> typecheck -> build"
   - "Release workflow pattern: tag push triggers build + electron-builder + draft release"
 
 requirements-completed: []
@@ -54,7 +54,7 @@ completed: 2026-03-02
 - **Files modified:** 2
 
 ## Accomplishments
-- Created GitHub Actions CI workflow running lint, typecheck, and build on PRs to main
+- Created GitHub Actions CI workflow running typecheck and build on PRs to main (lint deferred alongside testing)
 - Created GitHub Actions Release workflow building Windows NSIS installer on tag push and publishing as draft GitHub Release
 - Packaged app verified by user: launches correctly, syntax highlighting works, file association pipeline works, single-instance lock works
 
@@ -66,13 +66,14 @@ Each task was committed atomically:
 2. **Task 2: Verify packaged app runs correctly** - checkpoint:human-verify (approved by user)
 
 ## Files Created/Modified
-- `.github/workflows/ci.yml` - PR check workflow: lint + typecheck + build on pull_request to main
+- `.github/workflows/ci.yml` - PR check workflow: typecheck + build on pull_request to main
 - `.github/workflows/release.yml` - Tag-triggered release workflow: builds Windows installer via electron-builder, publishes draft GitHub Release
 
 ## Decisions Made
 - CI runs on `windows-latest` to match the target platform (Windows-only Electron app)
 - Draft releases so artifacts can be reviewed before publishing; auto-updater only detects published releases (desired behavior)
 - No test suite in CI (per user decision from planning phase)
+- Lint step removed from CI — eslint config exists but codebase was built without lint rules; deferred alongside testing to future milestone
 
 ## Deviations from Plan
 
