@@ -225,20 +225,24 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 9. Specialized Tool Call Display | 2/2 | Complete | 2026-03-01 |
 | 10. Packaging and Release | 3/3 | Complete   | 2026-03-02 |
 | 11. Player Polish | 4/4 | Complete    | 2026-03-04 |
-| 12. UX Polish | 0/0 | Not Started | - |
+| 12. UX Polish | 0/5 | In Progress | - |
 
 ### Phase 12: UX Polish
 **Goal**: Address accumulated UX feedback across Builder and Player — close presentations, live preview reactivity, date filter presets, checkbox placement, split section, assistant-only timestamps, show more overflow, box border rendering, system message classification, step combining, open file action, auto-update notification UI
 **Depends on**: Phase 11
-**Requirements**: TBD
+**Requirements**: UX-POLISH-01, UX-POLISH-02, UX-POLISH-03, UX-POLISH-04, UX-POLISH-05
 **Success Criteria** (what must be TRUE):
   1. Builder and Player UX issues from todo backlog are resolved
   2. Auto-update notification appears in renderer when update is ready
-**Plans**: 0 plans
+**Plans**: 5 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 12 to break down)
+- [ ] 12-01-PLAN.md -- Builder polish: date filter presets, close presentations, live preview reactivity
+- [ ] 12-02-PLAN.md -- Builder assembly outline: checkbox positioning, split-to-new-section
+- [ ] 12-03-PLAN.md -- Player rendering fixes: show-more overflow, box/border rendering, system message classification
+- [ ] 12-04-PLAN.md -- Player step combining and elapsed time for solo/combined assistant steps
+- [ ] 12-05-PLAN.md -- App-level polish: auto-update notification UI, open file in Player, clickable recent files
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-04 -- Phase 11 gap closure plan 04 added (elapsed marker repositioning from UAT retest)*
+*Last updated: 2026-03-04 -- Phase 12 planned: 5 plans in 1 wave (all parallel)*
