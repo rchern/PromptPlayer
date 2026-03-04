@@ -1,6 +1,6 @@
 import type { ParsedMessage } from '../../types/pipeline'
 import { ContentBlockRenderer } from './ContentBlockRenderer'
-import { cleanUserText, parseUserAnswer, parseToolRejection } from './cleanUserText'
+import { cleanUserText, parseUserAnswer, parseToolRejection, isSystemMessage } from './cleanUserText'
 
 interface MessageBubbleProps {
   message: ParsedMessage
@@ -56,6 +56,11 @@ function normalizeContent(raw: unknown): string {
 export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessages }: MessageBubbleProps): React.JSX.Element {
   const isUser = message.role === 'user'
 
+  // Detect system-generated user messages (should not display as "You")
+  const isSystem = isUser && message.contentBlocks.some(
+    (block) => block.type === 'text' && isSystemMessage(block.text)
+  )
+
   // Build a lookup from tool_use_id -> answer text for AskUserQuestion answer pairing.
   // Only for assistant messages that have follow-up tool_result answers.
   const followUpAnswerMap = new Map<string, string>()
@@ -75,7 +80,11 @@ export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessa
   return (
     <div
       style={{
-        background: isUser ? 'var(--color-bg-tertiary)' : 'var(--color-bg-primary)',
+        background: isSystem
+          ? 'var(--color-bg-secondary)'
+          : isUser
+            ? 'var(--color-bg-tertiary)'
+            : 'var(--color-bg-primary)',
         padding: 'var(--space-4) var(--space-6)',
         borderBottom: '1px solid var(--color-border-subtle)'
       }}
@@ -85,13 +94,17 @@ export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessa
         style={{
           fontSize: 'var(--text-sm)',
           fontWeight: 600,
-          color: isUser ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+          color: isSystem
+            ? 'var(--color-text-muted)'
+            : isUser
+              ? 'var(--color-accent)'
+              : 'var(--color-text-secondary)',
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
           marginBottom: 'var(--space-3)'
         }}
       >
-        {isUser ? 'You' : 'Claude'}
+        {isSystem ? 'System' : isUser ? 'You' : 'Claude'}
       </div>
 
       {/* Content blocks */}
