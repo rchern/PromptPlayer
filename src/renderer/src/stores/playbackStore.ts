@@ -3,10 +3,19 @@ import type { NavigationStep, StoredSession } from '../types/pipeline'
 import type { Presentation, PresentationSection } from '../types/presentation'
 import type { PlaybackStep, SectionProgressInfo } from '../types/playback'
 import { filterWithToolSettings, buildNavigationSteps } from '../utils/messageFiltering'
+import { computeElapsedMs } from '../utils/formatElapsed'
 
 // ---------------------------------------------------------------------------
 // Pure Functions (exported for independent testing)
 // ---------------------------------------------------------------------------
+
+/**
+ * Get the representative timestamp for a NavigationStep.
+ * Prefers userMessage timestamp; falls back to assistantMessage timestamp.
+ */
+function getStepTimestamp(step: NavigationStep): string | null {
+  return step.userMessage?.timestamp ?? step.assistantMessage?.timestamp ?? null
+}
 
 /**
  * Build a unified flat array of playback steps from a Presentation and its sessions.
@@ -17,6 +26,11 @@ import { filterWithToolSettings, buildNavigationSteps } from '../utils/messageFi
  * Uses filterWithToolSettings to respect the Builder's per-tool visibility config,
  * then buildNavigationSteps to produce NavigationStep[] per session.
  *
+ * Enriches steps with elapsed-time data:
+ * - NavigationPlaybackStep.elapsedMs: time since previous nav step in same session
+ * - SessionSeparatorStep.durationMs: first-to-last nav step timestamp span
+ * - SectionSeparatorStep.durationMs: sum of session durations in the section
+ *
  * Missing sessions are skipped gracefully with a console warning.
  */
 export function buildPlaybackSteps(
@@ -26,10 +40,18 @@ export function buildPlaybackSteps(
   const toolVisibility = presentation.settings.toolVisibility
   const steps: PlaybackStep[] = [{ type: 'overview' }]
 
+  // Track previous nav step timestamp and session for elapsed computation
+  let prevNavTimestamp: string | null = null
+  let prevNavSessionId: string | null = null
+
   for (const section of presentation.sections) {
     // Pre-compute navigation steps for each session to get section totals
     let sectionTotalSteps = 0
-    const sessionData: { ref: (typeof section.sessionRefs)[0]; navSteps: NavigationStep[]; session: StoredSession }[] = []
+    const sessionData: {
+      ref: (typeof section.sessionRefs)[0]
+      navSteps: NavigationStep[]
+      session: StoredSession
+    }[] = []
 
     for (const ref of section.sessionRefs) {
       const session = sessionsMap.get(ref.sessionId)
@@ -45,17 +67,37 @@ export function buildPlaybackSteps(
       sessionData.push({ ref, navSteps, session })
     }
 
-    // Section separator card
+    // Track section duration as sum of session durations
+    let sectionDurationMs: number | null = null
+
+    // Placeholder index for the section separator card (we'll fill durationMs after processing sessions)
+    const sectionSeparatorIndex = steps.length
     steps.push({
       type: 'section-separator',
       sectionId: section.id,
       sectionName: section.name,
       sessionCount: section.sessionRefs.length,
-      totalSteps: sectionTotalSteps
+      totalSteps: sectionTotalSteps,
+      durationMs: null // Will be updated after sessions
     })
 
     // Sessions within this section
     for (const { ref, navSteps, session } of sessionData) {
+      // Compute session duration from first/last nav step timestamps
+      let sessionDurationMs: number | null = null
+      if (navSteps.length > 0) {
+        const firstTimestamp = getStepTimestamp(navSteps[0])
+        const lastTimestamp = getStepTimestamp(navSteps[navSteps.length - 1])
+        if (navSteps.length > 1) {
+          sessionDurationMs = computeElapsedMs(firstTimestamp, lastTimestamp)
+        }
+      }
+
+      // Accumulate section duration
+      if (sessionDurationMs !== null) {
+        sectionDurationMs = (sectionDurationMs ?? 0) + sessionDurationMs
+      }
+
       // Session separator card
       steps.push({
         type: 'session-separator',
@@ -64,18 +106,41 @@ export function buildPlaybackSteps(
         sectionId: section.id,
         sectionName: section.name,
         stepCount: navSteps.length,
-        messageCount: session.messages.length
+        messageCount: session.messages.length,
+        durationMs: sessionDurationMs
       })
 
-      // Wrapped navigation steps
+      // Reset tracking at session boundary so first step in session gets elapsedMs = null
+      prevNavTimestamp = null
+      prevNavSessionId = null
+
+      // Wrapped navigation steps with elapsed computation
       for (const navStep of navSteps) {
+        const currTimestamp = getStepTimestamp(navStep)
+        let elapsedMs: number | null = null
+
+        // Only compute if same session and both timestamps valid
+        if (prevNavSessionId === ref.sessionId && prevNavTimestamp && currTimestamp) {
+          elapsedMs = computeElapsedMs(prevNavTimestamp, currTimestamp)
+        }
+
         steps.push({
           type: 'navigation',
           step: navStep,
           sessionId: ref.sessionId,
-          sectionId: section.id
+          sectionId: section.id,
+          elapsedMs
         })
+
+        prevNavTimestamp = currTimestamp
+        prevNavSessionId = ref.sessionId
       }
+    }
+
+    // Update section separator with computed duration
+    const sectionStep = steps[sectionSeparatorIndex]
+    if (sectionStep.type === 'section-separator') {
+      sectionStep.durationMs = sectionDurationMs
     }
   }
 
