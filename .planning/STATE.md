@@ -67,6 +67,7 @@ Progress: [███████████████████████
 | Phase 12 P05 | 3min | 2 tasks | 4 files |
 | Phase 12 P01 | 2min | 2 tasks | 4 files |
 | Phase 12 P04 | 3min | 2 tasks | 4 files |
+| Phase 12 P02 | 2min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -206,6 +207,9 @@ Recent decisions affecting current work:
 - [Phase 12]: Single solo assistant step NOT combined (no combinedAssistantMessages) to avoid unnecessary filmstrip rendering
 - [Phase 12]: Step-to-step elapsed for solo steps uses previous step's last timestamp (handles combined steps correctly)
 - [Phase 12]: Between-responses elapsed marker variant uses 0.6/0.4 opacity with descriptive "~Xs between responses" label
+- [Phase 12]: Scissors icon for split-to-new-section metaphor (Scissors from lucide-react)
+- [Phase 12]: Shared actionButtonStyle module-level constant for split and remove buttons in SessionEntry
+- [Phase 12]: splitToNewSection inserts new section after source, removes empty source sections
 
 ### Roadmap Evolution
 
@@ -221,8 +225,8 @@ Recent decisions affecting current work:
   - Step sequencing needs design thought
 - Builder UX feedback (3 items) — see `.planning/todos/pending/builder-ux-feedback.md`
   - Date filter presets: "This Week"/"This Month" vs "Last 7 days"/"Last 30 days" naming
-  - Session checkbox placement in assembly outline could use better positioning
-  - Split session to new section (complement to merge)
+  - ~~Session checkbox placement in assembly outline could use better positioning~~ FIXED (12-02): 24px gutter column
+  - ~~Split session to new section (complement to merge)~~ FIXED (12-02): splitToNewSection with scissors button
 - ~~Show elapsed timestamps for assistant-only steps~~ FIXED (12-04): step-to-step elapsed with between-responses variant
 - Builder live preview does not reflect settings changes
 - Add close button for open presentations in Builder
