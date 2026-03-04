@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 11-player-polish
 source: [11-01-SUMMARY.md, 11-02-SUMMARY.md, 11-03-SUMMARY.md]
 started: 2026-03-04T05:10:00Z
@@ -68,5 +68,11 @@ skipped: 0
   reason: "User reported: The elapsed time value is correct (verified against raw timestamps: 3.168s showing as 3s), but the marker is positioned at the top of the step above the user message instead of between the user message and Claude's response. Since it represents the time from user message to Claude's response, it should be displayed between those two messages to illustrate the actual time gap."
   severity: major
   test: 1
-  artifacts: []
-  missing: []
+  root_cause: "ElapsedTimeMarker rendered before StepView in PlaybackPlayer.tsx (line 178), placing it above the entire step. Needs to render between user message and assistant message inside the step layout."
+  artifacts:
+    - path: "src/renderer/src/components/player/PlaybackPlayer.tsx"
+      issue: "ElapsedTimeMarker rendered before StepView (line 178) — above entire step instead of between user/assistant messages"
+    - path: "src/renderer/src/components/player/StepView.tsx"
+      issue: "Does not accept or render ElapsedTimeMarker between user and assistant message blocks"
+  missing:
+    - "Move ElapsedTimeMarker rendering to between user message and assistant message within the step layout"
