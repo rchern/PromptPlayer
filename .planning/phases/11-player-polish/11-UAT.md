@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: resolved
 phase: 11-player-polish
 source: [11-01-SUMMARY.md, 11-02-SUMMARY.md]
 started: 2026-03-04T02:20:00Z
-updated: 2026-03-04T03:10:00Z
+updated: 2026-03-04T05:00:00Z
 ---
 
 ## Current Test
@@ -73,7 +73,7 @@ skipped: 0
 ## Gaps
 
 - truth: "Elapsed-time markers show how long Claude took to respond between consecutive navigation steps"
-  status: failed
+  status: resolved
   reason: "User reported: The elapsed marker measures user-message-to-user-message (between steps), which includes the user's idle time. It should measure Claude's response time within each step (user timestamp to assistant timestamp). Nobody cares how long the human took to type their next message."
   severity: major
   test: 1
@@ -86,7 +86,7 @@ skipped: 0
     - "Session duration lastTimestamp should prefer assistantMessage.timestamp over userMessage.timestamp"
 
 - truth: "Player applies the .promptplay file's configured theme (light, dark, or system-resolved) on load without flash"
-  status: failed
+  status: resolved
   reason: "User reported: Changed .promptplay from system to light but Player still shows dark (system theme). Theme from file config is not being applied."
   severity: major
   test: 6
@@ -99,7 +99,7 @@ skipped: 0
     - "Use cancelled flag or ref to prevent stale async cleanup from overwriting theme"
 
 - truth: "A small sun/moon toggle button in the progress bar area switches between light and dark themes at runtime"
-  status: failed
+  status: resolved
   reason: "User reported: Toggle icon is visible but clicking it does nothing — theme doesn't change."
   severity: major
   test: 7
