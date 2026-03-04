@@ -27,8 +27,20 @@ const pillStyle: React.CSSProperties = {
   whiteSpace: 'nowrap'
 }
 
+const dimPillStyle: React.CSSProperties = {
+  ...pillStyle,
+  opacity: 0.6,
+  fontSize: 'var(--text-xs)'
+}
+
+const dimLineStyle: React.CSSProperties = {
+  ...lineStyle,
+  opacity: 0.4
+}
+
 interface ElapsedTimeMarkerProps {
   elapsedMs: number
+  variant?: 'default' | 'between-responses'
 }
 
 /**
@@ -37,13 +49,22 @@ interface ElapsedTimeMarkerProps {
  * Displays a thin horizontal line with a centered pill showing the formatted
  * elapsed time (e.g., "2m 30s"). The caller gates rendering on showTimestamps
  * and non-null elapsedMs — this component always receives a valid positive number.
+ *
+ * Variant "between-responses" uses dimmer styling and a descriptive label for
+ * inter-response timing within combined assistant filmstrip steps.
  */
-export function ElapsedTimeMarker({ elapsedMs }: ElapsedTimeMarkerProps): React.JSX.Element {
+export function ElapsedTimeMarker({
+  elapsedMs,
+  variant = 'default'
+}: ElapsedTimeMarkerProps): React.JSX.Element {
+  const isDim = variant === 'between-responses'
   return (
     <div style={containerStyle}>
-      <div style={lineStyle} />
-      <span style={pillStyle}>{formatElapsed(elapsedMs)}</span>
-      <div style={lineStyle} />
+      <div style={isDim ? dimLineStyle : lineStyle} />
+      <span style={isDim ? dimPillStyle : pillStyle}>
+        {isDim ? `~${formatElapsed(elapsedMs)} between responses` : formatElapsed(elapsedMs)}
+      </span>
+      <div style={isDim ? dimLineStyle : lineStyle} />
     </div>
   )
 }

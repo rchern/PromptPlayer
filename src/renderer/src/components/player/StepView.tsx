@@ -3,6 +3,7 @@ import type { NavigationStep } from '../../types/pipeline'
 import { CollapsibleContent } from './CollapsibleContent'
 import { ElapsedTimeMarker } from './ElapsedTimeMarker'
 import { MessageBubble } from '../message/MessageBubble'
+import { computeElapsedMs } from '../../utils/formatElapsed'
 
 interface StepViewProps {
   step: NavigationStep
@@ -59,13 +60,16 @@ export function StepView({
         </CollapsibleContent>
       )}
 
-      {/* Elapsed time marker between user and assistant messages */}
-      {step.userMessage && showTimestamps && elapsedMs != null && elapsedMs >= 0 && (
-        <ElapsedTimeMarker elapsedMs={elapsedMs} />
+      {/* Elapsed time marker */}
+      {showTimestamps && elapsedMs != null && elapsedMs >= 0 && (
+        <ElapsedTimeMarker
+          elapsedMs={elapsedMs}
+          variant={step.userMessage ? 'default' : 'between-responses'}
+        />
       )}
 
-      {/* Assistant message section */}
-      {step.assistantMessage && (
+      {/* Single assistant message (non-combined steps) */}
+      {step.assistantMessage && !step.combinedAssistantMessages && (
         <CollapsibleContent
           isExpanded={expandedState.assistant}
           onToggle={() => onToggleExpand('assistant')}
@@ -80,6 +84,35 @@ export function StepView({
           />
         </CollapsibleContent>
       )}
+
+      {/* Combined assistant messages (filmstrip view for autonomous sequences) */}
+      {step.combinedAssistantMessages &&
+        step.combinedAssistantMessages.length > 0 &&
+        step.combinedAssistantMessages.map((msg, idx) => {
+          const prevMsg = idx > 0 ? step.combinedAssistantMessages![idx - 1] : null
+          const interElapsed = prevMsg ? computeElapsedMs(prevMsg.timestamp, msg.timestamp) : null
+
+          return (
+            <React.Fragment key={msg.uuid}>
+              {idx > 0 && showTimestamps && interElapsed != null && interElapsed >= 0 && (
+                <ElapsedTimeMarker elapsedMs={interElapsed} variant="between-responses" />
+              )}
+              <CollapsibleContent
+                isExpanded={expandedState.assistant}
+                onToggle={() => onToggleExpand('assistant')}
+                previewLines={3}
+                role="assistant"
+              >
+                <MessageBubble
+                  message={msg}
+                  showPlumbing={false}
+                  toolUseMap={toolUseMap}
+                  followUpMessages={idx === 0 ? step.followUpMessages : []}
+                />
+              </CollapsibleContent>
+            </React.Fragment>
+          )
+        })}
 
       {/* Follow-up messages — suppress results for specialized tool blocks (displayed inline) */}
       {step.followUpMessages.length > 0 &&
