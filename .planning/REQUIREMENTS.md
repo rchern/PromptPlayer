@@ -45,7 +45,7 @@
 - [ ] **PLAY-11**: Progress indicator shows current position: section name, step N of M, overall progress bar
 - [x] **PLAY-12**: Section/chapter markers are visible; user can jump to a section
 - [x] **PLAY-13**: Timestamps display between steps when enabled (showing original time and/or elapsed time)
-- [ ] **PLAY-14**: Light and dark theme applied based on presentation config
+- [x] **PLAY-14**: Light and dark theme applied based on presentation config
 - [ ] **PLAY-15**: Typography is optimized for screen sharing / projector readability (large fonts, good contrast)
 
 ### App Shell
@@ -133,7 +133,7 @@
 | PLAY-11 | Phase 4 | Complete |
 | PLAY-12 | Phase 8 | Complete |
 | PLAY-13 | Phase 11 | Complete |
-| PLAY-14 | Phase 11 | Pending |
+| PLAY-14 | Phase 11 | Complete |
 | PLAY-15 | Phase 3 | Complete |
 | SHELL-01 | Phase 1 | Complete |
 | SHELL-02 | Phase 1 | Complete |

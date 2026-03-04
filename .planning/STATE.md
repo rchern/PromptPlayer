@@ -1,3 +1,16 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: complete
+last_updated: "2026-03-04T02:14:33.296Z"
+progress:
+  total_phases: 11
+  completed_phases: 11
+  total_plans: 34
+  completed_plans: 34
+---
+
 # Project State
 
 ## Project Reference
@@ -9,12 +22,12 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 
 ## Current Position
 
-Phase: 11 of 11 (Player Polish) — IN PROGRESS
-Plan: 1 of 2 complete
-Status: Plan 01 (Elapsed Time Markers) complete. Plan 02 (Theme Application) next.
-Last activity: 2026-03-03 - Phase 11 Plan 01 executed. Elapsed-time markers and duration stats implemented.
+Phase: 11 of 11 (Player Polish) — COMPLETE
+Plan: 2 of 2 complete
+Status: All plans complete. Phase 11 done. All 11 phases finished.
+Last activity: 2026-03-03 - Phase 11 Plan 02 executed. Theme application with ephemeral toggle implemented.
 
-Progress: [█████████████████████████████████████████████████░] 33/34 plans (97%)
+Progress: [██████████████████████████████████████████████████] 34/34 plans (100%)
 
 ## Performance Metrics
 
@@ -47,6 +60,7 @@ Progress: [███████████████████████
 | Phase 10 P03 | 5min | 2 tasks | 2 files |
 | Phase 10 P02 | 9min | 2 tasks | 5 files |
 | Phase 10 P01 | 10min | 2 tasks | 5 files |
+| Phase 11 P02 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -166,6 +180,9 @@ Recent decisions affecting current work:
 - [Phase 11]: Elapsed time precomputed in buildPlaybackSteps (not during render) for step-array immutability
 - [Phase 11]: Session duration from first-to-last nav step timestamps (consistent with elapsed markers)
 - [Phase 11]: vitest installed as dev dependency for first test infrastructure in the project
+- [Phase 11]: usePlayerTheme as separate hook for clean separation from global useTheme
+- [Phase 11]: System theme defers to Player when presentation is loaded (appStore updated, data-theme skipped)
+- [Phase 11]: Theme toggle ephemeral by design: resets on loadPresentation and reset
 
 ### Pending Todos
 
@@ -201,5 +218,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 11-01-PLAN.md (Elapsed Time Markers)
-Resume file: .planning/phases/11-player-polish/11-02-PLAN.md
+Stopped at: Completed 11-02-PLAN.md (Theme Application). All 11 phases complete.
+Resume file: N/A - all plans executed
