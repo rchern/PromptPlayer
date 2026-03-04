@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 11 - Player Polish (next phase)
+**Current focus:** Phase 11 - Player Polish
 
 ## Current Position
 
-Phase: 10 of 11 (Packaging and Release) — COMPLETE
-Plan: 3 of 3
-Status: Done — all plans executed, UAT 9/9, CI + release workflows verified, v0.9.0 draft release published
-Last activity: 2026-03-03 - Phase 10 complete. PR merged to main, release workflow verified.
+Phase: 11 of 11 (Player Polish) — IN PROGRESS
+Plan: 1 of 2 complete
+Status: Plan 01 (Elapsed Time Markers) complete. Plan 02 (Theme Application) next.
+Last activity: 2026-03-03 - Phase 11 Plan 01 executed. Elapsed-time markers and duration stats implemented.
 
-Progress: [██████████████████████████████████████████████████] 32/32 plans (100%)
+Progress: [█████████████████████████████████████████████████░] 33/34 plans (97%)
 
 ## Performance Metrics
 
@@ -43,6 +43,7 @@ Progress: [███████████████████████
 - Trend: Phase 9 complete; all task management renderers done
 
 *Updated after each plan completion*
+| Phase 11 P01 | 7min | 2 tasks | 7 files |
 | Phase 10 P03 | 5min | 2 tasks | 2 files |
 | Phase 10 P02 | 9min | 2 tasks | 5 files |
 | Phase 10 P01 | 10min | 2 tasks | 5 files |
@@ -162,6 +163,9 @@ Recent decisions affecting current work:
 - [Phase 10]: NSIS assisted installer (oneClick: false) for desktop shortcut opt-out
 - [Phase 10]: Draft GitHub Releases via releaseType: draft for review-before-publish workflow
 - [Phase 10]: Programmatic ICO generation via Node.js script (no external tooling dependency)
+- [Phase 11]: Elapsed time precomputed in buildPlaybackSteps (not during render) for step-array immutability
+- [Phase 11]: Session duration from first-to-last nav step timestamps (consistent with elapsed markers)
+- [Phase 11]: vitest installed as dev dependency for first test infrastructure in the project
 
 ### Pending Todos
 
@@ -197,5 +201,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Phase 11 context gathered
-Resume file: .planning/phases/11-player-polish/11-CONTEXT.md
+Stopped at: Completed 11-01-PLAN.md (Elapsed Time Markers)
+Resume file: .planning/phases/11-player-polish/11-02-PLAN.md
