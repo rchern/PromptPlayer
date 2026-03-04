@@ -29,19 +29,28 @@ export const SectionHeader = React.memo(function SectionHeader({
         borderLeft: isSelected ? '3px solid var(--color-accent)' : '3px solid transparent'
       }}
     >
-      {/* Merge selection checkbox */}
-      <input
-        type="checkbox"
-        checked={isSelected}
-        onChange={() => onToggleSelect(section.id)}
+      {/* Merge selection checkbox — fixed-width gutter for consistent alignment */}
+      <div
         style={{
-          accentColor: 'var(--color-accent)',
-          width: '15px',
-          height: '15px',
-          cursor: 'pointer',
+          width: 24,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           flexShrink: 0
         }}
-      />
+      >
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={() => onToggleSelect(section.id)}
+          style={{
+            accentColor: 'var(--color-accent)',
+            width: '15px',
+            height: '15px',
+            cursor: 'pointer'
+          }}
+        />
+      </div>
 
       {/* Section icon */}
       <Layers

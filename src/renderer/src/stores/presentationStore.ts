@@ -34,6 +34,7 @@ interface PresentationState {
 
   // Section manipulation
   mergeSections: (sectionIds: string[]) => void
+  splitToNewSection: (sectionId: string, sessionId: string) => void
   removeSession: (sectionId: string, sessionId: string) => void
 
   // Add more sessions to active presentation
@@ -195,6 +196,55 @@ export const usePresentationStore = create<PresentationState>((set, get) => {
           // Skip other merged sections
         } else {
           newSections.push(section)
+        }
+      }
+
+      const updated: Presentation = {
+        ...active,
+        sections: newSections,
+        updatedAt: Date.now()
+      }
+
+      persistPresentation(updated)
+    },
+
+    splitToNewSection: (sectionId: string, sessionId: string): void => {
+      const active = get().getActivePresentation()
+      if (!active) return
+
+      // Find the source section
+      const sourceIndex = active.sections.findIndex((s) => s.id === sectionId)
+      if (sourceIndex === -1) return
+
+      const sourceSection = active.sections[sourceIndex]
+      const sessionRef = sourceSection.sessionRefs.find((r) => r.sessionId === sessionId)
+      if (!sessionRef) return
+
+      // Remove session from source section
+      const updatedSource: PresentationSection = {
+        ...sourceSection,
+        sessionRefs: sourceSection.sessionRefs.filter((r) => r.sessionId !== sessionId)
+      }
+
+      // Create new section named after the session
+      const newSection: PresentationSection = {
+        id: crypto.randomUUID(),
+        name: sessionRef.displayName,
+        sessionRefs: [sessionRef]
+      }
+
+      // Build new sections array: insert new section immediately after source
+      const newSections: PresentationSection[] = []
+      for (let i = 0; i < active.sections.length; i++) {
+        if (i === sourceIndex) {
+          // Only keep source section if it still has sessions
+          if (updatedSource.sessionRefs.length > 0) {
+            newSections.push(updatedSource)
+          }
+          // Insert new section right after source position
+          newSections.push(newSection)
+        } else {
+          newSections.push(active.sections[i])
         }
       }
 
