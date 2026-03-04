@@ -1,13 +1,26 @@
 import React from 'react'
-import { X } from 'lucide-react'
+import { Scissors, X } from 'lucide-react'
 import type { SessionRef } from '../../types/presentation'
 import { InlineEdit } from './InlineEdit'
+
+// Module-level style constants (per project convention)
+const actionButtonStyle: React.CSSProperties = {
+  backgroundColor: 'transparent',
+  border: 'none',
+  color: 'var(--color-text-muted)',
+  padding: 'var(--space-1)',
+  borderRadius: 'var(--radius-sm)',
+  opacity: 0,
+  transition: 'opacity 150ms ease, color 150ms ease',
+  flexShrink: 0
+}
 
 interface SessionEntryProps {
   sessionRef: SessionRef
   sectionId: string
   onRename: (sectionId: string, sessionId: string, name: string) => void
   onRemove: (sectionId: string, sessionId: string) => void
+  onSplit?: (sectionId: string, sessionId: string) => void
   onClick?: () => void
 }
 
@@ -16,6 +29,7 @@ export const SessionEntry = React.memo(function SessionEntry({
   sectionId,
   onRename,
   onRemove,
+  onSplit,
   onClick
 }: SessionEntryProps): React.JSX.Element {
   const formattedDate = sessionRef.sortKey
@@ -36,13 +50,13 @@ export const SessionEntry = React.memo(function SessionEntry({
       onClick={onClick}
       onMouseEnter={(e) => {
         e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)'
-        const btn = e.currentTarget.querySelector<HTMLElement>('[data-remove-btn]')
-        if (btn) btn.style.opacity = '1'
+        const btns = e.currentTarget.querySelectorAll<HTMLElement>('[data-remove-btn], [data-split-btn]')
+        btns.forEach((btn) => { btn.style.opacity = '1' })
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.backgroundColor = 'transparent'
-        const btn = e.currentTarget.querySelector<HTMLElement>('[data-remove-btn]')
-        if (btn) btn.style.opacity = '0'
+        const btns = e.currentTarget.querySelectorAll<HTMLElement>('[data-remove-btn], [data-split-btn]')
+        btns.forEach((btn) => { btn.style.opacity = '0' })
       }}
     >
       {/* Display name (editable) */}
@@ -67,6 +81,29 @@ export const SessionEntry = React.memo(function SessionEntry({
         </span>
       )}
 
+      {/* Split to new section button (appears on hover) */}
+      {onSplit && (
+        <button
+          data-split-btn
+          onMouseDown={(e) => {
+            // Prevent InlineEdit blur conflict (same pattern as remove button)
+            e.preventDefault()
+            onSplit(sectionId, sessionRef.sessionId)
+          }}
+          className="flex items-center justify-center cursor-pointer"
+          title="Split to new section"
+          style={actionButtonStyle}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = 'var(--color-accent)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = 'var(--color-text-muted)'
+          }}
+        >
+          <Scissors size={14} />
+        </button>
+      )}
+
       {/* Remove button (appears on hover) */}
       <button
         data-remove-btn
@@ -77,16 +114,7 @@ export const SessionEntry = React.memo(function SessionEntry({
         }}
         className="flex items-center justify-center cursor-pointer"
         title="Remove session"
-        style={{
-          backgroundColor: 'transparent',
-          border: 'none',
-          color: 'var(--color-text-muted)',
-          padding: 'var(--space-1)',
-          borderRadius: 'var(--radius-sm)',
-          opacity: 0,
-          transition: 'opacity 150ms ease, color 150ms ease',
-          flexShrink: 0
-        }}
+        style={actionButtonStyle}
         onMouseEnter={(e) => {
           e.currentTarget.style.color = '#ef4444'
         }}
