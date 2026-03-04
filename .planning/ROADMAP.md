@@ -23,6 +23,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 9: Specialized Tool Call Display** - AskUserQuestion and Task management tool call rendering (completed 2026-03-01)
 - [x] **Phase 10: Packaging and Release** - Windows installer, GitHub Actions CI/CD, .promptplay file association (completed 2026-03-03)
 - [x] **Phase 11: Player Polish** - Timestamps and theme application (completed 2026-03-04)
+- [ ] **Phase 12: UX Polish** - Accumulated UX feedback across Builder and Player
 
 ## Phase Details
 
@@ -209,7 +210,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -224,6 +225,19 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 9. Specialized Tool Call Display | 2/2 | Complete | 2026-03-01 |
 | 10. Packaging and Release | 3/3 | Complete   | 2026-03-02 |
 | 11. Player Polish | 4/4 | Complete    | 2026-03-04 |
+| 12. UX Polish | 0/0 | Not Started | - |
+
+### Phase 12: UX Polish
+**Goal**: Address accumulated UX feedback across Builder and Player — close presentations, live preview reactivity, date filter presets, checkbox placement, split section, assistant-only timestamps, show more overflow, box border rendering, system message classification, step combining, open file action, auto-update notification UI
+**Depends on**: Phase 11
+**Requirements**: TBD
+**Success Criteria** (what must be TRUE):
+  1. Builder and Player UX issues from todo backlog are resolved
+  2. Auto-update notification appears in renderer when update is ready
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 12 to break down)
 
 ---
 *Roadmap created: 2026-02-20*

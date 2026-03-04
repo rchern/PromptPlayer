@@ -203,6 +203,10 @@ Recent decisions affecting current work:
 - [Phase 11]: ElapsedTimeMarker rendered inside StepView between user and assistant messages (not above entire step)
 - [Phase 11]: Marker only shows when user message exists (solo assistant steps skip it -- no user-to-Claude gap)
 
+### Roadmap Evolution
+
+- Phase 12 added: UX Polish — accumulated UX feedback across Builder and Player (from 7 pending todos)
+
 ### Pending Todos
 
 - Player UX feedback (5 items) — see `.planning/todos/pending/player-ux-feedback.md`
@@ -215,6 +219,10 @@ Recent decisions affecting current work:
   - Date filter presets: "This Week"/"This Month" vs "Last 7 days"/"Last 30 days" naming
   - Session checkbox placement in assembly outline could use better positioning
   - Split session to new section (complement to merge)
+- Show elapsed timestamps for assistant-only steps
+- Builder live preview does not reflect settings changes
+- Add close button for open presentations in Builder
+- Auto-update notification UI
 - ~~Phase 7 checkpoint gaps (4 items from 07-04 visual verification)~~ ALL RESOLVED:
   - ~~Create Presentation button covers last session checkbox~~ FIXED (07-06): paddingBottom clearance
   - ~~No message preview in assembly view~~ FIXED (07-06): click-to-preview on outline session entries
