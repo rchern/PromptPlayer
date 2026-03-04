@@ -1,9 +1,9 @@
 ---
-status: complete
+status: diagnosed
 phase: 11-player-polish
 source: [11-01-SUMMARY.md, 11-02-SUMMARY.md]
 started: 2026-03-04T02:20:00Z
-updated: 2026-03-04T02:55:00Z
+updated: 2026-03-04T03:10:00Z
 ---
 
 ## Current Test
@@ -77,24 +77,35 @@ skipped: 0
   reason: "User reported: The elapsed marker measures user-message-to-user-message (between steps), which includes the user's idle time. It should measure Claude's response time within each step (user timestamp to assistant timestamp). Nobody cares how long the human took to type their next message."
   severity: major
   test: 1
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "getStepTimestamp() returns userMessage timestamp. Elapsed computed as user[N].timestamp - user[N-1].timestamp across steps — includes user idle time. Should be assistantMessage.timestamp - userMessage.timestamp within each step. Session duration also affected: last timestamp should prefer assistantMessage."
+  artifacts:
+    - path: "src/renderer/src/stores/playbackStore.ts"
+      issue: "getStepTimestamp returns user timestamp; elapsed loop compares across steps instead of within"
+  missing:
+    - "Compute elapsedMs as computeElapsedMs(navStep.userMessage?.timestamp, navStep.assistantMessage?.timestamp) within each step"
+    - "Session duration lastTimestamp should prefer assistantMessage.timestamp over userMessage.timestamp"
 
 - truth: "Player applies the .promptplay file's configured theme (light, dark, or system-resolved) on load without flash"
   status: failed
   reason: "User reported: Changed .promptplay from system to light but Player still shows dark (system theme). Theme from file config is not being applied."
   severity: major
   test: 6
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "usePlayerTheme cleanup dispatches async getTheme() to restore system theme. In React StrictMode (mount→unmount→remount) or on effect re-runs, the async callback resolves AFTER the new effect sets the correct theme, overwriting it with system dark. The cleanup is never cancelled."
+  artifacts:
+    - path: "src/renderer/src/hooks/usePlayerTheme.ts"
+      issue: "useEffect cleanup dispatches uncancellable async getTheme() that overwrites correct theme on re-run"
+  missing:
+    - "Separate theme application (useEffect with [effectiveTheme]) from unmount restoration (useEffect with [] dependency)"
+    - "Use cancelled flag or ref to prevent stale async cleanup from overwriting theme"
 
 - truth: "A small sun/moon toggle button in the progress bar area switches between light and dark themes at runtime"
   status: failed
   reason: "User reported: Toggle icon is visible but clicking it does nothing — theme doesn't change."
   severity: major
   test: 7
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Downstream symptom of Bug 1. toggleTheme correctly updates themeOverride in store, usePlayerTheme recomputes effectiveTheme and sets data-theme — but the async cleanup from the prior effect run resolves and clobbers it back to system theme."
+  artifacts:
+    - path: "src/renderer/src/hooks/usePlayerTheme.ts"
+      issue: "Same async cleanup race as test 6 — toggle works but gets immediately overwritten"
+  missing:
+    - "Fix the usePlayerTheme cleanup race (same fix as test 6 resolves this)"
