@@ -9,12 +9,14 @@ import { computeElapsedMs } from '../utils/formatElapsed'
 // Pure Functions (exported for independent testing)
 // ---------------------------------------------------------------------------
 
-/**
- * Get the representative timestamp for a NavigationStep.
- * Prefers userMessage timestamp; falls back to assistantMessage timestamp.
- */
-function getStepTimestamp(step: NavigationStep): string | null {
+/** Earliest timestamp for a step (prefers user message as it comes first chronologically). */
+function getStepFirstTimestamp(step: NavigationStep): string | null {
   return step.userMessage?.timestamp ?? step.assistantMessage?.timestamp ?? null
+}
+
+/** Latest timestamp for a step (prefers assistant message as it comes last chronologically). */
+function getStepLastTimestamp(step: NavigationStep): string | null {
+  return step.assistantMessage?.timestamp ?? step.userMessage?.timestamp ?? null
 }
 
 /**
@@ -27,8 +29,8 @@ function getStepTimestamp(step: NavigationStep): string | null {
  * then buildNavigationSteps to produce NavigationStep[] per session.
  *
  * Enriches steps with elapsed-time data:
- * - NavigationPlaybackStep.elapsedMs: time since previous nav step in same session
- * - SessionSeparatorStep.durationMs: first-to-last nav step timestamp span
+ * - NavigationPlaybackStep.elapsedMs: Claude's response time within the step (user -> assistant)
+ * - SessionSeparatorStep.durationMs: first user timestamp to last assistant timestamp span
  * - SectionSeparatorStep.durationMs: sum of session durations in the section
  *
  * Missing sessions are skipped gracefully with a console warning.
@@ -39,10 +41,6 @@ export function buildPlaybackSteps(
 ): PlaybackStep[] {
   const toolVisibility = presentation.settings.toolVisibility
   const steps: PlaybackStep[] = [{ type: 'overview' }]
-
-  // Track previous nav step timestamp and session for elapsed computation
-  let prevNavTimestamp: string | null = null
-  let prevNavSessionId: string | null = null
 
   for (const section of presentation.sections) {
     // Pre-compute navigation steps for each session to get section totals
@@ -86,8 +84,8 @@ export function buildPlaybackSteps(
       // Compute session duration from first/last nav step timestamps
       let sessionDurationMs: number | null = null
       if (navSteps.length > 0) {
-        const firstTimestamp = getStepTimestamp(navSteps[0])
-        const lastTimestamp = getStepTimestamp(navSteps[navSteps.length - 1])
+        const firstTimestamp = getStepFirstTimestamp(navSteps[0])
+        const lastTimestamp = getStepLastTimestamp(navSteps[navSteps.length - 1])
         if (navSteps.length > 1) {
           sessionDurationMs = computeElapsedMs(firstTimestamp, lastTimestamp)
         }
@@ -110,19 +108,13 @@ export function buildPlaybackSteps(
         durationMs: sessionDurationMs
       })
 
-      // Reset tracking at session boundary so first step in session gets elapsedMs = null
-      prevNavTimestamp = null
-      prevNavSessionId = null
-
-      // Wrapped navigation steps with elapsed computation
+      // Navigation steps with within-step elapsed computation
       for (const navStep of navSteps) {
-        const currTimestamp = getStepTimestamp(navStep)
-        let elapsedMs: number | null = null
-
-        // Only compute if same session and both timestamps valid
-        if (prevNavSessionId === ref.sessionId && prevNavTimestamp && currTimestamp) {
-          elapsedMs = computeElapsedMs(prevNavTimestamp, currTimestamp)
-        }
+        // Elapsed = Claude's response time within this step (user -> assistant)
+        const elapsedMs = computeElapsedMs(
+          navStep.userMessage?.timestamp ?? null,
+          navStep.assistantMessage?.timestamp ?? null
+        )
 
         steps.push({
           type: 'navigation',
@@ -131,9 +123,6 @@ export function buildPlaybackSteps(
           sectionId: section.id,
           elapsedMs
         })
-
-        prevNavTimestamp = currTimestamp
-        prevNavSessionId = ref.sessionId
       }
     }
 
