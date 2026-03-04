@@ -91,6 +91,9 @@ export interface NavigationStep {
   userMessage: ParsedMessage | null // null when first message is assistant-only
   assistantMessage: ParsedMessage | null // null for unpaired user message at end
   followUpMessages: ParsedMessage[] // tool_result-only user messages folded into this step (e.g. AskUserQuestion answers)
+  /** When present, this step is a combined view of multiple consecutive solo assistant messages.
+   *  assistantMessage is the first; this array includes ALL (including first) for rendering. */
+  combinedAssistantMessages?: ParsedMessage[]
 }
 
 // ---------------------------------------------------------------------------

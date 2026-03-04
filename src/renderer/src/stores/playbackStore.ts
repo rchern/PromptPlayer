@@ -16,7 +16,64 @@ function getStepFirstTimestamp(step: NavigationStep): string | null {
 
 /** Latest timestamp for a step (prefers assistant message as it comes last chronologically). */
 function getStepLastTimestamp(step: NavigationStep): string | null {
+  // For combined steps, use the last combined message's timestamp
+  if (step.combinedAssistantMessages && step.combinedAssistantMessages.length > 0) {
+    return step.combinedAssistantMessages[step.combinedAssistantMessages.length - 1].timestamp
+  }
   return step.assistantMessage?.timestamp ?? step.userMessage?.timestamp ?? null
+}
+
+/**
+ * Combine consecutive solo assistant steps (userMessage === null) into single navigable steps.
+ *
+ * This reduces click-through fatigue in autonomous sequences (e.g., /gsd:execute-phase)
+ * where Claude produces many consecutive assistant-only messages.
+ *
+ * A single solo assistant step is NOT combined (no combinedAssistantMessages).
+ * Two or more consecutive solo assistant steps produce one combined step with
+ * combinedAssistantMessages containing all messages for filmstrip rendering.
+ */
+function combineConsecutiveSoloSteps(navSteps: NavigationStep[]): NavigationStep[] {
+  const result: NavigationStep[] = []
+  let i = 0
+  while (i < navSteps.length) {
+    const step = navSteps[i]
+    // If this is a solo assistant step (no user message), look for consecutive ones
+    if (step.userMessage === null && step.assistantMessage) {
+      const combinedMessages: import('../types/pipeline').ParsedMessage[] = [step.assistantMessage]
+      const combinedFollowUps: import('../types/pipeline').ParsedMessage[] = [
+        ...step.followUpMessages
+      ]
+      let j = i + 1
+      while (
+        j < navSteps.length &&
+        navSteps[j].userMessage === null &&
+        navSteps[j].assistantMessage
+      ) {
+        combinedMessages.push(navSteps[j].assistantMessage!)
+        combinedFollowUps.push(...navSteps[j].followUpMessages)
+        j++
+      }
+      if (combinedMessages.length > 1) {
+        // Combined step: primary assistant is first, all messages stored for rendering
+        result.push({
+          index: result.length,
+          userMessage: null,
+          assistantMessage: combinedMessages[0],
+          followUpMessages: combinedFollowUps,
+          combinedAssistantMessages: combinedMessages
+        })
+      } else {
+        // Single solo step (no combining needed)
+        result.push({ ...step, index: result.length })
+      }
+      i = j
+    } else {
+      result.push({ ...step, index: result.length })
+      i++
+    }
+  }
+  return result
 }
 
 /**
@@ -60,7 +117,8 @@ export function buildPlaybackSteps(
         continue
       }
       const filtered = filterWithToolSettings(session.messages, toolVisibility)
-      const navSteps = buildNavigationSteps(filtered)
+      const rawNavSteps = buildNavigationSteps(filtered)
+      const navSteps = combineConsecutiveSoloSteps(rawNavSteps)
       sectionTotalSteps += navSteps.length
       sessionData.push({ ref, navSteps, session })
     }
@@ -108,13 +166,22 @@ export function buildPlaybackSteps(
         durationMs: sessionDurationMs
       })
 
-      // Navigation steps with within-step elapsed computation
+      // Navigation steps with elapsed computation
+      // - Steps WITH a userMessage: within-step elapsed (user -> assistant)
+      // - Solo assistant steps (userMessage === null): step-to-step elapsed from previous step's last timestamp
+      let prevStepLastTimestamp: string | null = null
       for (const navStep of navSteps) {
-        // Elapsed = Claude's response time within this step (user -> assistant)
-        const elapsedMs = computeElapsedMs(
-          navStep.userMessage?.timestamp ?? null,
-          navStep.assistantMessage?.timestamp ?? null
-        )
+        let elapsedMs: number | null = null
+        if (navStep.userMessage) {
+          // Within-step: user -> assistant
+          elapsedMs = computeElapsedMs(
+            navStep.userMessage.timestamp,
+            navStep.assistantMessage?.timestamp ?? null
+          )
+        } else if (prevStepLastTimestamp && navStep.assistantMessage) {
+          // Step-to-step: previous step's last timestamp -> this assistant
+          elapsedMs = computeElapsedMs(prevStepLastTimestamp, navStep.assistantMessage.timestamp)
+        }
 
         steps.push({
           type: 'navigation',
@@ -123,6 +190,13 @@ export function buildPlaybackSteps(
           sectionId: section.id,
           elapsedMs
         })
+
+        // Track last timestamp for next iteration
+        const lastMsg = navStep.combinedAssistantMessages
+          ? navStep.combinedAssistantMessages[navStep.combinedAssistantMessages.length - 1]
+          : navStep.assistantMessage
+        prevStepLastTimestamp =
+          lastMsg?.timestamp ?? navStep.userMessage?.timestamp ?? prevStepLastTimestamp
       }
     }
 
