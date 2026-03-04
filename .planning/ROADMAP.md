@@ -198,12 +198,13 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Timestamps display between steps when enabled, showing original time and/or elapsed time between messages
   2. Light and dark themes apply correctly based on the presentation's configured theme
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
 - [x] 11-01-PLAN.md -- Elapsed-time markers between steps, duration on separator cards, formatElapsed utility
 - [x] 11-02-PLAN.md -- Theme application from presentation config with ephemeral sun/moon runtime toggle
-- [ ] 11-03-PLAN.md -- Gap closure: fix elapsed time semantics (within-step) and theme race condition (async cleanup)
+- [x] 11-03-PLAN.md -- Gap closure: fix elapsed time semantics (within-step) and theme race condition (async cleanup)
+- [ ] 11-04-PLAN.md -- Gap closure: reposition elapsed marker between user and assistant messages
 
 ## Progress
 
@@ -222,8 +223,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 8. Player Multi-Session Playback | 3/3 | Complete | - |
 | 9. Specialized Tool Call Display | 2/2 | Complete | 2026-03-01 |
 | 10. Packaging and Release | 3/3 | Complete   | 2026-03-02 |
-| 11. Player Polish | 3/3 | Complete    | 2026-03-04 |
+| 11. Player Polish | 3/4 | In Progress | - |
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-04 -- Phase 11 gap closure plan added (1 plan, 2 tasks)*
+*Last updated: 2026-03-04 -- Phase 11 gap closure plan 04 added (elapsed marker repositioning from UAT retest)*
