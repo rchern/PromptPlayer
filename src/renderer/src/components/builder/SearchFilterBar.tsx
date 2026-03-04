@@ -16,8 +16,8 @@ interface SearchFilterBarProps {
 const DATE_PRESETS: { label: string; value: DatePreset }[] = [
   { label: 'All', value: 'all' },
   { label: 'Today', value: 'today' },
-  { label: 'This Week', value: 'this-week' },
-  { label: 'This Month', value: 'this-month' },
+  { label: 'Last 7 days', value: 'last-7-days' },
+  { label: 'Last 30 days', value: 'last-30-days' },
   { label: 'Older', value: 'older' },
   { label: 'Custom', value: 'custom' }
 ]
