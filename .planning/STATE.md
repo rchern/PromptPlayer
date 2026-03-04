@@ -23,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 12 of 12 (UX Polish)
-Plan: 3 of 5 complete
-Status: Plan 03 executed. Overflow detection, box/border rendering, and system message classification complete.
-Last activity: 2026-03-04 - Phase 12 Plan 03 executed. MutationObserver overflow fix, blockquote/hr styling, system message labeling.
+Plan: 5 of 5 complete
+Status: Phase 12 complete. All 5 plans executed. All 12 phases finished.
+Last activity: 2026-03-04 - Phase 12 Plan 05 executed. Auto-update banner, Open File in Player, clickable recent files.
 
-Progress: [████████████████████████████████████████████░░░░░░] 36/40 plans (90%)
+Progress: [██████████████████████████████████████████████████] 40/40 plans (100%)
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Progress: [███████████████████████
 | Phase 12 P03 | 2min | 2 tasks | 4 files |
 | Phase 12 P05 | 3min | 2 tasks | 4 files |
 | Phase 12 P01 | 2min | 2 tasks | 4 files |
+| Phase 12 P04 | 3min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -201,6 +202,10 @@ Recent decisions affecting current work:
 - [Phase 12]: Rolling-window date filters (7-day/30-day) instead of calendar-based for consistency regardless of weekday
 - [Phase 12]: Reactive Zustand selector replaces non-reactive getActivePresentation() getter for live preview invalidation
 - [Phase 12]: Close button deactivates presentation (sets active to null) rather than removing from store array
+- [Phase 12]: Combined steps reindex before entering PlaybackStep array (progress bar/sidebar unaffected)
+- [Phase 12]: Single solo assistant step NOT combined (no combinedAssistantMessages) to avoid unnecessary filmstrip rendering
+- [Phase 12]: Step-to-step elapsed for solo steps uses previous step's last timestamp (handles combined steps correctly)
+- [Phase 12]: Between-responses elapsed marker variant uses 0.6/0.4 opacity with descriptive "~Xs between responses" label
 
 ### Roadmap Evolution
 
@@ -212,16 +217,16 @@ Recent decisions affecting current work:
   - ~~"Show more" button visible when nothing to expand~~ FIXED (12-03): MutationObserver remeasurement
   - ~~Broken box/border rendering (CHECKPOINT, HR patterns)~~ FIXED (12-03): blockquote, hr, table, pre CSS
   - ~~System-generated messages showing as "YOU"~~ FIXED (12-03): isSystemMessage detection + System label
-  - Consecutive solo Claude steps could be combined
+  - ~~Consecutive solo Claude steps could be combined~~ FIXED (12-04): combineConsecutiveSoloSteps filmstrip rendering
   - Step sequencing needs design thought
 - Builder UX feedback (3 items) — see `.planning/todos/pending/builder-ux-feedback.md`
   - Date filter presets: "This Week"/"This Month" vs "Last 7 days"/"Last 30 days" naming
   - Session checkbox placement in assembly outline could use better positioning
   - Split session to new section (complement to merge)
-- Show elapsed timestamps for assistant-only steps
+- ~~Show elapsed timestamps for assistant-only steps~~ FIXED (12-04): step-to-step elapsed with between-responses variant
 - Builder live preview does not reflect settings changes
 - Add close button for open presentations in Builder
-- Auto-update notification UI
+- ~~Auto-update notification UI~~ FIXED (12-05): banner in RootLayout with auto-dismiss
 - ~~Phase 7 checkpoint gaps (4 items from 07-04 visual verification)~~ ALL RESOLVED:
   - ~~Create Presentation button covers last session checkbox~~ FIXED (07-06): paddingBottom clearance
   - ~~No message preview in assembly view~~ FIXED (07-06): click-to-preview on outline session entries
@@ -244,5 +249,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed 12-03-PLAN.md (Player Rendering Fixes). MutationObserver overflow, blockquote/hr styling, system message labeling.
-Resume file: .planning/phases/12-ux-polish/12-04-PLAN.md
+Stopped at: Completed 12-04-PLAN.md (Combine Solo Assistant Steps). Filmstrip rendering with inter-response elapsed timing.
+Resume file: .planning/phases/12-ux-polish/12-05-PLAN.md
