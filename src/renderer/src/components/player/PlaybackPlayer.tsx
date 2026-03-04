@@ -9,6 +9,7 @@ import { StepView } from './StepView'
 import { NavigationControls } from './NavigationControls'
 import { SectionSidebar } from './SectionSidebar'
 import { SegmentedProgress } from './SegmentedProgress'
+import { usePlayerTheme } from '../../hooks/usePlayerTheme'
 
 /**
  * Multi-session playback wrapper component.
@@ -33,6 +34,9 @@ export function PlaybackPlayer(): React.JSX.Element {
   const prevStep = usePlaybackStore((s) => s.prevStep)
   const toggleExpand = usePlaybackStore((s) => s.toggleExpand)
   const toggleSidebar = usePlaybackStore((s) => s.toggleSidebar)
+
+  // Apply presentation theme with ephemeral toggle support
+  const { isDark } = usePlayerTheme()
 
   // Activate playback keyboard bindings (arrows, Home/End, S sidebar toggle)
   usePlaybackKeyboardNavigation()
@@ -191,8 +195,8 @@ export function PlaybackPlayer(): React.JSX.Element {
           onForward={nextStep}
         />
 
-        {/* Segmented section progress bar */}
-        <SegmentedProgress />
+        {/* Segmented section progress bar with theme toggle */}
+        <SegmentedProgress isDark={isDark} />
       </div>
     </div>
   )
