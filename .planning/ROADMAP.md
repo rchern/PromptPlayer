@@ -225,7 +225,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 9. Specialized Tool Call Display | 2/2 | Complete | 2026-03-01 |
 | 10. Packaging and Release | 3/3 | Complete   | 2026-03-02 |
 | 11. Player Polish | 4/4 | Complete    | 2026-03-04 |
-| 12. UX Polish | 5/5 | Complete   | 2026-03-04 |
+| 12. UX Polish | 5/5 | Complete    | 2026-03-04 |
 
 ### Phase 12: UX Polish
 **Goal**: Address accumulated UX feedback across Builder and Player — close presentations, live preview reactivity, date filter presets, checkbox placement, split section, assistant-only timestamps, show more overflow, box border rendering, system message classification, step combining, open file action, auto-update notification UI
