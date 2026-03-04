@@ -197,5 +197,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Phase 10 complete — merged to main, v0.9.0 draft release verified
-Resume file: Phase 11 (Player Polish) not yet started — no artifacts
+Stopped at: Phase 11 context gathered
+Resume file: .planning/phases/11-player-polish/11-CONTEXT.md
