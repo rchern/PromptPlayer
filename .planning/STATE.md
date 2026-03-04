@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T02:18:53.900Z"
+last_updated: "2026-03-04T04:02:25.350Z"
 progress:
   total_phases: 11
   completed_phases: 11
-  total_plans: 33
-  completed_plans: 33
+  total_plans: 34
+  completed_plans: 34
 ---
 
 ---
@@ -36,9 +36,9 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 11 of 11 (Player Polish) — COMPLETE
-Plan: 2 of 2 complete
-Status: All plans complete. Phase 11 done. All 11 phases finished.
-Last activity: 2026-03-03 - Phase 11 Plan 02 executed. Theme application with ephemeral toggle implemented.
+Plan: 3 of 3 complete
+Status: All plans complete including gap closure. Phase 11 done. All 11 phases finished.
+Last activity: 2026-03-03 - Phase 11 Plan 03 executed. UAT gap closure: elapsed time and theme race condition fixed.
 
 Progress: [██████████████████████████████████████████████████] 34/34 plans (100%)
 
@@ -74,6 +74,7 @@ Progress: [███████████████████████
 | Phase 10 P02 | 9min | 2 tasks | 5 files |
 | Phase 10 P01 | 10min | 2 tasks | 5 files |
 | Phase 11 P02 | 3min | 2 tasks | 5 files |
+| Phase 11 P03 | 3min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -196,6 +197,8 @@ Recent decisions affecting current work:
 - [Phase 11]: usePlayerTheme as separate hook for clean separation from global useTheme
 - [Phase 11]: System theme defers to Player when presentation is loaded (appStore updated, data-theme skipped)
 - [Phase 11]: Theme toggle ephemeral by design: resets on loadPresentation and reset
+- [Phase 11]: Within-step elapsed (user->assistant) instead of cross-step for accurate Claude response time
+- [Phase 11]: Split-effect pattern with isMountedRef cancellation guard for StrictMode-safe theme handling
 
 ### Pending Todos
 
@@ -231,5 +234,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 11-02-PLAN.md (Theme Application). All 11 phases complete.
+Stopped at: Completed 11-03-PLAN.md (Gap Closure). All 3 UAT failures resolved.
 Resume file: N/A - all plans executed
