@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { FolderOpen } from 'lucide-react'
 import { useSessionStore } from '../stores/sessionStore'
 import { useNavigationStore } from '../stores/navigationStore'
 import { usePlaybackStore } from '../stores/playbackStore'
@@ -8,6 +9,43 @@ import { StepView } from '../components/player/StepView'
 import { NavigationControls } from '../components/player/NavigationControls'
 import { ProgressIndicator } from '../components/player/ProgressIndicator'
 import { PlaybackPlayer } from '../components/player/PlaybackPlayer'
+
+// ---------------------------------------------------------------------------
+// Open File button styles (module-level constants)
+// ---------------------------------------------------------------------------
+
+const openFileButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'var(--space-2)',
+  padding: 'var(--space-2) var(--space-4)',
+  backgroundColor: 'var(--color-accent)',
+  color: 'white',
+  border: 'none',
+  borderRadius: 'var(--radius-md)',
+  fontSize: 'var(--text-sm)',
+  fontWeight: 600,
+  cursor: 'pointer',
+  marginTop: 'var(--space-4)',
+}
+
+const openFileMiniButtonStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: 'var(--space-3)',
+  right: 'var(--space-3)',
+  zIndex: 15,
+  background: 'var(--color-bg-elevated)',
+  border: '1px solid var(--color-border)',
+  borderRadius: 'var(--radius-md)',
+  padding: 6,
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'var(--color-text-muted)',
+  opacity: 0.5,
+  transition: 'opacity 200ms ease',
+}
 
 /**
  * Player route: dispatches between single-session and multi-session modes.
@@ -44,12 +82,38 @@ export function Player(): React.JSX.Element {
     })
   }, [presentation, activeSession, loadPresentation])
 
-  // Dispatch: multi-session playback vs single-session preview
-  if (presentation) {
-    return <PlaybackPlayer />
+  // Open a different .promptplay file via the system dialog
+  const handleOpenFile = async (): Promise<void> => {
+    const result = await window.electronAPI.importPresentation()
+    if (result) {
+      loadPresentation(result.presentation, result.sessions)
+    }
   }
 
-  return <SingleSessionPlayer />
+  // Dispatch: multi-session playback vs single-session preview
+  if (presentation) {
+    return (
+      <div style={{ position: 'relative', height: '100%' }}>
+        <PlaybackPlayer />
+        {/* Open different file button - top right, subtle */}
+        <button
+          onClick={handleOpenFile}
+          title="Open a different presentation"
+          style={openFileMiniButtonStyle}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = '1'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = '0.5'
+          }}
+        >
+          <FolderOpen size={16} />
+        </button>
+      </div>
+    )
+  }
+
+  return <SingleSessionPlayer handleOpenFile={handleOpenFile} />
 }
 
 // ---------------------------------------------------------------------------
@@ -60,7 +124,7 @@ export function Player(): React.JSX.Element {
  * Original single-session slideshow player, extracted as a component so that
  * its hooks are not called conditionally after the presentation dispatch check.
  */
-function SingleSessionPlayer(): React.JSX.Element {
+function SingleSessionPlayer({ handleOpenFile }: { handleOpenFile: () => Promise<void> }): React.JSX.Element {
   const activeSession = useSessionStore((s) => s.activeSession)
 
   const steps = useNavigationStore((s) => s.steps)
@@ -138,6 +202,10 @@ function SingleSessionPlayer(): React.JSX.Element {
           Select a session in Builder mode to preview it here, or choose a saved
           presentation from the Home screen.
         </p>
+        <button onClick={handleOpenFile} style={openFileButtonStyle}>
+          <FolderOpen size={16} />
+          Open Presentation
+        </button>
       </div>
     )
   }

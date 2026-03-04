@@ -1,7 +1,11 @@
 import React from 'react'
 import { useAppStore } from '../../stores/appStore'
 
-export function RecentFiles(): React.JSX.Element {
+interface RecentFilesProps {
+  onOpenFile?: (filePath: string) => void
+}
+
+export function RecentFiles({ onOpenFile }: RecentFilesProps): React.JSX.Element {
   const recentFiles = useAppStore((state) => state.recentFiles)
 
   if (recentFiles.length === 0) {
@@ -37,6 +41,7 @@ export function RecentFiles(): React.JSX.Element {
         <div
           key={file.path}
           className="flex items-center justify-between"
+          onClick={() => onOpenFile?.(file.path)}
           style={{
             padding: 'var(--space-2) var(--space-3)',
             borderRadius: 'var(--radius-md)',

@@ -1,9 +1,24 @@
 import React from 'react'
+import { useNavigate } from 'react-router'
 import { Wrench, Play } from 'lucide-react'
 import { ModeCard } from '../components/home/ModeCard'
 import { RecentFiles } from '../components/home/RecentFiles'
+import { usePlaybackStore } from '../stores/playbackStore'
 
 export function Home(): React.JSX.Element {
+  const navigate = useNavigate()
+  const loadPresentation = usePlaybackStore((s) => s.loadPresentation)
+
+  const handleRecentFileOpen = async (filePath: string): Promise<void> => {
+    try {
+      const data = await window.electronAPI.readPromptPlayFile(filePath)
+      loadPresentation(data.presentation, data.sessions)
+      navigate('/player')
+    } catch (err) {
+      console.error('Failed to open recent file:', err)
+    }
+  }
+
   return (
     <div
       className="flex flex-col items-center"
@@ -41,7 +56,7 @@ export function Home(): React.JSX.Element {
 
       {/* Recent files */}
       <div style={{ width: '100%', maxWidth: 700 }}>
-        <RecentFiles />
+        <RecentFiles onOpenFile={handleRecentFileOpen} />
       </div>
     </div>
   )
