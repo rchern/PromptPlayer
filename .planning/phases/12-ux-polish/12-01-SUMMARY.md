@@ -72,7 +72,7 @@ Each task was committed atomically:
 1. **Task 1: Rename date filter presets from calendar-based to relative** - `aea941d` (feat)
 2. **Task 2: Add close button on presentation tabs and fix live preview reactivity** - `50f57df` (feat)
 
-**Plan metadata:** [pending] (docs: complete plan)
+**Plan metadata:** `bfd9fde` (docs: complete plan)
 
 ## Files Created/Modified
 - `src/renderer/src/utils/sessionFiltering.ts` - DatePreset type updated, rolling-window date logic for last-7-days/last-30-days/older
