@@ -4,7 +4,6 @@ import { usePlaybackStore } from '../../stores/playbackStore'
 import { usePlaybackKeyboardNavigation } from '../../hooks/usePlaybackKeyboardNavigation'
 import { PresentationOverview } from './PresentationOverview'
 import { SeparatorCard } from './SeparatorCard'
-import { ElapsedTimeMarker } from './ElapsedTimeMarker'
 import { StepView } from './StepView'
 import { NavigationControls } from './NavigationControls'
 import { SectionSidebar } from './SectionSidebar'
@@ -171,19 +170,14 @@ export function PlaybackPlayer(): React.JSX.Element {
           )}
 
           {currentStep.type === 'navigation' && (
-            <>
-              {showTimestamps &&
-                currentStep.elapsedMs !== null &&
-                currentStep.elapsedMs >= 0 && (
-                  <ElapsedTimeMarker elapsedMs={currentStep.elapsedMs} />
-                )}
-              <StepView
-                step={currentStep.step}
-                expandedState={expanded}
-                onToggleExpand={(role) => toggleExpand(currentStepIndex, role)}
-                toolUseMap={toolUseMap}
-              />
-            </>
+            <StepView
+              step={currentStep.step}
+              expandedState={expanded}
+              onToggleExpand={(role) => toggleExpand(currentStepIndex, role)}
+              toolUseMap={toolUseMap}
+              elapsedMs={currentStep.elapsedMs}
+              showTimestamps={showTimestamps}
+            />
           )}
         </div>
 

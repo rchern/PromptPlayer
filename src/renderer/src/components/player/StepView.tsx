@@ -1,6 +1,7 @@
 import React from 'react'
 import type { NavigationStep } from '../../types/pipeline'
 import { CollapsibleContent } from './CollapsibleContent'
+import { ElapsedTimeMarker } from './ElapsedTimeMarker'
 import { MessageBubble } from '../message/MessageBubble'
 
 interface StepViewProps {
@@ -8,6 +9,8 @@ interface StepViewProps {
   expandedState: { user: boolean; assistant: boolean }
   onToggleExpand: (role: 'user' | 'assistant') => void
   toolUseMap: Map<string, { name: string; input: Record<string, unknown> }>
+  elapsedMs?: number | null
+  showTimestamps?: boolean
 }
 
 /**
@@ -25,7 +28,9 @@ export function StepView({
   step,
   expandedState,
   onToggleExpand,
-  toolUseMap
+  toolUseMap,
+  elapsedMs,
+  showTimestamps
 }: StepViewProps): React.JSX.Element {
   return (
     <div
@@ -52,6 +57,11 @@ export function StepView({
             toolUseMap={toolUseMap}
           />
         </CollapsibleContent>
+      )}
+
+      {/* Elapsed time marker between user and assistant messages */}
+      {step.userMessage && showTimestamps && elapsedMs != null && elapsedMs >= 0 && (
+        <ElapsedTimeMarker elapsedMs={elapsedMs} />
       )}
 
       {/* Assistant message section */}
