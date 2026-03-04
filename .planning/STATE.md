@@ -2,39 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-last_updated: "2026-03-04T04:09:02.902Z"
-progress:
-  total_phases: 11
-  completed_phases: 11
-  total_plans: 34
-  completed_plans: 34
----
-
----
-gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: unknown
-last_updated: "2026-03-04T04:02:25.350Z"
-progress:
-  total_phases: 11
-  completed_phases: 11
-  total_plans: 34
-  completed_plans: 34
----
-
----
-gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
 status: complete
-last_updated: "2026-03-04T02:14:33.296Z"
+last_updated: "2026-03-04T05:32:29.000Z"
 progress:
   total_phases: 11
   completed_phases: 11
-  total_plans: 34
-  completed_plans: 34
+  total_plans: 35
+  completed_plans: 35
 ---
 
 # Project State
@@ -49,11 +23,11 @@ See: .planning/PROJECT.md (updated 2026-02-20)
 ## Current Position
 
 Phase: 11 of 11 (Player Polish) — COMPLETE
-Plan: 3 of 3 complete
-Status: All plans complete including gap closure. Phase 11 done. All 11 phases finished.
-Last activity: 2026-03-03 - Phase 11 Plan 03 executed. UAT gap closure: elapsed time and theme race condition fixed.
+Plan: 4 of 4 complete
+Status: All plans complete including gap closure plan 04. Phase 11 done. All 11 phases finished.
+Last activity: 2026-03-03 - Phase 11 Plan 04 executed. Elapsed marker repositioned between user and assistant messages.
 
-Progress: [██████████████████████████████████████████████████] 34/34 plans (100%)
+Progress: [██████████████████████████████████████████████████] 35/35 plans (100%)
 
 ## Performance Metrics
 
@@ -88,6 +62,7 @@ Progress: [███████████████████████
 | Phase 10 P01 | 10min | 2 tasks | 5 files |
 | Phase 11 P02 | 3min | 2 tasks | 5 files |
 | Phase 11 P03 | 3min | 2 tasks | 2 files |
+| Phase 11 P04 | 1min | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -212,6 +187,8 @@ Recent decisions affecting current work:
 - [Phase 11]: Theme toggle ephemeral by design: resets on loadPresentation and reset
 - [Phase 11]: Within-step elapsed (user->assistant) instead of cross-step for accurate Claude response time
 - [Phase 11]: Split-effect pattern with isMountedRef cancellation guard for StrictMode-safe theme handling
+- [Phase 11]: ElapsedTimeMarker rendered inside StepView between user and assistant messages (not above entire step)
+- [Phase 11]: Marker only shows when user message exists (solo assistant steps skip it -- no user-to-Claude gap)
 
 ### Pending Todos
 
@@ -247,5 +224,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed 11-03-PLAN.md (Gap Closure). All 3 UAT failures resolved.
+Stopped at: Completed 11-04-PLAN.md (Gap Closure). Elapsed marker repositioned between user and assistant messages.
 Resume file: N/A - all plans executed
