@@ -187,9 +187,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 10-01-PLAN.md -- electron-builder config, dependencies, build scripts, placeholder icon
-- [ ] 10-02-PLAN.md -- Single-instance lock, .promptplay file opening (SHELL-03), auto-updater
-- [ ] 10-03-PLAN.md -- GitHub Actions CI/CD workflows, packaged app verification checkpoint
+- [x] 10-01-PLAN.md -- electron-builder config, dependencies, build scripts, placeholder icon
+- [x] 10-02-PLAN.md -- Single-instance lock, .promptplay file opening (SHELL-03), auto-updater
+- [x] 10-03-PLAN.md -- GitHub Actions CI/CD workflows, packaged app verification checkpoint
 
 ### Phase 11: Player Polish
 **Goal**: Player delivers a fully polished presentation experience with timestamps and themes
@@ -198,11 +198,11 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Timestamps display between steps when enabled, showing original time and/or elapsed time between messages
   2. Light and dark themes apply correctly based on the presentation's configured theme
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 11-01: Timestamp display (original time and elapsed time between steps)
-- [ ] 11-02: Theme engine (light and dark theme application from presentation config)
+- [ ] 11-01-PLAN.md -- Elapsed-time markers between steps, duration on separator cards, formatElapsed utility
+- [ ] 11-02-PLAN.md -- Theme application from presentation config with ephemeral sun/moon runtime toggle
 
 ## Progress
 
@@ -225,4 +225,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-01 -- Phase 10 planned (3 plans)*
+*Last updated: 2026-03-03 -- Phase 11 planned (2 plans)*
