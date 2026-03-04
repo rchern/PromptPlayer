@@ -197,6 +197,9 @@ interface PlaybackState {
   currentStepIndex: number
   expandedSteps: Record<number, { user: boolean; assistant: boolean }>
 
+  // Theme state
+  themeOverride: 'light' | 'dark' | null // null = use file default
+
   // Sidebar state
   sidebarOpen: boolean
   expandedSections: Set<string> // Section IDs expanded in sidebar tree
@@ -211,6 +214,7 @@ interface PlaybackState {
   jumpToSection: (sectionId: string) => void
   jumpToSession: (sessionId: string) => void
   toggleExpand: (stepIndex: number, role: 'user' | 'assistant') => void
+  toggleTheme: () => void
   toggleSidebar: () => void
   toggleSidebarSection: (sectionId: string) => void
   reset: () => void
@@ -223,6 +227,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
   steps: [],
   currentStepIndex: 0,
   expandedSteps: {},
+  themeOverride: null,
   sidebarOpen: false,
   expandedSections: new Set(),
 
@@ -241,6 +246,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
       steps,
       currentStepIndex: 0,
       expandedSteps: {},
+      themeOverride: null,
       sidebarOpen: false,
       expandedSections
     })
@@ -312,6 +318,22 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     })
   },
 
+  toggleTheme: (): void => {
+    const { presentation, themeOverride } = get()
+    if (!presentation) return
+    // Determine current effective theme
+    const settingsTheme = presentation.settings.theme
+    let current: 'light' | 'dark'
+    if (themeOverride) {
+      current = themeOverride
+    } else if (settingsTheme === 'system') {
+      current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
+    } else {
+      current = settingsTheme
+    }
+    set({ themeOverride: current === 'dark' ? 'light' : 'dark' })
+  },
+
   toggleSidebar: (): void => {
     set((s) => ({ sidebarOpen: !s.sidebarOpen }))
   },
@@ -334,6 +356,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
       steps: [],
       currentStepIndex: 0,
       expandedSteps: {},
+      themeOverride: null,
       sidebarOpen: false,
       expandedSections: new Set()
     })
