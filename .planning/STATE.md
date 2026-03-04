@@ -3,25 +3,25 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-04T05:39:05.783Z"
+last_updated: "2026-03-04T14:17:58.262Z"
 progress:
-  total_phases: 11
-  completed_phases: 11
-  total_plans: 35
-  completed_plans: 35
+  total_phases: 12
+  completed_phases: 12
+  total_plans: 40
+  completed_plans: 40
 ---
 
 ---
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: complete
-last_updated: "2026-03-04T05:32:29.000Z"
+status: in-progress
+last_updated: "2026-03-04T14:15:58.000Z"
 progress:
-  total_phases: 11
+  total_phases: 12
   completed_phases: 11
-  total_plans: 35
-  completed_plans: 35
+  total_plans: 40
+  completed_plans: 36
 ---
 
 # Project State
@@ -31,16 +31,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-20)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 11 - Player Polish
+**Current focus:** Phase 12 - UX Polish
 
 ## Current Position
 
-Phase: 11 of 11 (Player Polish) — COMPLETE
-Plan: 4 of 4 complete
-Status: All plans complete including gap closure plan 04. Phase 11 done. All 11 phases finished.
-Last activity: 2026-03-03 - Phase 11 Plan 04 executed. Elapsed marker repositioned between user and assistant messages.
+Phase: 12 of 12 (UX Polish)
+Plan: 3 of 5 complete
+Status: Plan 03 executed. Overflow detection, box/border rendering, and system message classification complete.
+Last activity: 2026-03-04 - Phase 12 Plan 03 executed. MutationObserver overflow fix, blockquote/hr styling, system message labeling.
 
-Progress: [██████████████████████████████████████████████████] 35/35 plans (100%)
+Progress: [████████████████████████████████████████████░░░░░░] 36/40 plans (90%)
 
 ## Performance Metrics
 
@@ -76,6 +76,9 @@ Progress: [███████████████████████
 | Phase 11 P02 | 3min | 2 tasks | 5 files |
 | Phase 11 P03 | 3min | 2 tasks | 2 files |
 | Phase 11 P04 | 1min | 1 tasks | 2 files |
+| Phase 12 P03 | 2min | 2 tasks | 4 files |
+| Phase 12 P05 | 3min | 2 tasks | 4 files |
+| Phase 12 P01 | 2min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -202,6 +205,15 @@ Recent decisions affecting current work:
 - [Phase 11]: Split-effect pattern with isMountedRef cancellation guard for StrictMode-safe theme handling
 - [Phase 11]: ElapsedTimeMarker rendered inside StepView between user and assistant messages (not above entire step)
 - [Phase 11]: Marker only shows when user message exists (solo assistant steps skip it -- no user-to-Claude gap)
+- [Phase 12]: MutationObserver pattern reused from CodeBlock.tsx for CollapsibleContent overflow remeasurement
+- [Phase 12]: Conservative system message detection: false negatives preferred over false positives
+- [Phase 12]: System messages get muted color and secondary background, not hidden entirely
+- [Phase 12]: Three-way role label: System/You/Claude with distinct colors per role
+- [Phase 12]: Auto-update banner uses fixed positioning at bottom-right with 30s auto-dismiss
+- [Phase 12]: RecentFiles uses optional onOpenFile prop for backward compatibility
+- [Phase 12]: Rolling-window date filters (7-day/30-day) instead of calendar-based for consistency regardless of weekday
+- [Phase 12]: Reactive Zustand selector replaces non-reactive getActivePresentation() getter for live preview invalidation
+- [Phase 12]: Close button deactivates presentation (sets active to null) rather than removing from store array
 
 ### Roadmap Evolution
 
@@ -210,9 +222,9 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - Player UX feedback (5 items) — see `.planning/todos/pending/player-ux-feedback.md`
-  - "Show more" button visible when nothing to expand
-  - Broken box/border rendering (CHECKPOINT, HR patterns)
-  - System-generated messages showing as "YOU"
+  - ~~"Show more" button visible when nothing to expand~~ FIXED (12-03): MutationObserver remeasurement
+  - ~~Broken box/border rendering (CHECKPOINT, HR patterns)~~ FIXED (12-03): blockquote, hr, table, pre CSS
+  - ~~System-generated messages showing as "YOU"~~ FIXED (12-03): isSystemMessage detection + System label
   - Consecutive solo Claude steps could be combined
   - Step sequencing needs design thought
 - Builder UX feedback (3 items) — see `.planning/todos/pending/builder-ux-feedback.md`
@@ -244,6 +256,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-03
-Stopped at: Completed 11-04-PLAN.md (Gap Closure). Elapsed marker repositioned between user and assistant messages.
-Resume file: N/A - all plans executed
+Last session: 2026-03-04
+Stopped at: Completed 12-03-PLAN.md (Player Rendering Fixes). MutationObserver overflow, blockquote/hr styling, system message labeling.
+Resume file: .planning/phases/12-ux-polish/12-04-PLAN.md
