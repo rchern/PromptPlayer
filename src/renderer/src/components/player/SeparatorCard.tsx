@@ -1,8 +1,10 @@
 import React from 'react'
 import type { PlaybackStep } from '../../types/playback'
+import { formatElapsed } from '../../utils/formatElapsed'
 
 interface SeparatorCardProps {
   step: Extract<PlaybackStep, { type: 'section-separator' | 'session-separator' }>
+  showTimestamps?: boolean
 }
 
 /**
@@ -17,7 +19,7 @@ interface SeparatorCardProps {
  * Both fill the full viewport height with flexbox centering and use
  * .presentation-mode for 20px base font (per 03-03 decision).
  */
-export function SeparatorCard({ step }: SeparatorCardProps): React.JSX.Element {
+export function SeparatorCard({ step, showTimestamps }: SeparatorCardProps): React.JSX.Element {
   if (step.type === 'section-separator') {
     return (
       <div
@@ -65,6 +67,7 @@ export function SeparatorCard({ step }: SeparatorCardProps): React.JSX.Element {
         >
           {step.sessionCount} {step.sessionCount === 1 ? 'session' : 'sessions'},{' '}
           {step.totalSteps} {step.totalSteps === 1 ? 'step' : 'steps'}
+          {showTimestamps && step.durationMs != null && `, ${formatElapsed(step.durationMs)}`}
         </div>
 
         {/* Bottom divider */}
@@ -129,6 +132,7 @@ export function SeparatorCard({ step }: SeparatorCardProps): React.JSX.Element {
       >
         {step.stepCount} {step.stepCount === 1 ? 'step' : 'steps'},{' '}
         {step.messageCount} {step.messageCount === 1 ? 'message' : 'messages'}
+        {showTimestamps && step.durationMs != null && `, ${formatElapsed(step.durationMs)}`}
       </div>
     </div>
   )
