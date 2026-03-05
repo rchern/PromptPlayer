@@ -23,7 +23,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 9: Specialized Tool Call Display** - AskUserQuestion and Task management tool call rendering (completed 2026-03-01)
 - [x] **Phase 10: Packaging and Release** - Windows installer, GitHub Actions CI/CD, .promptplay file association (completed 2026-03-03)
 - [x] **Phase 11: Player Polish** - Timestamps and theme application (completed 2026-03-04)
-- [ ] **Phase 12: UX Polish** - Accumulated UX feedback across Builder and Player (UAT gap closure in progress)
+- [x] **Phase 12: UX Polish** - Accumulated UX feedback across Builder and Player (UAT gap closure in progress) (completed 2026-03-05)
 
 ## Phase Details
 
@@ -244,7 +244,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 9. Specialized Tool Call Display | 2/2 | Complete | 2026-03-01 |
 | 10. Packaging and Release | 3/3 | Complete   | 2026-03-02 |
 | 11. Player Polish | 4/4 | Complete    | 2026-03-04 |
-| 12. UX Polish | 6/8 | In Progress|  |
+| 12. UX Polish | 8/8 | Complete   | 2026-03-05 |
 
 ---
 *Roadmap created: 2026-02-20*
