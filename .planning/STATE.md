@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-05T01:22:26.901Z"
+last_updated: "2026-03-05T01:25:07.722Z"
 progress:
   total_phases: 12
   completed_phases: 12
@@ -70,6 +70,7 @@ Progress: [███████████████████████
 | Phase 12 P02 | 2min | 2 tasks | 4 files |
 | Phase 12 P06 | 2min | 2 tasks | 4 files |
 | Phase 12 P08 | 3min | 2 tasks | 8 files |
+| Phase 12 P07 | 4min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -218,6 +219,8 @@ Recent decisions affecting current work:
 - [Phase 12]: Max 10 recent files, newest first, deduplicated by path
 - [Phase 12]: Light theme CSS rule [data-theme='light'] mirrors :root color variables for scoped override
 - [Phase 12]: ElapsedTimeMarker reused from Player for Builder preview timestamp rendering via MessageList showTimestamps prop
+- [Phase 12]: toolVisibilityMap takes precedence over showPlumbing when provided, preserving backward compatibility for Builder MessageList
+- [Phase 12]: MessageBubble returns null when all content blocks resolve to hidden, suppressing empty CLAUDE labels in combined filmstrip steps
 
 ### Roadmap Evolution
 
