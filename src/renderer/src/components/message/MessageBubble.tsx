@@ -5,6 +5,8 @@ import { cleanUserText, parseUserAnswer, parseToolRejection, isSystemMessage } f
 interface MessageBubbleProps {
   message: ParsedMessage
   showPlumbing: boolean
+  /** Per-tool visibility map from presentation settings (takes precedence over showPlumbing) */
+  toolVisibilityMap?: Map<string, boolean>
   toolUseMap?: Map<string, { name: string; input: Record<string, unknown> }>
   /** Follow-up messages (e.g. tool_result-only user messages with AskUserQuestion answers) */
   followUpMessages?: ParsedMessage[]
@@ -53,7 +55,7 @@ function normalizeContent(raw: unknown): string {
   return ''
 }
 
-export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessages }: MessageBubbleProps): React.JSX.Element {
+export function MessageBubble({ message, showPlumbing, toolVisibilityMap, toolUseMap, followUpMessages }: MessageBubbleProps): React.JSX.Element | null {
   const isUser = message.role === 'user'
 
   // Detect system-generated user messages (should not display as "You")
@@ -76,6 +78,33 @@ export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessa
       }
     }
   }
+
+  // Suppress rendering when all content blocks would resolve to null.
+  // This prevents empty "CLAUDE" labels in combined filmstrip steps.
+  const hasVisibleContent = message.contentBlocks.some((block) => {
+    if (block.type === 'text' && block.text.trim().length > 0) return true
+    if (block.type === 'thinking') return true
+    if (block.type === 'tool_use') {
+      if (message.toolVisibility === 'plumbing') {
+        if (toolVisibilityMap) return toolVisibilityMap.get(block.name) === true
+        return showPlumbing
+      }
+      return true
+    }
+    if (block.type === 'tool_result') {
+      if (message.toolVisibility === 'plumbing') {
+        if (toolVisibilityMap && toolUseMap) {
+          const info = toolUseMap.get(block.tool_use_id)
+          return info ? toolVisibilityMap.get(info.name) === true : showPlumbing
+        }
+        return showPlumbing
+      }
+      return true
+    }
+    return false
+  })
+
+  if (!hasVisibleContent) return null
 
   return (
     <div
@@ -187,6 +216,8 @@ export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessa
                 block={{ ...block, text: cleaned }}
                 toolVisibility={message.toolVisibility}
                 showPlumbing={showPlumbing}
+                toolVisibilityMap={toolVisibilityMap}
+                toolUseMap={toolUseMap}
                 plainText
               />
             )
@@ -203,6 +234,8 @@ export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessa
               block={block}
               toolVisibility={message.toolVisibility}
               showPlumbing={showPlumbing}
+              toolVisibilityMap={toolVisibilityMap}
+              toolUseMap={toolUseMap}
               answerText={blockAnswerText}
             />
           )
