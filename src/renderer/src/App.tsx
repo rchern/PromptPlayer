@@ -6,6 +6,7 @@ import { Builder } from './routes/Builder'
 import { Player } from './routes/Player'
 import { useTheme } from './hooks/useTheme'
 import { usePlaybackStore } from './stores/playbackStore'
+import { useAppStore } from './stores/appStore'
 
 // ---------------------------------------------------------------------------
 // Auto-update banner styles (module-level constants)
@@ -68,6 +69,7 @@ function RootLayout(): React.JSX.Element {
   useTheme()
   const navigate = useNavigate()
   const loadPresentation = usePlaybackStore((s) => s.loadPresentation)
+  const addRecentFile = useAppStore((s) => s.addRecentFile)
 
   // Auto-update notification state
   const [updateVersion, setUpdateVersion] = useState<string | null>(null)
@@ -81,13 +83,14 @@ function RootLayout(): React.JSX.Element {
       try {
         const data = await window.electronAPI.readPromptPlayFile(filePath)
         loadPresentation(data.presentation, data.sessions)
+        addRecentFile(filePath)
         navigate('/player')
       } catch (err) {
         console.error('Failed to open .promptplay file:', err)
       }
     })
     return cleanup
-  }, [navigate, loadPresentation])
+  }, [navigate, loadPresentation, addRecentFile])
 
   // Listen for auto-update ready events from main process.
   // Shows a banner when an update is downloaded. Auto-dismisses after 30s.

@@ -3,6 +3,7 @@ import { FolderOpen } from 'lucide-react'
 import { useSessionStore } from '../stores/sessionStore'
 import { useNavigationStore } from '../stores/navigationStore'
 import { usePlaybackStore } from '../stores/playbackStore'
+import { useAppStore } from '../stores/appStore'
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation'
 import { buildToolUseMap } from '../utils/messageFiltering'
 import { StepView } from '../components/player/StepView'
@@ -68,6 +69,7 @@ export function Player(): React.JSX.Element {
   const presentation = usePlaybackStore((s) => s.presentation)
   const loadPresentation = usePlaybackStore((s) => s.loadPresentation)
   const activeSession = useSessionStore((s) => s.activeSession)
+  const addRecentFile = useAppStore((s) => s.addRecentFile)
 
   // Temporary dev import trigger: when player mounts with no session and no
   // presentation, prompt the user to open a .promptplay file for testing.
@@ -78,15 +80,21 @@ export function Player(): React.JSX.Element {
     window.electronAPI.importPresentation().then((result) => {
       if (result) {
         loadPresentation(result.presentation, result.sessions)
+        if (result.filePath) {
+          addRecentFile(result.filePath)
+        }
       }
     })
-  }, [presentation, activeSession, loadPresentation])
+  }, [presentation, activeSession, loadPresentation, addRecentFile])
 
   // Open a different .promptplay file via the system dialog
   const handleOpenFile = async (): Promise<void> => {
     const result = await window.electronAPI.importPresentation()
     if (result) {
       loadPresentation(result.presentation, result.sessions)
+      if (result.filePath) {
+        addRecentFile(result.filePath)
+      }
     }
   }
 
