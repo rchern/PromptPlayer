@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 12-ux-polish
 source: 12-09-SUMMARY.md, 12-10-SUMMARY.md
 started: 2026-03-05T03:15:00Z
@@ -43,7 +43,10 @@ skipped: 0
   reason: "User reported: Progress bar still overlaps content — text and bullet points render behind the segmented progress indicator at the bottom of the viewport"
   severity: minor
   test: 3
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "paddingBottom: var(--space-12) (48px) is too tight — progress bar text row + bar + bottom offset consumes ~42-48px depending on theme toggle, leaving zero-to-minimal clearance"
+  artifacts:
+    - path: "src/renderer/src/components/player/PlaybackPlayer.tsx"
+      issue: "paddingBottom: var(--space-12) insufficient clearance for SegmentedProgress overlay"
+  missing:
+    - "Increase paddingBottom to var(--space-16) (4rem = 64px) or larger for comfortable clearance"
   debug_session: ""
