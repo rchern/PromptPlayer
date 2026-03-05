@@ -168,6 +168,7 @@ export function PlaybackPlayer(): React.JSX.Element {
           style={{
             height: '100%',
             overflowY: 'auto',
+            paddingBottom: 'var(--space-12)',
             opacity: visible ? 1 : 0,
             transition: 'opacity 75ms ease-in-out'
           }}
