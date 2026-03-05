@@ -244,7 +244,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 9. Specialized Tool Call Display | 2/2 | Complete | 2026-03-01 |
 | 10. Packaging and Release | 3/3 | Complete   | 2026-03-02 |
 | 11. Player Polish | 4/4 | Complete    | 2026-03-04 |
-| 12. UX Polish | 5/8 | Gap closure  | - |
+| 12. UX Polish | 6/8 | In Progress|  |
 
 ---
 *Roadmap created: 2026-02-20*
