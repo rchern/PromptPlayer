@@ -481,6 +481,7 @@ export function Builder(): React.JSX.Element {
             {activeSession && !isParsing && (
               <div
                 className="flex flex-col"
+                data-theme={resolvedTheme}
                 style={{
                   flex: 1,
                   minHeight: '200px',
@@ -532,9 +533,7 @@ export function Builder(): React.JSX.Element {
                     Close
                   </button>
                 </div>
-                {/* Scoped theme wrapper: data-theme only affects this preview area */}
                 <div
-                  data-theme={resolvedTheme}
                   style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}
                 >
                   <MessageList messages={filteredMessages} showTimestamps={activePresentation?.settings?.showTimestamps} />
