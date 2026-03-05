@@ -168,7 +168,6 @@ export function PlaybackPlayer(): React.JSX.Element {
           style={{
             height: '100%',
             overflowY: 'auto',
-            paddingBottom: 'var(--space-16)',
             opacity: visible ? 1 : 0,
             transition: 'opacity 75ms ease-in-out'
           }}
@@ -196,6 +195,9 @@ export function PlaybackPlayer(): React.JSX.Element {
               showTimestamps={showTimestamps}
             />
           )}
+
+          {/* Spacer to clear the absolute-positioned progress bar */}
+          <div style={{ height: 'var(--space-16)', flexShrink: 0 }} />
         </div>
 
         {/* Navigation arrow buttons on viewport edges */}
