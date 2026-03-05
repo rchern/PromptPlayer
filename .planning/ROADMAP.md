@@ -239,6 +239,11 @@ Plans:
   2. VERIFICATION.md exists for Phase 4 covering PLAY-02, PLAY-03, PLAY-11
   3. All 8 requirement checkboxes in REQUIREMENTS.md are checked (`[x]`)
   4. Re-audit shows 38/38 requirements satisfied
+**Plans**: 2 plans
+
+Plans:
+- [ ] 13-01-PLAN.md -- Create Phase 3 VERIFICATION.md with code-level evidence for PLAY-04, PLAY-05, PLAY-06, PLAY-09, PLAY-15
+- [ ] 13-02-PLAN.md -- Create Phase 4 VERIFICATION.md with code-level evidence for PLAY-02, PLAY-03, PLAY-11; update REQUIREMENTS.md checkboxes and traceability (38/38)
 
 ## Progress
 
@@ -259,7 +264,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 10. Packaging and Release | 3/3 | Complete   | 2026-03-02 |
 | 11. Player Polish | 4/4 | Complete    | 2026-03-04 |
 | 12. UX Polish | 10/10 | Complete    | 2026-03-05 |
-| 13. Verification Gap Closure | 0/0 | Pending | - |
+| 13. Verification Gap Closure | 0/2 | Pending | - |
 
 ---
 *Roadmap created: 2026-02-20*
