@@ -23,7 +23,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 9: Specialized Tool Call Display** - AskUserQuestion and Task management tool call rendering (completed 2026-03-01)
 - [x] **Phase 10: Packaging and Release** - Windows installer, GitHub Actions CI/CD, .promptplay file association (completed 2026-03-03)
 - [x] **Phase 11: Player Polish** - Timestamps and theme application (completed 2026-03-04)
-- [x] **Phase 12: UX Polish** - Accumulated UX feedback across Builder and Player (completed 2026-03-04)
+- [ ] **Phase 12: UX Polish** - Accumulated UX feedback across Builder and Player (UAT gap closure in progress)
 
 ## Phase Details
 
@@ -207,6 +207,25 @@ Plans:
 - [x] 11-03-PLAN.md -- Gap closure: fix elapsed time semantics (within-step) and theme race condition (async cleanup)
 - [ ] 11-04-PLAN.md -- Gap closure: reposition elapsed marker between user and assistant messages
 
+### Phase 12: UX Polish
+**Goal**: Address accumulated UX feedback across Builder and Player — close presentations, live preview reactivity, date filter presets, checkbox placement, split section, assistant-only timestamps, show more overflow, box border rendering, system message classification, step combining, open file action, auto-update notification UI
+**Depends on**: Phase 11
+**Requirements**: UX-POLISH-01, UX-POLISH-02, UX-POLISH-03, UX-POLISH-04, UX-POLISH-05
+**Success Criteria** (what must be TRUE):
+  1. Builder and Player UX issues from todo backlog are resolved
+  2. Auto-update notification appears in renderer when update is ready
+**Plans**: 8 plans
+
+Plans:
+- [x] 12-01-PLAN.md -- Builder polish: date filter presets, close presentations, live preview reactivity
+- [x] 12-02-PLAN.md -- Builder assembly outline: checkbox positioning, split-to-new-section
+- [x] 12-03-PLAN.md -- Player rendering fixes: show-more overflow, box/border rendering, system message classification
+- [x] 12-04-PLAN.md -- Player step combining and elapsed time for solo/combined assistant steps
+- [x] 12-05-PLAN.md -- App-level polish: auto-update notification UI, open file in Player, clickable recent files
+- [ ] 12-06-PLAN.md -- Gap closure: fix close button flicker and live preview theme/timestamp reactivity
+- [ ] 12-07-PLAN.md -- Gap closure: fix blank combined assistant steps (per-tool visibility in Player renderer)
+- [ ] 12-08-PLAN.md -- Gap closure: implement recent files persistence and tracking at file-open callsites
+
 ## Progress
 
 **Execution Order:**
@@ -225,24 +244,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 9. Specialized Tool Call Display | 2/2 | Complete | 2026-03-01 |
 | 10. Packaging and Release | 3/3 | Complete   | 2026-03-02 |
 | 11. Player Polish | 4/4 | Complete    | 2026-03-04 |
-| 12. UX Polish | 5/5 | Complete    | 2026-03-04 |
-
-### Phase 12: UX Polish
-**Goal**: Address accumulated UX feedback across Builder and Player — close presentations, live preview reactivity, date filter presets, checkbox placement, split section, assistant-only timestamps, show more overflow, box border rendering, system message classification, step combining, open file action, auto-update notification UI
-**Depends on**: Phase 11
-**Requirements**: UX-POLISH-01, UX-POLISH-02, UX-POLISH-03, UX-POLISH-04, UX-POLISH-05
-**Success Criteria** (what must be TRUE):
-  1. Builder and Player UX issues from todo backlog are resolved
-  2. Auto-update notification appears in renderer when update is ready
-**Plans**: 5 plans
-
-Plans:
-- [ ] 12-01-PLAN.md -- Builder polish: date filter presets, close presentations, live preview reactivity
-- [ ] 12-02-PLAN.md -- Builder assembly outline: checkbox positioning, split-to-new-section
-- [ ] 12-03-PLAN.md -- Player rendering fixes: show-more overflow, box/border rendering, system message classification
-- [ ] 12-04-PLAN.md -- Player step combining and elapsed time for solo/combined assistant steps
-- [ ] 12-05-PLAN.md -- App-level polish: auto-update notification UI, open file in Player, clickable recent files
+| 12. UX Polish | 5/8 | Gap closure  | - |
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-04 -- Phase 12 planned: 5 plans in 1 wave (all parallel)*
+*Last updated: 2026-03-04 -- Phase 12 gap closure: 3 plans added for UAT failures (close button, live preview, combined steps, recent files)*
