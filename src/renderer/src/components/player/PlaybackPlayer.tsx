@@ -127,7 +127,7 @@ export function PlaybackPlayer(): React.JSX.Element {
       <div
         ref={contentRef}
         tabIndex={-1}
-        style={{ flex: 1, position: 'relative', overflow: 'hidden', outline: 'none' }}
+        style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', outline: 'none' }}
       >
         {/* Sidebar toggle button (visible when sidebar is closed) */}
         {!sidebarOpen && (
@@ -166,7 +166,8 @@ export function PlaybackPlayer(): React.JSX.Element {
         <div
           ref={containerRef}
           style={{
-            height: '100%',
+            flex: 1,
+            minHeight: 0,
             overflowY: 'auto',
             opacity: visible ? 1 : 0,
             transition: 'opacity 75ms ease-in-out'
@@ -195,9 +196,6 @@ export function PlaybackPlayer(): React.JSX.Element {
               showTimestamps={showTimestamps}
             />
           )}
-
-          {/* Spacer to clear the absolute-positioned progress bar */}
-          <div style={{ height: 'var(--space-16)', flexShrink: 0 }} />
         </div>
 
         {/* Navigation arrow buttons on viewport edges */}

@@ -4,13 +4,8 @@ import { usePlaybackStore } from '../../stores/playbackStore'
 import { computeSectionProgress } from '../../stores/playbackStore'
 
 const containerStyle: React.CSSProperties = {
-  position: 'absolute',
-  bottom: 'var(--space-3)',
-  left: 'var(--space-4)',
-  right: 'var(--space-4)',
-  zIndex: 10,
-  userSelect: 'none',
-  pointerEvents: 'none'
+  padding: 'var(--space-2) var(--space-4) var(--space-3)',
+  userSelect: 'none'
 }
 
 const textRowStyle: React.CSSProperties = {
@@ -37,8 +32,7 @@ const themeToggleStyle: React.CSSProperties = {
   justifyContent: 'center',
   color: 'var(--color-text-muted)',
   opacity: 0.6,
-  transition: 'opacity 150ms ease',
-  pointerEvents: 'auto'
+  transition: 'opacity 150ms ease'
 }
 
 const barContainerStyle: React.CSSProperties = {
