@@ -10,6 +10,8 @@ interface StepViewProps {
   expandedState: { user: boolean; assistant: boolean }
   onToggleExpand: (role: 'user' | 'assistant') => void
   toolUseMap: Map<string, { name: string; input: Record<string, unknown> }>
+  /** Per-tool visibility map from presentation settings for granular tool rendering */
+  toolVisibilityMap?: Map<string, boolean>
   elapsedMs?: number | null
   showTimestamps?: boolean
 }
@@ -30,6 +32,7 @@ export function StepView({
   expandedState,
   onToggleExpand,
   toolUseMap,
+  toolVisibilityMap,
   elapsedMs,
   showTimestamps
 }: StepViewProps): React.JSX.Element {
@@ -55,6 +58,7 @@ export function StepView({
           <MessageBubble
             message={step.userMessage}
             showPlumbing={false}
+            toolVisibilityMap={toolVisibilityMap}
             toolUseMap={toolUseMap}
           />
         </CollapsibleContent>
@@ -79,6 +83,7 @@ export function StepView({
           <MessageBubble
             message={step.assistantMessage}
             showPlumbing={false}
+            toolVisibilityMap={toolVisibilityMap}
             toolUseMap={toolUseMap}
             followUpMessages={step.followUpMessages}
           />
@@ -106,6 +111,7 @@ export function StepView({
                 <MessageBubble
                   message={msg}
                   showPlumbing={false}
+                  toolVisibilityMap={toolVisibilityMap}
                   toolUseMap={toolUseMap}
                   followUpMessages={idx === 0 ? step.followUpMessages : []}
                 />
@@ -133,6 +139,7 @@ export function StepView({
               key={`followup-${idx}`}
               message={msg}
               showPlumbing={false}
+              toolVisibilityMap={toolVisibilityMap}
               toolUseMap={toolUseMap}
             />
           ))}

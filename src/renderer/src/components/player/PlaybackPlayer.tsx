@@ -63,6 +63,21 @@ export function PlaybackPlayer(): React.JSX.Element {
     return undefined
   }, [currentStepIndex])
 
+  // Build per-tool visibility map from presentation settings
+  // This allows ContentBlockRenderer to show/hide individual plumbing tools
+  // based on the presentation's tool visibility configuration
+  const toolVisibilityMap = useMemo(() => {
+    if (!presentation?.settings?.toolVisibility) return undefined
+    const map = new Map<string, boolean>()
+    for (const category of presentation.settings.toolVisibility) {
+      for (const tool of category.tools) {
+        const override = category.toolOverrides[tool]
+        map.set(tool, override ?? category.visible)
+      }
+    }
+    return map
+  }, [presentation?.settings?.toolVisibility])
+
   // Build tool use map spanning ALL sessions for rejection display
   const toolUseMap = useMemo(() => {
     const map = new Map<string, { name: string; input: Record<string, unknown> }>()
@@ -175,6 +190,7 @@ export function PlaybackPlayer(): React.JSX.Element {
               expandedState={expanded}
               onToggleExpand={(role) => toggleExpand(currentStepIndex, role)}
               toolUseMap={toolUseMap}
+              toolVisibilityMap={toolVisibilityMap}
               elapsedMs={currentStep.elapsedMs}
               showTimestamps={showTimestamps}
             />
