@@ -121,20 +121,20 @@
 | BLDR-11 | Phase 7 | Complete |
 | BLDR-12 | Phase 7 | Complete |
 | PLAY-01 | Phase 8 | Complete |
-| PLAY-02 | Phase 4 | Complete |
-| PLAY-03 | Phase 4 | Complete |
-| PLAY-04 | Phase 3 | Complete |
-| PLAY-05 | Phase 3 | Complete |
-| PLAY-06 | Phase 3 | Complete |
+| PLAY-02 | Phase 13 (gap closure) | Pending |
+| PLAY-03 | Phase 13 (gap closure) | Pending |
+| PLAY-04 | Phase 13 (gap closure) | Pending |
+| PLAY-05 | Phase 13 (gap closure) | Pending |
+| PLAY-06 | Phase 13 (gap closure) | Pending |
 | PLAY-07 | Phase 9 | Complete |
 | PLAY-08 | Phase 9 | Complete |
-| PLAY-09 | Phase 3 | Complete |
+| PLAY-09 | Phase 13 (gap closure) | Pending |
 | PLAY-10 | Phase 8 | Complete |
-| PLAY-11 | Phase 4 | Complete |
+| PLAY-11 | Phase 13 (gap closure) | Pending |
 | PLAY-12 | Phase 8 | Complete |
 | PLAY-13 | Phase 11 | Complete |
 | PLAY-14 | Phase 11 | Complete |
-| PLAY-15 | Phase 3 | Complete |
+| PLAY-15 | Phase 13 (gap closure) | Pending |
 | SHELL-01 | Phase 1 | Complete |
 | SHELL-02 | Phase 1 | Complete |
 | SHELL-03 | Phase 10 (Packaging) | Complete |
@@ -144,7 +144,9 @@
 - v1 requirements: 38 total
 - Mapped to phases: 38
 - Unmapped: 0
+- Verified (checked): 30/38
+- Pending verification (Phase 13): 8
 
 ---
 *Requirements defined: 2026-02-20*
-*Last updated: 2026-02-24 -- Phase 6 complete*
+*Last updated: 2026-03-05 -- 8 requirements reassigned to Phase 13 (gap closure) per milestone audit*

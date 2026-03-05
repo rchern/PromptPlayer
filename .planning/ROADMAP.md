@@ -24,6 +24,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 10: Packaging and Release** - Windows installer, GitHub Actions CI/CD, .promptplay file association (completed 2026-03-03)
 - [x] **Phase 11: Player Polish** - Timestamps and theme application (completed 2026-03-04)
 - [x] **Phase 12: UX Polish** - Accumulated UX feedback across Builder and Player (UAT round 2 gap closure in progress) (completed 2026-03-05)
+- [ ] **Phase 13: Phase 3 & 4 Verification Gap Closure** - Create missing VERIFICATION.md files and update requirement checkboxes for orphaned Phase 3/4 requirements
 
 ## Phase Details
 
@@ -228,10 +229,21 @@ Plans:
 - [ ] 12-09-PLAN.md -- Gap closure: fix light theme text visibility and data-theme scope in Builder preview
 - [ ] 12-10-PLAN.md -- Gap closure: add paddingBottom to Player scrollable container for progress bar clearance
 
+### Phase 13: Phase 3 & 4 Verification Gap Closure
+**Goal:** Close 8 orphaned documentation/verification gaps from Phases 3 and 4 — features are implemented and wired, but missing VERIFICATION.md files and unchecked requirement boxes
+**Depends on:** Phase 12
+**Requirements:** PLAY-02, PLAY-03, PLAY-04, PLAY-05, PLAY-06, PLAY-09, PLAY-11, PLAY-15
+**Gap Closure:** Closes gaps from audit (v1.0-MILESTONE-AUDIT.md)
+**Success Criteria** (what must be TRUE):
+  1. VERIFICATION.md exists for Phase 3 covering PLAY-04, PLAY-05, PLAY-06, PLAY-09, PLAY-15
+  2. VERIFICATION.md exists for Phase 4 covering PLAY-02, PLAY-03, PLAY-11
+  3. All 8 requirement checkboxes in REQUIREMENTS.md are checked (`[x]`)
+  4. Re-audit shows 38/38 requirements satisfied
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12 -> 13
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -247,7 +259,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 10. Packaging and Release | 3/3 | Complete   | 2026-03-02 |
 | 11. Player Polish | 4/4 | Complete    | 2026-03-04 |
 | 12. UX Polish | 10/10 | Complete    | 2026-03-05 |
+| 13. Verification Gap Closure | 0/0 | Pending | - |
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-05 -- Phase 12 UAT round 2 gap closure: 2 plans added (light theme text fix, progress bar overlap)*
+*Last updated: 2026-03-05 -- Phase 13 added for verification gap closure (8 orphaned requirements from Phases 3 & 4)*
