@@ -109,7 +109,7 @@ export function PresentationList({
             {/* Close button (appears on hover) */}
             <span
               data-hover-btn
-              onMouseDown={(e) => handleClose(e, p.id, p.name)}
+              onClick={(e) => handleClose(e, p.id, p.name)}
               className="flex items-center justify-center"
               title="Close"
               style={{
@@ -134,7 +134,7 @@ export function PresentationList({
             {/* Delete button (appears on hover) */}
             <span
               data-hover-btn
-              onMouseDown={(e) => handleDelete(e, p.id, p.name)}
+              onClick={(e) => handleDelete(e, p.id, p.name)}
               className="flex items-center justify-center"
               title="Delete"
               style={{
