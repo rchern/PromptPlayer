@@ -537,7 +537,7 @@ export function Builder(): React.JSX.Element {
                   data-theme={resolvedTheme}
                   style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}
                 >
-                  <MessageList messages={filteredMessages} />
+                  <MessageList messages={filteredMessages} showTimestamps={activePresentation?.settings?.showTimestamps} />
                 </div>
               </div>
             )}
