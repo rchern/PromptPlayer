@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 12-ux-polish
 source: 12-06-SUMMARY.md, 12-07-SUMMARY.md, 12-08-SUMMARY.md
 started: 2026-03-05T02:00:00Z
@@ -55,16 +55,27 @@ skipped: 0
   reason: "User reported: (1) message text invisible — white/light text on light background, text doesn't flip to dark. (2) elapsed time markers and gaps between messages stay dark"
   severity: blocker
   test: 2
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "Two issues: (1) .message-view in message.css has no color declaration — text color inherits from body which resolves dark theme value, so white text on light background. (2) Outer preview container in Builder.tsx (flex flex-col div) sits outside the [data-theme='light'] wrapper — its backgroundColor resolves var(--color-bg-secondary) in dark context, bleeding dark behind separators and markers."
+  artifacts:
+    - path: "src/renderer/src/styles/message.css"
+      issue: ".message-view has no color declaration; inherits body dark theme color"
+    - path: "src/renderer/src/routes/Builder.tsx"
+      issue: "Outer preview container (flex flex-col) sits outside [data-theme='light'] scope; backgroundColor resolves dark"
+  missing:
+    - "Add color: var(--color-text-primary) to .message-view in message.css"
+    - "Move data-theme attribute up to the outer preview container OR add explicit background on the inner data-theme wrapper"
   debug_session: ""
 - truth: "Segmented progress bar does not overlap step content in the Player"
   status: failed
   reason: "User reported: progress bar area overlaps with step content — section separator text renders behind the progress indicator"
   severity: minor
   test: 0
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "SegmentedProgress is position:absolute with bottom offset, removed from document flow. The scrollable containerRef div in PlaybackPlayer.tsx has no paddingBottom to reserve space, so content scrolls underneath the progress bar."
+  artifacts:
+    - path: "src/renderer/src/components/player/PlaybackPlayer.tsx"
+      issue: "Scrollable container (lines 166-174) has no paddingBottom to clear the absolute-positioned progress bar"
+    - path: "src/renderer/src/components/player/SegmentedProgress.tsx"
+      issue: "position:absolute removes bar from flow — by design, but consumer must reserve space"
+  missing:
+    - "Add paddingBottom (~48px or var(--space-12)) to the scrollable containerRef div in PlaybackPlayer.tsx"
   debug_session: ""
