@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: resolved
 phase: 12-ux-polish
 source: 12-09-SUMMARY.md, 12-10-SUMMARY.md
 started: 2026-03-05T03:15:00Z
@@ -39,7 +39,7 @@ skipped: 0
 ## Gaps
 
 - truth: "Segmented progress bar does not overlap step content in the Player"
-  status: failed
+  status: resolved
   reason: "User reported: Progress bar still overlaps content — text and bullet points render behind the segmented progress indicator at the bottom of the viewport"
   severity: minor
   test: 3
