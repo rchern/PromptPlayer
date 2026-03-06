@@ -44,7 +44,19 @@ export function CollapsibleContent({
   useLayoutEffect(() => {
     measure()
     window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
+
+    // Re-measure after async DOM mutations (e.g., shiki syntax highlighting)
+    const el = contentRef.current
+    let observer: MutationObserver | undefined
+    if (el) {
+      observer = new MutationObserver(() => measure())
+      observer.observe(el, { childList: true, subtree: true, characterData: true })
+    }
+
+    return () => {
+      window.removeEventListener('resize', measure)
+      observer?.disconnect()
+    }
   }, [measure, children])
 
   const needsCollapse = overflows && !isExpanded

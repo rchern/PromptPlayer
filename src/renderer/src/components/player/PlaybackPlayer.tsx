@@ -8,6 +8,7 @@ import { StepView } from './StepView'
 import { NavigationControls } from './NavigationControls'
 import { SectionSidebar } from './SectionSidebar'
 import { SegmentedProgress } from './SegmentedProgress'
+import { usePlayerTheme } from '../../hooks/usePlayerTheme'
 
 /**
  * Multi-session playback wrapper component.
@@ -32,6 +33,9 @@ export function PlaybackPlayer(): React.JSX.Element {
   const prevStep = usePlaybackStore((s) => s.prevStep)
   const toggleExpand = usePlaybackStore((s) => s.toggleExpand)
   const toggleSidebar = usePlaybackStore((s) => s.toggleSidebar)
+
+  // Apply presentation theme with ephemeral toggle support
+  const { isDark } = usePlayerTheme()
 
   // Activate playback keyboard bindings (arrows, Home/End, S sidebar toggle)
   usePlaybackKeyboardNavigation()
@@ -59,6 +63,21 @@ export function PlaybackPlayer(): React.JSX.Element {
     return undefined
   }, [currentStepIndex])
 
+  // Build per-tool visibility map from presentation settings
+  // This allows ContentBlockRenderer to show/hide individual plumbing tools
+  // based on the presentation's tool visibility configuration
+  const toolVisibilityMap = useMemo(() => {
+    if (!presentation?.settings?.toolVisibility) return undefined
+    const map = new Map<string, boolean>()
+    for (const category of presentation.settings.toolVisibility) {
+      for (const tool of category.tools) {
+        const override = category.toolOverrides[tool]
+        map.set(tool, override ?? category.visible)
+      }
+    }
+    return map
+  }, [presentation?.settings?.toolVisibility])
+
   // Build tool use map spanning ALL sessions for rejection display
   const toolUseMap = useMemo(() => {
     const map = new Map<string, { name: string; input: Record<string, unknown> }>()
@@ -85,6 +104,7 @@ export function PlaybackPlayer(): React.JSX.Element {
 
   const currentStep = steps[currentStepIndex]
   const expanded = expandedSteps[currentStepIndex] ?? { user: false, assistant: false }
+  const showTimestamps = presentation.settings.showTimestamps
 
   return (
     <div style={{ display: 'flex', height: '100%' }}>
@@ -107,7 +127,7 @@ export function PlaybackPlayer(): React.JSX.Element {
       <div
         ref={contentRef}
         tabIndex={-1}
-        style={{ flex: 1, position: 'relative', overflow: 'hidden', outline: 'none' }}
+        style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden', outline: 'none' }}
       >
         {/* Sidebar toggle button (visible when sidebar is closed) */}
         {!sidebarOpen && (
@@ -146,7 +166,8 @@ export function PlaybackPlayer(): React.JSX.Element {
         <div
           ref={containerRef}
           style={{
-            height: '100%',
+            flex: 1,
+            minHeight: 0,
             overflowY: 'auto',
             opacity: visible ? 1 : 0,
             transition: 'opacity 75ms ease-in-out'
@@ -161,7 +182,7 @@ export function PlaybackPlayer(): React.JSX.Element {
 
           {(currentStep.type === 'section-separator' ||
             currentStep.type === 'session-separator') && (
-            <SeparatorCard step={currentStep} />
+            <SeparatorCard step={currentStep} showTimestamps={showTimestamps} />
           )}
 
           {currentStep.type === 'navigation' && (
@@ -170,6 +191,9 @@ export function PlaybackPlayer(): React.JSX.Element {
               expandedState={expanded}
               onToggleExpand={(role) => toggleExpand(currentStepIndex, role)}
               toolUseMap={toolUseMap}
+              toolVisibilityMap={toolVisibilityMap}
+              elapsedMs={currentStep.elapsedMs}
+              showTimestamps={showTimestamps}
             />
           )}
         </div>
@@ -182,8 +206,8 @@ export function PlaybackPlayer(): React.JSX.Element {
           onForward={nextStep}
         />
 
-        {/* Segmented section progress bar */}
-        <SegmentedProgress />
+        {/* Segmented section progress bar with theme toggle */}
+        <SegmentedProgress isDark={isDark} />
       </div>
     </div>
   )

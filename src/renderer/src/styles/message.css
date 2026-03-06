@@ -16,6 +16,7 @@
   margin: 0 auto;
   font-size: var(--text-preview-base);
   line-height: 1.6;
+  color: var(--color-text-primary);
   overflow-x: hidden;
 }
 
@@ -88,10 +89,12 @@
 
 /* Blockquotes */
 .message-view blockquote {
-  border-left: 3px solid var(--color-border);
-  padding-left: 1em;
+  border-left: 3px solid var(--color-accent);
+  padding: 0.75em 1em;
   color: var(--color-text-secondary);
   margin: 0.75em 0;
+  background: var(--color-bg-tertiary);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
 /* Tables */
@@ -146,4 +149,20 @@
   border: none;
   border-top: 1px solid var(--color-border);
   margin: 1.5em 0;
+}
+
+/* Collapse spacing when Claude outputs multiple consecutive separators */
+.message-view hr + hr {
+  margin-top: 0;
+}
+
+/* Table row hover for cleaner readability of CHECKPOINT/box patterns */
+.message-view tr:hover {
+  background: var(--color-bg-tertiary);
+}
+
+/* Pre blocks with box-drawing characters: ensure monospace alignment */
+.message-view pre {
+  line-height: 1.4;
+  font-family: var(--font-mono);
 }

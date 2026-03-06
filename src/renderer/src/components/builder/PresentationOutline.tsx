@@ -16,6 +16,7 @@ export function PresentationOutline({ onSessionClick }: PresentationOutlineProps
     renameSection,
     renameSessionRef,
     removeSession,
+    splitToNewSection,
     mergeSections
   } = usePresentationStore()
 
@@ -139,6 +140,7 @@ export function PresentationOutline({ onSessionClick }: PresentationOutlineProps
                 sectionId={section.id}
                 onRename={renameSessionRef}
                 onRemove={removeSession}
+                onSplit={splitToNewSection}
                 onClick={onSessionClick ? () => onSessionClick(ref.sessionId) : undefined}
               />
             ))}

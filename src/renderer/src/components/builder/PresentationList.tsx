@@ -1,5 +1,5 @@
 import React from 'react'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, X } from 'lucide-react'
 import { usePresentationStore } from '../../stores/presentationStore'
 
 interface PresentationListProps {
@@ -15,6 +15,19 @@ export function PresentationList({
     setActivePresentation,
     deletePresentation
   } = usePresentationStore()
+
+  const handleClose = (e: React.MouseEvent, id: string, name: string): void => {
+    e.stopPropagation()
+    const presentation = presentations.find((p) => p.id === id)
+    if (presentation && !presentation.sourceFilePath) {
+      if (!window.confirm(`"${name}" has not been saved. Close without saving?`)) {
+        return
+      }
+    }
+    if (activePresentationId === id) {
+      setActivePresentation(null)
+    }
+  }
 
   const handleDelete = (e: React.MouseEvent, id: string, name: string): void => {
     e.stopPropagation()
@@ -58,15 +71,17 @@ export function PresentationList({
               if (!isActive) {
                 e.currentTarget.style.borderColor = 'var(--color-accent)'
               }
-              const btn = e.currentTarget.querySelector<HTMLElement>('[data-delete-btn]')
-              if (btn) btn.style.opacity = '1'
+              e.currentTarget.querySelectorAll<HTMLElement>('[data-hover-btn]').forEach(
+                (btn) => { btn.style.opacity = '1' }
+              )
             }}
             onMouseLeave={(e) => {
               if (!isActive) {
                 e.currentTarget.style.borderColor = 'var(--color-border)'
               }
-              const btn = e.currentTarget.querySelector<HTMLElement>('[data-delete-btn]')
-              if (btn) btn.style.opacity = '0'
+              e.currentTarget.querySelectorAll<HTMLElement>('[data-hover-btn]').forEach(
+                (btn) => { btn.style.opacity = '0' }
+              )
             }}
           >
             <div className="flex flex-col" style={{ overflow: 'hidden', minWidth: 0 }}>
@@ -91,11 +106,37 @@ export function PresentationList({
               </span>
             </div>
 
+            {/* Close button (appears on hover) */}
+            <span
+              data-hover-btn
+              onClick={(e) => handleClose(e, p.id, p.name)}
+              className="flex items-center justify-center"
+              title="Close"
+              style={{
+                opacity: 0,
+                color: 'var(--color-text-muted)',
+                cursor: 'pointer',
+                padding: '2px',
+                borderRadius: 'var(--radius-sm)',
+                transition: 'opacity 150ms ease, color 150ms ease',
+                flexShrink: 0
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--color-text-primary)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--color-text-muted)'
+              }}
+            >
+              <X size={12} />
+            </span>
+
             {/* Delete button (appears on hover) */}
             <span
-              data-delete-btn
-              onMouseDown={(e) => handleDelete(e, p.id, p.name)}
+              data-hover-btn
+              onClick={(e) => handleDelete(e, p.id, p.name)}
               className="flex items-center justify-center"
+              title="Delete"
               style={{
                 opacity: 0,
                 color: 'var(--color-text-muted)',

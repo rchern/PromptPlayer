@@ -76,11 +76,16 @@ export function Builder(): React.JSX.Element {
     presentations,
     activePresentationId,
     addSessions,
-    getActivePresentation,
     importFromPromptPlay
   } = usePresentationStore()
 
   const isDarkMode = useAppStore((s) => s.isDarkMode)
+
+  // Reactive selector: re-renders when the active presentation object changes in the store
+  const activePresentation = usePresentationStore((s) => {
+    if (!s.activePresentationId) return null
+    return s.presentations.find((p) => p.id === s.activePresentationId) ?? null
+  })
 
   const [view, setView] = useState<BuilderView>('browse')
 
@@ -247,14 +252,11 @@ export function Builder(): React.JSX.Element {
     setView('browse')
   }
 
-  // Active presentation (for assembly view live preview)
-  const activePresentation = getActivePresentation()
-
   // Filter messages using presentation tool visibility settings (assembly view live preview)
   const filteredMessages = useMemo(() => {
     if (!activeSession || !activePresentation?.settings) return activeSession?.messages ?? []
     return filterWithToolSettings(activeSession.messages, activePresentation.settings.toolVisibility)
-  }, [activeSession, activePresentation?.settings])
+  }, [activeSession, activePresentation?.settings?.toolVisibility])
 
   // Resolve scoped theme for the message preview area (assembly view only)
   // 'system' => undefined (inherit system theme), 'light'/'dark' => override
@@ -479,6 +481,7 @@ export function Builder(): React.JSX.Element {
             {activeSession && !isParsing && (
               <div
                 className="flex flex-col"
+                data-theme={resolvedTheme}
                 style={{
                   flex: 1,
                   minHeight: '200px',
@@ -530,12 +533,10 @@ export function Builder(): React.JSX.Element {
                     Close
                   </button>
                 </div>
-                {/* Scoped theme wrapper: data-theme only affects this preview area */}
                 <div
-                  data-theme={resolvedTheme}
                   style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}
                 >
-                  <MessageList messages={filteredMessages} />
+                  <MessageList messages={filteredMessages} showTimestamps={activePresentation?.settings?.showTimestamps} />
                 </div>
               </div>
             )}

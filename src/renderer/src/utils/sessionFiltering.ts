@@ -3,7 +3,7 @@
 
 import type { SessionMetadata } from '../types/pipeline'
 
-export type DatePreset = 'all' | 'today' | 'this-week' | 'this-month' | 'older' | 'custom'
+export type DatePreset = 'all' | 'today' | 'last-7-days' | 'last-30-days' | 'older' | 'custom'
 
 export interface DateFilter {
   preset: DatePreset
@@ -47,18 +47,17 @@ function matchesDateFilter(session: SessionMetadata, filter: DateFilter): boolea
   switch (filter.preset) {
     case 'today':
       return sessionDate >= startOfToday
-    case 'this-week': {
-      const startOfWeek = new Date(startOfToday)
-      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
-      return sessionDate >= startOfWeek
+    case 'last-7-days': {
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      return sessionDate >= sevenDaysAgo
     }
-    case 'this-month': {
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-      return sessionDate >= startOfMonth
+    case 'last-30-days': {
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+      return sessionDate >= thirtyDaysAgo
     }
     case 'older': {
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-      return sessionDate < startOfMonth
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+      return sessionDate < thirtyDaysAgo
     }
     case 'custom': {
       if (filter.customStart && sessionDate < new Date(filter.customStart)) return false

@@ -12,6 +12,7 @@ import {
   saveStoredSession,
   removeStoredSession
 } from './storage/sessionStore'
+import { getRecentFiles, addRecentFile } from './storage/recentFileStore'
 import {
   getPresentations,
   savePresentation,
@@ -256,6 +257,15 @@ if (!gotTheLock) {
 
     ipcMain.handle('pipeline:removeStoredSession', async (_event, sessionId: string) => {
       removeStoredSession(sessionId)
+    })
+
+    // ---------- IPC: Recent Files ----------
+    ipcMain.handle('recentFiles:get', async () => {
+      return getRecentFiles()
+    })
+
+    ipcMain.handle('recentFiles:add', async (_event, filePath: string) => {
+      return addRecentFile(filePath)
     })
 
     // ---------- IPC: Presentation Storage ----------

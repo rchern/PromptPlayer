@@ -1,20 +1,36 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: PromptPlayer MVP
+status: complete
+stopped_at: v1.0 milestone shipped. All 13 phases, 47 plans, 38 requirements complete.
+last_updated: "2026-03-05"
+last_activity: 2026-03-05 - v1.0 milestone completed and archived.
+progress:
+  total_phases: 13
+  completed_phases: 13
+  total_plans: 47
+  completed_plans: 47
+  percent: 100
+---
+
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-20)
+See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Enable a presenter to walk their team through a real Claude Code / GSD workflow step by step
-**Current focus:** Phase 10 - Packaging and Release (next phase)
+**Current focus:** v1.0 shipped — planning next milestone
 
 ## Current Position
 
-Phase: 10 of 11 (Packaging and Release)
-Plan: 3 of 3
-Status: Complete — all plans executed, UAT passed, CI lint deferred
-Last activity: 2026-03-02 - Lint step removed from CI (deferred alongside testing)
+Phase: 13 of 13 (Verification Gap Closure)
+Plan: 2 of 2 complete
+Status: Phase 13 fully complete. All verification gaps closed. 38/38 requirements verified.
+Last activity: 2026-03-05 - Phase 13 Plan 02 executed. REQUIREMENTS.md updated to 38/38.
 
-Progress: [██████████████████████████████████████████████████] 32/32 plans (100%)
+Progress: [██████████████████████████████████████████████████] 47/47 plans (100%)
 
 ## Performance Metrics
 
@@ -43,9 +59,25 @@ Progress: [███████████████████████
 - Trend: Phase 9 complete; all task management renderers done
 
 *Updated after each plan completion*
+| Phase 11 P01 | 7min | 2 tasks | 7 files |
 | Phase 10 P03 | 5min | 2 tasks | 2 files |
 | Phase 10 P02 | 9min | 2 tasks | 5 files |
 | Phase 10 P01 | 10min | 2 tasks | 5 files |
+| Phase 11 P02 | 3min | 2 tasks | 5 files |
+| Phase 11 P03 | 3min | 2 tasks | 2 files |
+| Phase 11 P04 | 1min | 1 tasks | 2 files |
+| Phase 12 P03 | 2min | 2 tasks | 4 files |
+| Phase 12 P05 | 3min | 2 tasks | 4 files |
+| Phase 12 P01 | 2min | 2 tasks | 4 files |
+| Phase 12 P04 | 3min | 2 tasks | 4 files |
+| Phase 12 P02 | 2min | 2 tasks | 4 files |
+| Phase 12 P06 | 2min | 2 tasks | 4 files |
+| Phase 12 P08 | 3min | 2 tasks | 8 files |
+| Phase 12 P07 | 4min | 2 tasks | 4 files |
+| Phase 12 P09 | 1min | 1 tasks | 2 files |
+| Phase 12 P10 | 1min | 1 tasks | 1 files |
+| Phase 13 P01 | 3min | 1 tasks | 1 files |
+| Phase 13 P02 | 6min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -162,19 +194,67 @@ Recent decisions affecting current work:
 - [Phase 10]: NSIS assisted installer (oneClick: false) for desktop shortcut opt-out
 - [Phase 10]: Draft GitHub Releases via releaseType: draft for review-before-publish workflow
 - [Phase 10]: Programmatic ICO generation via Node.js script (no external tooling dependency)
+- [Phase 11]: Elapsed time precomputed in buildPlaybackSteps (not during render) for step-array immutability
+- [Phase 11]: Session duration from first-to-last nav step timestamps (consistent with elapsed markers)
+- [Phase 11]: vitest installed as dev dependency for first test infrastructure in the project
+- [Phase 11]: usePlayerTheme as separate hook for clean separation from global useTheme
+- [Phase 11]: System theme defers to Player when presentation is loaded (appStore updated, data-theme skipped)
+- [Phase 11]: Theme toggle ephemeral by design: resets on loadPresentation and reset
+- [Phase 11]: Within-step elapsed (user->assistant) instead of cross-step for accurate Claude response time
+- [Phase 11]: Split-effect pattern with isMountedRef cancellation guard for StrictMode-safe theme handling
+- [Phase 11]: ElapsedTimeMarker rendered inside StepView between user and assistant messages (not above entire step)
+- [Phase 11]: Marker only shows when user message exists (solo assistant steps skip it -- no user-to-Claude gap)
+- [Phase 12]: MutationObserver pattern reused from CodeBlock.tsx for CollapsibleContent overflow remeasurement
+- [Phase 12]: Conservative system message detection: false negatives preferred over false positives
+- [Phase 12]: System messages get muted color and secondary background, not hidden entirely
+- [Phase 12]: Three-way role label: System/You/Claude with distinct colors per role
+- [Phase 12]: Auto-update banner uses fixed positioning at bottom-right with 30s auto-dismiss
+- [Phase 12]: RecentFiles uses optional onOpenFile prop for backward compatibility
+- [Phase 12]: Rolling-window date filters (7-day/30-day) instead of calendar-based for consistency regardless of weekday
+- [Phase 12]: Reactive Zustand selector replaces non-reactive getActivePresentation() getter for live preview invalidation
+- [Phase 12]: Close button deactivates presentation (sets active to null) rather than removing from store array
+- [Phase 12]: Combined steps reindex before entering PlaybackStep array (progress bar/sidebar unaffected)
+- [Phase 12]: Single solo assistant step NOT combined (no combinedAssistantMessages) to avoid unnecessary filmstrip rendering
+- [Phase 12]: Step-to-step elapsed for solo steps uses previous step's last timestamp (handles combined steps correctly)
+- [Phase 12]: Between-responses elapsed marker variant uses 0.6/0.4 opacity with descriptive "~Xs between responses" label
+- [Phase 12]: Scissors icon for split-to-new-section metaphor (Scissors from lucide-react)
+- [Phase 12]: Shared actionButtonStyle module-level constant for split and remove buttons in SessionEntry
+- [Phase 12]: splitToNewSection inserts new section after source, removes empty source sections
+- [Phase 12]: onClick (not onMouseDown) for close/delete buttons -- stopPropagation on click prevents parent onClick
+- [Phase 12]: recentFileStore follows sessionStore pattern (readFileSync/writeFileSync, try/catch returns [])
+- [Phase 12]: addRecentFile returns updated array for immediate store hydration (avoids extra IPC round-trip)
+- [Phase 12]: Max 10 recent files, newest first, deduplicated by path
+- [Phase 12]: Light theme CSS rule [data-theme='light'] mirrors :root color variables for scoped override
+- [Phase 12]: ElapsedTimeMarker reused from Player for Builder preview timestamp rendering via MessageList showTimestamps prop
+- [Phase 12]: toolVisibilityMap takes precedence over showPlumbing when provided, preserving backward compatibility for Builder MessageList
+- [Phase 12]: MessageBubble returns null when all content blocks resolve to hidden, suppressing empty CLAUDE labels in combined filmstrip steps
+- [Phase 12]: color: var(--color-text-primary) on .message-view for theme-aware text color resolution
+- [Phase 12]: data-theme attribute must be on outermost preview container for full CSS variable scope (moved from inner scrollable div)
+- [Phase 12]: var(--space-12) paddingBottom clearance for progress bar overlay in Player scrollable container
+- [Phase 13]: Included post-Phase-3 enhancements from Phases 11/12 as additional evidence in verification (system message detection, theme-aware text color)
+- [Phase 13]: Evidence traces to current line numbers in source files, not stale plan/summary references
+- [Phase 13]: Phase 4 VERIFICATION.md covers both single-session and multi-session navigation paths per Pitfall 4
+
+### Roadmap Evolution
+
+- Phase 12 added: UX Polish — accumulated UX feedback across Builder and Player (from 7 pending todos)
 
 ### Pending Todos
 
 - Player UX feedback (5 items) — see `.planning/todos/pending/player-ux-feedback.md`
-  - "Show more" button visible when nothing to expand
-  - Broken box/border rendering (CHECKPOINT, HR patterns)
-  - System-generated messages showing as "YOU"
-  - Consecutive solo Claude steps could be combined
+  - ~~"Show more" button visible when nothing to expand~~ FIXED (12-03): MutationObserver remeasurement
+  - ~~Broken box/border rendering (CHECKPOINT, HR patterns)~~ FIXED (12-03): blockquote, hr, table, pre CSS
+  - ~~System-generated messages showing as "YOU"~~ FIXED (12-03): isSystemMessage detection + System label
+  - ~~Consecutive solo Claude steps could be combined~~ FIXED (12-04): combineConsecutiveSoloSteps filmstrip rendering
   - Step sequencing needs design thought
 - Builder UX feedback (3 items) — see `.planning/todos/pending/builder-ux-feedback.md`
   - Date filter presets: "This Week"/"This Month" vs "Last 7 days"/"Last 30 days" naming
-  - Session checkbox placement in assembly outline could use better positioning
-  - Split session to new section (complement to merge)
+  - ~~Session checkbox placement in assembly outline could use better positioning~~ FIXED (12-02): 24px gutter column
+  - ~~Split session to new section (complement to merge)~~ FIXED (12-02): splitToNewSection with scissors button
+- ~~Show elapsed timestamps for assistant-only steps~~ FIXED (12-04): step-to-step elapsed with between-responses variant
+- Builder live preview does not reflect settings changes
+- Add close button for open presentations in Builder
+- ~~Auto-update notification UI~~ FIXED (12-05): banner in RootLayout with auto-dismiss
 - ~~Phase 7 checkpoint gaps (4 items from 07-04 visual verification)~~ ALL RESOLVED:
   - ~~Create Presentation button covers last session checkbox~~ FIXED (07-06): paddingBottom clearance
   - ~~No message preview in assembly view~~ FIXED (07-06): click-to-preview on outline session entries
@@ -196,6 +276,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-02
-Stopped at: Phase 10 closed out — lint deferred, CI runs typecheck + build only
-Resume file: .planning/phases/10-packaging-and-release/ (phase complete)
+Last session: 2026-03-05
+Stopped at: Completed 13-02-PLAN.md (Phase 4 Verification and Requirements Closure). All 38/38 requirements verified. Milestone v1.0 complete.
+Resume file: None -- all plans complete

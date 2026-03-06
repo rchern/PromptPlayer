@@ -1,24 +1,38 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
+import { Sun, Moon } from 'lucide-react'
 import { usePlaybackStore } from '../../stores/playbackStore'
 import { computeSectionProgress } from '../../stores/playbackStore'
 
 const containerStyle: React.CSSProperties = {
-  position: 'absolute',
-  bottom: 'var(--space-3)',
-  left: 'var(--space-4)',
-  right: 'var(--space-4)',
-  zIndex: 10,
-  userSelect: 'none',
-  pointerEvents: 'none'
+  padding: 'var(--space-2) var(--space-4) var(--space-3)',
+  userSelect: 'none'
+}
+
+const textRowStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: 'var(--space-1)'
 }
 
 const textStyle: React.CSSProperties = {
   fontFamily: 'var(--font-mono)',
   fontSize: 'var(--text-sm)',
   color: 'var(--color-text-muted)',
-  fontVariantNumeric: 'tabular-nums',
-  textAlign: 'right',
-  marginBottom: 'var(--space-1)'
+  fontVariantNumeric: 'tabular-nums'
+}
+
+const themeToggleStyle: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  padding: 4,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'var(--color-text-muted)',
+  opacity: 0.6,
+  transition: 'opacity 150ms ease'
 }
 
 const barContainerStyle: React.CSSProperties = {
@@ -50,10 +64,16 @@ const segmentFillStyle: React.CSSProperties = {
  *
  * Replaces the simple ProgressIndicator from Plan 02.
  */
-export function SegmentedProgress(): React.JSX.Element {
+interface SegmentedProgressProps {
+  isDark?: boolean
+}
+
+export function SegmentedProgress({ isDark }: SegmentedProgressProps): React.JSX.Element {
   const steps = usePlaybackStore((s) => s.steps)
   const currentStepIndex = usePlaybackStore((s) => s.currentStepIndex)
   const presentation = usePlaybackStore((s) => s.presentation)
+  const toggleTheme = usePlaybackStore((s) => s.toggleTheme)
+  const [toggleHovered, setToggleHovered] = useState(false)
 
   // Compute per-section progress
   const sectionProgress = useMemo(() => {
@@ -108,8 +128,21 @@ export function SegmentedProgress(): React.JSX.Element {
 
   return (
     <div style={containerStyle}>
-      {/* Text row */}
-      <div style={textStyle}>{progressText}</div>
+      {/* Text row with optional theme toggle */}
+      <div style={textRowStyle}>
+        <span style={textStyle}>{progressText}</span>
+        {isDark !== undefined && (
+          <button
+            style={{ ...themeToggleStyle, opacity: toggleHovered ? 1 : 0.6 }}
+            onClick={toggleTheme}
+            onMouseEnter={() => setToggleHovered(true)}
+            onMouseLeave={() => setToggleHovered(false)}
+            aria-label="Toggle theme"
+          >
+            {isDark ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
+        )}
+      </div>
 
       {/* Segmented bar */}
       <div style={barContainerStyle}>

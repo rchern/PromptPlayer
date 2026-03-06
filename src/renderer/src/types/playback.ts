@@ -20,6 +20,7 @@ export interface SectionSeparatorStep {
   sectionName: string
   sessionCount: number
   totalSteps: number // Navigation steps only (excludes separator cards)
+  durationMs: number | null // Section duration (sum of session durations), null if unavailable
 }
 
 /** Session transition card — introduces a session within a section. */
@@ -31,6 +32,7 @@ export interface SessionSeparatorStep {
   sectionName: string
   stepCount: number // Navigation steps in this session
   messageCount: number // Raw message count from StoredSession
+  durationMs: number | null // Session duration (first to last nav step), null if unavailable
 }
 
 /** Wraps an existing NavigationStep with session/section context for cross-session navigation. */
@@ -39,6 +41,7 @@ export interface NavigationPlaybackStep {
   step: NavigationStep
   sessionId: string
   sectionId: string
+  elapsedMs: number | null // Elapsed time from previous nav step in same session, null = don't show
 }
 
 /**

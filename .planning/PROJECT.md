@@ -12,29 +12,29 @@ Enable a presenter to walk their team through a real Claude Code / GSD workflow 
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Two-mode architecture: Builder for curation/configuration, Player for presentation — v1.0
+- ✓ Builder: Import Claude Code JSONL conversation files from `.claude/projects/` into app-local storage — v1.0
+- ✓ Builder: Browse/search/preview imported sessions to select which to include — v1.0
+- ✓ Builder: Assemble an ordered session chain forming a complete workflow — v1.0
+- ✓ Builder: Define named sections/chapters across the session chain — v1.0
+- ✓ Builder: Configure tool call visibility (which tool types to show/hide) — v1.0
+- ✓ Builder: Export a self-contained `.promptplay` presentation artifact — v1.0
+- ✓ Player: Open `.promptplay` files — v1.0
+- ✓ Player: Step through messages manually (forward/back) with keyboard or click — v1.0
+- ✓ Player: Display user messages clearly distinguished from Claude responses — v1.0
+- ✓ Player: Render Claude's markdown responses with proper formatting and syntax highlighting — v1.0
+- ✓ Player: Show AskUserQuestion tool calls with the options presented and the user's selection — v1.0
+- ✓ Player: Show Task management tool calls (TaskCreate, TaskUpdate, TaskList) inline — v1.0
+- ✓ Player: Hide "plumbing" tool calls by default (Read, Grep, Glob, Write, Edit, Bash, etc.) — v1.0
+- ✓ Player: Transition seamlessly between sessions in a chain — v1.0
+- ✓ Player: Show current position (which section, which session, which step, progress) — v1.0
+- ✓ Player: Display timestamps / elapsed time between steps — v1.0
+- ✓ Player: Support light and dark themes (optimized for projector and screen share) — v1.0
+- ✓ Run on Windows 10/11 — v1.0
 
 ### Active
 
-- [ ] Two-mode architecture: Builder for curation/configuration, Player for presentation
-- [ ] Builder: Import Claude Code JSONL conversation files from `.claude/projects/` into app-local storage
-- [ ] Builder: Browse/search/preview imported sessions to select which to include
-- [ ] Builder: Assemble an ordered session chain forming a complete workflow
-- [ ] Builder: Define named sections/chapters across the session chain
-- [ ] Builder: Configure tool call visibility (which tool types to show/hide)
-- [ ] Builder: Export a self-contained `.promptplay` presentation artifact
-- [ ] Player: Open `.promptplay` files
-- [ ] Player: Step through messages manually (forward/back) with keyboard or click
-- [ ] Player: Display user messages clearly distinguished from Claude responses
-- [ ] Player: Render Claude's markdown responses with proper formatting and syntax highlighting
-- [ ] Player: Show AskUserQuestion tool calls with the options presented and the user's selection
-- [ ] Player: Show Task management tool calls (TaskCreate, TaskUpdate, TaskList) inline
-- [ ] Player: Hide "plumbing" tool calls by default (Read, Grep, Glob, Write, Edit, Bash, etc.)
-- [ ] Player: Transition seamlessly between sessions in a chain
-- [ ] Player: Show current position (which section, which session, which step, progress)
-- [ ] Player: Display timestamps / elapsed time between steps
-- [ ] Player: Support light and dark themes (optimized for projector and screen share)
-- [ ] Run on Windows 10/11
+(Fresh for next milestone — define with `/gsd:new-milestone`)
 
 ### Out of Scope
 
@@ -56,32 +56,42 @@ Enable a presenter to walk their team through a real Claude Code / GSD workflow 
 
 ## Context
 
-- Claude Code stores conversations as JSONL in the user's `.claude/projects/` directory, but Claude Code may clean up old sessions — app must import/copy conversation data into its own storage to prevent data loss
-- A typical GSD workflow spans multiple conversations (user runs `/clear` between GSD commands), so a single demo requires chaining 5-15+ separate session files
-- The JSONL format uses UUID-based threading (parentUuid chains), message types (user, assistant, progress, file-history-snapshot), content blocks (text, thinking, tool_use, tool_result), and metadata (isSidechain, isMeta)
-- The primary demo scenario is walking a dev team through how GSD takes a feature idea from description → questioning → research → requirements → roadmap → planning → execution
-- Audience is primarily developers who might adopt Claude Code / GSD, but could include PMs or BAs
-- The presenter is a senior developer / manager explaining their workflow
+Shipped v1.0 with ~12,000 LOC TypeScript/TSX/CSS.
+Tech stack: Electron 40 + React 19 + TypeScript + electron-vite 3.x + Zustand + shiki.
+13 phases, 47 plans executed over 13 days (Feb 20 → Mar 5, 2026).
+38/38 v1 requirements verified.
+
+Known issues carried forward:
+- Renderer bundle at 810KB includes all shiki grammars — consider fine-grained bundling if size becomes a concern
+- queue-operation messages not parsed (user messages typed while agents run) — needs parser change
+- npm audit reports 2 high severity vulnerabilities in eslint dependency chain
+- AskUserQuestion tool call schema assumed but unverified (Phase 9)
+- 4 debug sessions open (blank-combined-steps, close-button-flicker, empty-recent-files, live-preview-reactivity)
 
 ## Constraints
 
 - **Platform**: Must run on Windows 10/11
 - **Data source**: Must parse Claude Code's native JSONL conversation format; imports into app-local storage to avoid dependency on volatile `.claude/projects/` directory
 - **Presentation context**: Optimized for screen sharing / projector — needs to be readable at a distance
-- **Tech stack**: Electron + React + TypeScript (determined by research phase)
+- **Tech stack**: Electron 40 + React 19 + TypeScript + electron-vite 3.x
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Two-mode architecture (Builder + Player) | Builder handles complexity (import, curate, configure); Player stays simple (render, navigate) | — Pending |
-| Same app, two modes | Builder preview shares rendering with Player; one app to maintain | — Pending |
-| Self-contained .promptplay export | Portable, survives Claude Code cleanup, could enable sharing later | — Pending |
-| Manual stepping as primary navigation | Presenter needs control over pacing, especially with variable-length responses | — Pending |
-| Session chain via ordered manifest | GSD workflows span multiple conversations; need a way to sequence them | — Pending |
-| Show only "narrative" tool calls | AskUserQuestion and Task management tell the story; file reads/greps are noise | — Pending |
-| Electron + React + TypeScript | Best markdown rendering (web engine), desktop shell for presentation, familiar ecosystem | — Pending |
-| Import conversations into app-local storage | Claude Code may clean up `.claude/projects/`; demos must persist independently | — Pending |
+| Two-mode architecture (Builder + Player) | Builder handles complexity (import, curate, configure); Player stays simple (render, navigate) | ✓ Good — clean separation |
+| Same app, two modes | Builder preview shares rendering with Player; one app to maintain | ✓ Good — significant code reuse |
+| Self-contained .promptplay export | Portable, survives Claude Code cleanup, could enable sharing later | ✓ Good — works well |
+| Manual stepping as primary navigation | Presenter needs control over pacing, especially with variable-length responses | ✓ Good — core UX |
+| Session chain via ordered manifest | GSD workflows span multiple conversations; need a way to sequence them | ✓ Good — flexible |
+| Show only "narrative" tool calls | AskUserQuestion and Task management tell the story; file reads/greps are noise | ✓ Good — cleaner presentations |
+| Electron + React + TypeScript | Best markdown rendering (web engine), desktop shell for presentation, familiar ecosystem | ✓ Good |
+| Import conversations into app-local storage | Claude Code may clean up `.claude/projects/`; demos must persist independently | ✓ Good — prevents data loss |
+| JSON file persistence over electron-store | electron-store v11 ESM-only incompatible with electron-vite 3.x CJS output | ✓ Good — simple, works |
+| Separator cards as real navigable steps | Ensures forward/back are exact inverses at session boundaries | ✓ Good — predictable UX |
+| NSIS assisted installer (not oneClick) | Allows desktop shortcut opt-out, standard install experience | ✓ Good |
+| shiki for syntax highlighting | Accurate language grammars, dual-theme support via CSS variables | ⚠️ Revisit — 810KB bundle |
+| wasm-unsafe-eval in CSP for shiki | Required for WASM execution, no alternative for shiki's approach | ✓ Acceptable trade-off |
 
 ---
-*Last updated: 2026-02-20 after Builder/Player architecture decision*
+*Last updated: 2026-03-05 after v1.0 milestone*

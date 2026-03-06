@@ -1,10 +1,12 @@
 import type { ParsedMessage } from '../../types/pipeline'
 import { ContentBlockRenderer } from './ContentBlockRenderer'
-import { cleanUserText, parseUserAnswer, parseToolRejection } from './cleanUserText'
+import { cleanUserText, parseUserAnswer, parseToolRejection, isSystemMessage } from './cleanUserText'
 
 interface MessageBubbleProps {
   message: ParsedMessage
   showPlumbing: boolean
+  /** Per-tool visibility map from presentation settings (takes precedence over showPlumbing) */
+  toolVisibilityMap?: Map<string, boolean>
   toolUseMap?: Map<string, { name: string; input: Record<string, unknown> }>
   /** Follow-up messages (e.g. tool_result-only user messages with AskUserQuestion answers) */
   followUpMessages?: ParsedMessage[]
@@ -53,8 +55,13 @@ function normalizeContent(raw: unknown): string {
   return ''
 }
 
-export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessages }: MessageBubbleProps): React.JSX.Element {
+export function MessageBubble({ message, showPlumbing, toolVisibilityMap, toolUseMap, followUpMessages }: MessageBubbleProps): React.JSX.Element | null {
   const isUser = message.role === 'user'
+
+  // Detect system-generated user messages (should not display as "You")
+  const isSystem = isUser && message.contentBlocks.some(
+    (block) => block.type === 'text' && isSystemMessage(block.text)
+  )
 
   // Build a lookup from tool_use_id -> answer text for AskUserQuestion answer pairing.
   // Only for assistant messages that have follow-up tool_result answers.
@@ -72,10 +79,41 @@ export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessa
     }
   }
 
+  // Suppress rendering when all content blocks would resolve to null.
+  // This prevents empty "CLAUDE" labels in combined filmstrip steps.
+  const hasVisibleContent = message.contentBlocks.some((block) => {
+    if (block.type === 'text' && block.text.trim().length > 0) return true
+    if (block.type === 'thinking') return true
+    if (block.type === 'tool_use') {
+      if (message.toolVisibility === 'plumbing') {
+        if (toolVisibilityMap) return toolVisibilityMap.get(block.name) === true
+        return showPlumbing
+      }
+      return true
+    }
+    if (block.type === 'tool_result') {
+      if (message.toolVisibility === 'plumbing') {
+        if (toolVisibilityMap && toolUseMap) {
+          const info = toolUseMap.get(block.tool_use_id)
+          return info ? toolVisibilityMap.get(info.name) === true : showPlumbing
+        }
+        return showPlumbing
+      }
+      return true
+    }
+    return false
+  })
+
+  if (!hasVisibleContent) return null
+
   return (
     <div
       style={{
-        background: isUser ? 'var(--color-bg-tertiary)' : 'var(--color-bg-primary)',
+        background: isSystem
+          ? 'var(--color-bg-secondary)'
+          : isUser
+            ? 'var(--color-bg-tertiary)'
+            : 'var(--color-bg-primary)',
         padding: 'var(--space-4) var(--space-6)',
         borderBottom: '1px solid var(--color-border-subtle)'
       }}
@@ -85,13 +123,17 @@ export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessa
         style={{
           fontSize: 'var(--text-sm)',
           fontWeight: 600,
-          color: isUser ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+          color: isSystem
+            ? 'var(--color-text-muted)'
+            : isUser
+              ? 'var(--color-accent)'
+              : 'var(--color-text-secondary)',
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
           marginBottom: 'var(--space-3)'
         }}
       >
-        {isUser ? 'You' : 'Claude'}
+        {isSystem ? 'System' : isUser ? 'You' : 'Claude'}
       </div>
 
       {/* Content blocks */}
@@ -174,6 +216,8 @@ export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessa
                 block={{ ...block, text: cleaned }}
                 toolVisibility={message.toolVisibility}
                 showPlumbing={showPlumbing}
+                toolVisibilityMap={toolVisibilityMap}
+                toolUseMap={toolUseMap}
                 plainText
               />
             )
@@ -190,6 +234,8 @@ export function MessageBubble({ message, showPlumbing, toolUseMap, followUpMessa
               block={block}
               toolVisibility={message.toolVisibility}
               showPlumbing={showPlumbing}
+              toolVisibilityMap={toolVisibilityMap}
+              toolUseMap={toolUseMap}
               answerText={blockAnswerText}
             />
           )

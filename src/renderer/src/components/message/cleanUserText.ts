@@ -98,9 +98,33 @@ function cleanAskUserAnswer(text: string): string {
 }
 
 /**
- * Parse a "User has answered" message into structured data for rich rendering.
- * Returns null if the text doesn't match the pattern.
+ * Detect system-generated user messages that should not display as "You".
+ *
+ * These are messages injected by Claude Code's orchestration layer into the
+ * user role, not typed by the actual human user. Detection is conservative:
+ * false negatives (showing system as "You") are preferred over false positives
+ * (hiding real user input).
+ *
+ * Checks RAW text (before cleanUserText processing) so system XML tags
+ * like <task-notification> are still present for detection.
  */
+export function isSystemMessage(text: string): boolean {
+  const trimmed = text.trim()
+  const patterns = [
+    // TaskOutput read result injections
+    /^Read the output file to retrieve the result:/,
+    // Tool output task completions
+    /^The tool has completed/,
+    // Agent task output notifications
+    /^<task-notification>/,
+    // Task result notifications (agent spawning)
+    /^<task-result>/,
+    // Background task output
+    /^<output-file>/,
+  ]
+  return patterns.some((p) => p.test(trimmed))
+}
+
 /**
  * Parse a tool use rejection message. Returns the user's stated reason,
  * or "Declined" if no reason given.

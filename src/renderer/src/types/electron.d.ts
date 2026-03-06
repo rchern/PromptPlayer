@@ -56,6 +56,10 @@ export interface ElectronAPI {
     sessions: StoredSession[]
   }>
 
+  // Recent files
+  getRecentFiles: () => Promise<Array<{ path: string; name: string; lastOpened: number }>>
+  addRecentFile: (filePath: string) => Promise<Array<{ path: string; name: string; lastOpened: number }>>
+
   // Auto-update
   onUpdateReady: (callback: (version: string) => void) => () => void
   installUpdate: () => void

@@ -85,6 +85,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   readPromptPlayFile: (filePath: string): Promise<unknown> =>
     ipcRenderer.invoke('presentation:readFile', filePath),
 
+  // Recent files
+  getRecentFiles: (): Promise<unknown> =>
+    ipcRenderer.invoke('recentFiles:get'),
+  addRecentFile: (filePath: string): Promise<unknown> =>
+    ipcRenderer.invoke('recentFiles:add', filePath),
+
   // Auto-update notifications
   onUpdateReady: (callback: (version: string) => void): (() => void) => {
     const handler = (_event: Electron.IpcRendererEvent, version: string): void =>

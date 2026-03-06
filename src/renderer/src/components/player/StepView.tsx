@@ -1,13 +1,19 @@
 import React from 'react'
 import type { NavigationStep } from '../../types/pipeline'
 import { CollapsibleContent } from './CollapsibleContent'
+import { ElapsedTimeMarker } from './ElapsedTimeMarker'
 import { MessageBubble } from '../message/MessageBubble'
+import { computeElapsedMs } from '../../utils/formatElapsed'
 
 interface StepViewProps {
   step: NavigationStep
   expandedState: { user: boolean; assistant: boolean }
   onToggleExpand: (role: 'user' | 'assistant') => void
   toolUseMap: Map<string, { name: string; input: Record<string, unknown> }>
+  /** Per-tool visibility map from presentation settings for granular tool rendering */
+  toolVisibilityMap?: Map<string, boolean>
+  elapsedMs?: number | null
+  showTimestamps?: boolean
 }
 
 /**
@@ -25,7 +31,10 @@ export function StepView({
   step,
   expandedState,
   onToggleExpand,
-  toolUseMap
+  toolUseMap,
+  toolVisibilityMap,
+  elapsedMs,
+  showTimestamps
 }: StepViewProps): React.JSX.Element {
   return (
     <div
@@ -49,13 +58,22 @@ export function StepView({
           <MessageBubble
             message={step.userMessage}
             showPlumbing={false}
+            toolVisibilityMap={toolVisibilityMap}
             toolUseMap={toolUseMap}
           />
         </CollapsibleContent>
       )}
 
-      {/* Assistant message section */}
-      {step.assistantMessage && (
+      {/* Elapsed time marker */}
+      {showTimestamps && elapsedMs != null && elapsedMs >= 0 && (
+        <ElapsedTimeMarker
+          elapsedMs={elapsedMs}
+          variant={step.userMessage ? 'default' : 'between-responses'}
+        />
+      )}
+
+      {/* Single assistant message (non-combined steps) */}
+      {step.assistantMessage && !step.combinedAssistantMessages && (
         <CollapsibleContent
           isExpanded={expandedState.assistant}
           onToggle={() => onToggleExpand('assistant')}
@@ -65,11 +83,42 @@ export function StepView({
           <MessageBubble
             message={step.assistantMessage}
             showPlumbing={false}
+            toolVisibilityMap={toolVisibilityMap}
             toolUseMap={toolUseMap}
             followUpMessages={step.followUpMessages}
           />
         </CollapsibleContent>
       )}
+
+      {/* Combined assistant messages (filmstrip view for autonomous sequences) */}
+      {step.combinedAssistantMessages &&
+        step.combinedAssistantMessages.length > 0 &&
+        step.combinedAssistantMessages.map((msg, idx) => {
+          const prevMsg = idx > 0 ? step.combinedAssistantMessages![idx - 1] : null
+          const interElapsed = prevMsg ? computeElapsedMs(prevMsg.timestamp, msg.timestamp) : null
+
+          return (
+            <React.Fragment key={msg.uuid}>
+              {idx > 0 && showTimestamps && interElapsed != null && interElapsed >= 0 && (
+                <ElapsedTimeMarker elapsedMs={interElapsed} variant="between-responses" />
+              )}
+              <CollapsibleContent
+                isExpanded={expandedState.assistant}
+                onToggle={() => onToggleExpand('assistant')}
+                previewLines={3}
+                role="assistant"
+              >
+                <MessageBubble
+                  message={msg}
+                  showPlumbing={false}
+                  toolVisibilityMap={toolVisibilityMap}
+                  toolUseMap={toolUseMap}
+                  followUpMessages={idx === 0 ? step.followUpMessages : []}
+                />
+              </CollapsibleContent>
+            </React.Fragment>
+          )
+        })}
 
       {/* Follow-up messages — suppress results for specialized tool blocks (displayed inline) */}
       {step.followUpMessages.length > 0 &&
@@ -90,6 +139,7 @@ export function StepView({
               key={`followup-${idx}`}
               message={msg}
               showPlumbing={false}
+              toolVisibilityMap={toolVisibilityMap}
               toolUseMap={toolUseMap}
             />
           ))}

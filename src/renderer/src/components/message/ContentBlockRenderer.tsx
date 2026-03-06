@@ -7,6 +7,10 @@ interface ContentBlockRendererProps {
   block: ContentBlock
   toolVisibility: ToolVisibility | null
   showPlumbing: boolean
+  /** Per-tool visibility map from presentation settings (takes precedence over showPlumbing) */
+  toolVisibilityMap?: Map<string, boolean>
+  /** Map from tool_use_id to tool info, used to look up tool names for tool_result blocks */
+  toolUseMap?: Map<string, { name: string; input: Record<string, unknown> }>
   /** If true, render text as plain pre-wrapped text instead of markdown */
   plainText?: boolean
   /** Paired tool_result content for AskUserQuestion answer display */
@@ -26,6 +30,8 @@ export function ContentBlockRenderer({
   block,
   toolVisibility,
   showPlumbing,
+  toolVisibilityMap,
+  toolUseMap,
   plainText = false,
   answerText
 }: ContentBlockRendererProps): React.JSX.Element | null {
@@ -44,7 +50,14 @@ export function ContentBlockRenderer({
       return <ThinkingBlock content={block.thinking} />
 
     case 'tool_use':
-      if (toolVisibility === 'plumbing' && !showPlumbing) return null
+      if (toolVisibility === 'plumbing') {
+        if (toolVisibilityMap) {
+          // Per-tool check: only show if this specific tool is enabled
+          if (!toolVisibilityMap.get(block.name)) return null
+        } else if (!showPlumbing) {
+          return null
+        }
+      }
       return (
         <ToolCallBlock
           name={block.name}
@@ -55,7 +68,14 @@ export function ContentBlockRenderer({
       )
 
     case 'tool_result':
-      if (toolVisibility === 'plumbing' && !showPlumbing) return null
+      if (toolVisibility === 'plumbing') {
+        if (toolVisibilityMap && toolUseMap) {
+          const toolInfo = toolUseMap.get(block.tool_use_id)
+          if (toolInfo && !toolVisibilityMap.get(toolInfo.name)) return null
+        } else if (!showPlumbing) {
+          return null
+        }
+      }
       return (
         <ToolResultBlock
           content={block.content}

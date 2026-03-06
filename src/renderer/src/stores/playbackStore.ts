@@ -3,10 +3,78 @@ import type { NavigationStep, StoredSession } from '../types/pipeline'
 import type { Presentation, PresentationSection } from '../types/presentation'
 import type { PlaybackStep, SectionProgressInfo } from '../types/playback'
 import { filterWithToolSettings, buildNavigationSteps } from '../utils/messageFiltering'
+import { computeElapsedMs } from '../utils/formatElapsed'
 
 // ---------------------------------------------------------------------------
 // Pure Functions (exported for independent testing)
 // ---------------------------------------------------------------------------
+
+/** Earliest timestamp for a step (prefers user message as it comes first chronologically). */
+function getStepFirstTimestamp(step: NavigationStep): string | null {
+  return step.userMessage?.timestamp ?? step.assistantMessage?.timestamp ?? null
+}
+
+/** Latest timestamp for a step (prefers assistant message as it comes last chronologically). */
+function getStepLastTimestamp(step: NavigationStep): string | null {
+  // For combined steps, use the last combined message's timestamp
+  if (step.combinedAssistantMessages && step.combinedAssistantMessages.length > 0) {
+    return step.combinedAssistantMessages[step.combinedAssistantMessages.length - 1].timestamp
+  }
+  return step.assistantMessage?.timestamp ?? step.userMessage?.timestamp ?? null
+}
+
+/**
+ * Combine consecutive solo assistant steps (userMessage === null) into single navigable steps.
+ *
+ * This reduces click-through fatigue in autonomous sequences (e.g., /gsd:execute-phase)
+ * where Claude produces many consecutive assistant-only messages.
+ *
+ * A single solo assistant step is NOT combined (no combinedAssistantMessages).
+ * Two or more consecutive solo assistant steps produce one combined step with
+ * combinedAssistantMessages containing all messages for filmstrip rendering.
+ */
+function combineConsecutiveSoloSteps(navSteps: NavigationStep[]): NavigationStep[] {
+  const result: NavigationStep[] = []
+  let i = 0
+  while (i < navSteps.length) {
+    const step = navSteps[i]
+    // If this is a solo assistant step (no user message), look for consecutive ones
+    if (step.userMessage === null && step.assistantMessage) {
+      const combinedMessages: import('../types/pipeline').ParsedMessage[] = [step.assistantMessage]
+      const combinedFollowUps: import('../types/pipeline').ParsedMessage[] = [
+        ...step.followUpMessages
+      ]
+      let j = i + 1
+      while (
+        j < navSteps.length &&
+        navSteps[j].userMessage === null &&
+        navSteps[j].assistantMessage
+      ) {
+        combinedMessages.push(navSteps[j].assistantMessage!)
+        combinedFollowUps.push(...navSteps[j].followUpMessages)
+        j++
+      }
+      if (combinedMessages.length > 1) {
+        // Combined step: primary assistant is first, all messages stored for rendering
+        result.push({
+          index: result.length,
+          userMessage: null,
+          assistantMessage: combinedMessages[0],
+          followUpMessages: combinedFollowUps,
+          combinedAssistantMessages: combinedMessages
+        })
+      } else {
+        // Single solo step (no combining needed)
+        result.push({ ...step, index: result.length })
+      }
+      i = j
+    } else {
+      result.push({ ...step, index: result.length })
+      i++
+    }
+  }
+  return result
+}
 
 /**
  * Build a unified flat array of playback steps from a Presentation and its sessions.
@@ -16,6 +84,11 @@ import { filterWithToolSettings, buildNavigationSteps } from '../utils/messageFi
  *
  * Uses filterWithToolSettings to respect the Builder's per-tool visibility config,
  * then buildNavigationSteps to produce NavigationStep[] per session.
+ *
+ * Enriches steps with elapsed-time data:
+ * - NavigationPlaybackStep.elapsedMs: Claude's response time within the step (user -> assistant)
+ * - SessionSeparatorStep.durationMs: first user timestamp to last assistant timestamp span
+ * - SectionSeparatorStep.durationMs: sum of session durations in the section
  *
  * Missing sessions are skipped gracefully with a console warning.
  */
@@ -29,7 +102,11 @@ export function buildPlaybackSteps(
   for (const section of presentation.sections) {
     // Pre-compute navigation steps for each session to get section totals
     let sectionTotalSteps = 0
-    const sessionData: { ref: (typeof section.sessionRefs)[0]; navSteps: NavigationStep[]; session: StoredSession }[] = []
+    const sessionData: {
+      ref: (typeof section.sessionRefs)[0]
+      navSteps: NavigationStep[]
+      session: StoredSession
+    }[] = []
 
     for (const ref of section.sessionRefs) {
       const session = sessionsMap.get(ref.sessionId)
@@ -40,22 +117,43 @@ export function buildPlaybackSteps(
         continue
       }
       const filtered = filterWithToolSettings(session.messages, toolVisibility)
-      const navSteps = buildNavigationSteps(filtered)
+      const rawNavSteps = buildNavigationSteps(filtered)
+      const navSteps = combineConsecutiveSoloSteps(rawNavSteps)
       sectionTotalSteps += navSteps.length
       sessionData.push({ ref, navSteps, session })
     }
 
-    // Section separator card
+    // Track section duration as sum of session durations
+    let sectionDurationMs: number | null = null
+
+    // Placeholder index for the section separator card (we'll fill durationMs after processing sessions)
+    const sectionSeparatorIndex = steps.length
     steps.push({
       type: 'section-separator',
       sectionId: section.id,
       sectionName: section.name,
       sessionCount: section.sessionRefs.length,
-      totalSteps: sectionTotalSteps
+      totalSteps: sectionTotalSteps,
+      durationMs: null // Will be updated after sessions
     })
 
     // Sessions within this section
     for (const { ref, navSteps, session } of sessionData) {
+      // Compute session duration from first/last nav step timestamps
+      let sessionDurationMs: number | null = null
+      if (navSteps.length > 0) {
+        const firstTimestamp = getStepFirstTimestamp(navSteps[0])
+        const lastTimestamp = getStepLastTimestamp(navSteps[navSteps.length - 1])
+        if (navSteps.length > 1) {
+          sessionDurationMs = computeElapsedMs(firstTimestamp, lastTimestamp)
+        }
+      }
+
+      // Accumulate section duration
+      if (sessionDurationMs !== null) {
+        sectionDurationMs = (sectionDurationMs ?? 0) + sessionDurationMs
+      }
+
       // Session separator card
       steps.push({
         type: 'session-separator',
@@ -64,18 +162,48 @@ export function buildPlaybackSteps(
         sectionId: section.id,
         sectionName: section.name,
         stepCount: navSteps.length,
-        messageCount: session.messages.length
+        messageCount: session.messages.length,
+        durationMs: sessionDurationMs
       })
 
-      // Wrapped navigation steps
+      // Navigation steps with elapsed computation
+      // - Steps WITH a userMessage: within-step elapsed (user -> assistant)
+      // - Solo assistant steps (userMessage === null): step-to-step elapsed from previous step's last timestamp
+      let prevStepLastTimestamp: string | null = null
       for (const navStep of navSteps) {
+        let elapsedMs: number | null = null
+        if (navStep.userMessage) {
+          // Within-step: user -> assistant
+          elapsedMs = computeElapsedMs(
+            navStep.userMessage.timestamp,
+            navStep.assistantMessage?.timestamp ?? null
+          )
+        } else if (prevStepLastTimestamp && navStep.assistantMessage) {
+          // Step-to-step: previous step's last timestamp -> this assistant
+          elapsedMs = computeElapsedMs(prevStepLastTimestamp, navStep.assistantMessage.timestamp)
+        }
+
         steps.push({
           type: 'navigation',
           step: navStep,
           sessionId: ref.sessionId,
-          sectionId: section.id
+          sectionId: section.id,
+          elapsedMs
         })
+
+        // Track last timestamp for next iteration
+        const lastMsg = navStep.combinedAssistantMessages
+          ? navStep.combinedAssistantMessages[navStep.combinedAssistantMessages.length - 1]
+          : navStep.assistantMessage
+        prevStepLastTimestamp =
+          lastMsg?.timestamp ?? navStep.userMessage?.timestamp ?? prevStepLastTimestamp
       }
+    }
+
+    // Update section separator with computed duration
+    const sectionStep = steps[sectionSeparatorIndex]
+    if (sectionStep.type === 'section-separator') {
+      sectionStep.durationMs = sectionDurationMs
     }
   }
 
@@ -132,6 +260,9 @@ interface PlaybackState {
   currentStepIndex: number
   expandedSteps: Record<number, { user: boolean; assistant: boolean }>
 
+  // Theme state
+  themeOverride: 'light' | 'dark' | null // null = use file default
+
   // Sidebar state
   sidebarOpen: boolean
   expandedSections: Set<string> // Section IDs expanded in sidebar tree
@@ -146,6 +277,7 @@ interface PlaybackState {
   jumpToSection: (sectionId: string) => void
   jumpToSession: (sessionId: string) => void
   toggleExpand: (stepIndex: number, role: 'user' | 'assistant') => void
+  toggleTheme: () => void
   toggleSidebar: () => void
   toggleSidebarSection: (sectionId: string) => void
   reset: () => void
@@ -158,6 +290,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
   steps: [],
   currentStepIndex: 0,
   expandedSteps: {},
+  themeOverride: null,
   sidebarOpen: false,
   expandedSections: new Set(),
 
@@ -176,6 +309,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
       steps,
       currentStepIndex: 0,
       expandedSteps: {},
+      themeOverride: null,
       sidebarOpen: false,
       expandedSections
     })
@@ -247,6 +381,22 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     })
   },
 
+  toggleTheme: (): void => {
+    const { presentation, themeOverride } = get()
+    if (!presentation) return
+    // Determine current effective theme
+    const settingsTheme = presentation.settings.theme
+    let current: 'light' | 'dark'
+    if (themeOverride) {
+      current = themeOverride
+    } else if (settingsTheme === 'system') {
+      current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
+    } else {
+      current = settingsTheme
+    }
+    set({ themeOverride: current === 'dark' ? 'light' : 'dark' })
+  },
+
   toggleSidebar: (): void => {
     set((s) => ({ sidebarOpen: !s.sidebarOpen }))
   },
@@ -269,6 +419,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
       steps: [],
       currentStepIndex: 0,
       expandedSteps: {},
+      themeOverride: null,
       sidebarOpen: false,
       expandedSections: new Set()
     })
