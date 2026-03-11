@@ -1,8 +1,8 @@
 ---
-status: awaiting_human_verify
+status: resolved
 trigger: "AskUserQuestion answer selections not displaying consistently in Player/Builder preview"
 created: 2026-03-10T15:00:00Z
-updated: 2026-03-10T15:30:00Z
+updated: 2026-03-10T16:00:00Z
 ---
 
 ## Current Focus
