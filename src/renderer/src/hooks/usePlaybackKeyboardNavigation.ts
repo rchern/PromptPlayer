@@ -8,6 +8,9 @@ import { usePlaybackStore } from '../stores/playbackStore'
  * usePlaybackStore instead of useNavigationStore. Adds sidebar toggle
  * binding on 'S' key (no modifier) and Ctrl+B.
  *
+ * When `loadingRef` is provided, navigation keys are blocked while the
+ * ref is true (prevents queueing up navigations during slow renders).
+ *
  * Bindings:
  *   ArrowRight / Space  -> nextStep
  *   ArrowLeft           -> prevStep
@@ -18,7 +21,7 @@ import { usePlaybackStore } from '../stores/playbackStore'
  *
  * Skips key handling when focus is inside INPUT or TEXTAREA elements.
  */
-export function usePlaybackKeyboardNavigation(): void {
+export function usePlaybackKeyboardNavigation(loadingRef?: React.RefObject<boolean>): void {
   const nextStep = usePlaybackStore((s) => s.nextStep)
   const prevStep = usePlaybackStore((s) => s.prevStep)
   const goToFirst = usePlaybackStore((s) => s.goToFirst)
@@ -40,6 +43,12 @@ export function usePlaybackKeyboardNavigation(): void {
       if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
         e.preventDefault()
         toggleSidebar()
+        return
+      }
+
+      // Block navigation while content is still rendering
+      if (loadingRef?.current) {
+        e.preventDefault()
         return
       }
 
@@ -66,5 +75,5 @@ export function usePlaybackKeyboardNavigation(): void {
 
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [nextStep, prevStep, goToFirst, goToLast, toggleSidebar])
+  }, [nextStep, prevStep, goToFirst, goToLast, toggleSidebar, loadingRef])
 }

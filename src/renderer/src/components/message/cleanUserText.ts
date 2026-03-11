@@ -86,15 +86,15 @@ function removeTag(text: string, tagName: string): string {
  * into a clean answer display. Returns original text if no match.
  */
 function cleanAskUserAnswer(text: string): string {
-  // Pattern: User has answered your questions: "question"="answer". You can now continue...
-  const match = text.match(
-    /User has answered your questions?:\s*"([^"]*)"="([^"]*)"\.\s*You can now continue/
-  )
-  if (match) {
-    const answers = match[2]
-    return answers
-  }
-  return text
+  // Check if text contains the answer protocol
+  if (!text.match(/User has answered your questions?:/)) return text
+  if (!text.includes('. You can now continue')) return text
+
+  // Extract pairs using the "="-split parser and return all answers joined
+  const parsed = parseUserAnswerPairs(text)
+  if (!parsed || parsed.pairs.length === 0) return text
+
+  return parsed.pairs.map((p) => p.answer).join(', ')
 }
 
 /**
@@ -140,21 +140,17 @@ export function parseToolRejection(text: string): string | null {
 }
 
 export function parseUserAnswer(text: string): { answers: string[] } | null {
-  // Try matching directly first (tool_result content is clean)
-  let raw = text.match(
-    /User has answered your questions?:\s*"[^"]*?"="([^"]*?)"/
-  )
-  // If no match, strip XML tags and retry (text blocks may have tags mixed in)
-  if (!raw) {
-    const stripped = text.replace(/<[^>]*>/g, ' ').trim()
-    raw = stripped.match(
-      /User has answered your questions?:\s*"[^"]*?"="([^"]*?)"/
-    )
+  // Delegate to parseUserAnswerPairs which handles embedded quotes correctly
+  const parsed = parseUserAnswerPairs(text)
+  if (!parsed || parsed.pairs.length === 0) return null
+
+  // Collect all answers from all pairs
+  const answers: string[] = []
+  for (const pair of parsed.pairs) {
+    // Split by comma for multi-select answers (e.g., "option1, option2")
+    const parts = pair.answer.split(',').map((a) => a.trim()).filter(Boolean)
+    answers.push(...parts)
   }
-  if (!raw) return null
-  const answerStr = raw[1]
-  // Split by comma, handling "option1, option2" format
-  const answers = answerStr.split(',').map((a) => a.trim()).filter(Boolean)
   return { answers }
 }
 
@@ -164,6 +160,9 @@ export function parseUserAnswer(text: string): { answers: string[] } | null {
  *   Single: 'User has answered your questions: "Q1"="A1". You can now continue...'
  *   Multi:  'User has answered your questions: "Q1"="A1", "Q2"="A2". You can now continue...'
  *   With notes: '... "Q"="A" user notes: free text here. You can now continue...'
+ *
+ * Uses "=" as the primary delimiter (protocol-specific, never appears in natural text)
+ * rather than [^"]*? regex which breaks when question/answer text contains embedded quotes.
  *
  * Returns null if the text doesn't match the expected format.
  */
@@ -178,29 +177,85 @@ export function parseUserAnswerPairs(text: string): {
   }
   if (!source.match(/User has answered your questions?:/)) return null
 
-  // Extract the section after "User has answered your question(s):" up to "You can now continue"
-  const bodyMatch = source.match(
-    /User has answered your questions?:\s*([\s\S]*?)(?:\.\s*You can now continue|$)/
-  )
-  if (!bodyMatch) return null
+  // Extract everything after "User has answered your question(s): "
+  const prefixMatch = source.match(/User has answered your questions?:\s*/)
+  if (!prefixMatch) return null
+  const afterPrefix = source.slice(prefixMatch.index! + prefixMatch[0].length)
 
-  const body = bodyMatch[1].trim()
-
-  // Check for user notes suffix: content may contain 'user notes: ...' before the final period
-  let pairsSection = body
-  let userNotes: string | null = null
-  const notesMatch = body.match(/^([\s\S]*?)\s+user notes:\s*([\s\S]+)$/)
-  if (notesMatch) {
-    pairsSection = notesMatch[1].trim()
-    userNotes = notesMatch[2].trim()
+  // Remove trailing ". You can now continue..." suffix
+  let body = afterPrefix
+  const suffixIdx = body.indexOf('. You can now continue')
+  if (suffixIdx !== -1) {
+    body = body.slice(0, suffixIdx)
   }
 
-  // Match all "question"="answer" pairs using global regex
-  const pairRegex = /"([^"]*?)"="([^"]*?)"/g
+  // Split on "=" — the protocol delimiter between question and answer.
+  // This is unambiguous because "=" never appears in natural language text.
+  // Format: "Q1"="A1", "Q2"="A2", ...
+  const delimiter = '"="'
+  const segments = body.split(delimiter)
+
+  if (segments.length < 2) return null // Need at least one Q/A pair
+
   const pairs: Array<{ question: string; answer: string }> = []
-  let match: RegExpExecArray | null
-  while ((match = pairRegex.exec(pairsSection)) !== null) {
-    pairs.push({ question: match[1], answer: match[2] })
+  let userNotes: string | null = null
+
+  /** Strip " user notes: ..." from an answer string if present */
+  function extractNotes(answer: string): { answer: string; notes: string | null } {
+    const notesIdx = answer.indexOf(' user notes: ')
+    if (notesIdx === -1) return { answer, notes: null }
+    return {
+      // Strip trailing " — it's the protocol closing quote before " user notes:"
+      answer: answer.slice(0, notesIdx).replace(/"$/, ''),
+      notes: answer.slice(notesIdx + ' user notes: '.length)
+    }
+  }
+
+  if (segments.length === 2) {
+    // Single pair: segments are ["Q1] and [A1"]
+    const question = segments[0].replace(/^"/, '')
+    const rawAnswer = segments[1].replace(/"$/, '')
+    const extracted = extractNotes(rawAnswer)
+    pairs.push({ question, answer: extracted.answer })
+    if (extracted.notes) userNotes = extracted.notes
+  } else {
+    // Multiple pairs. After splitting on "=":
+    //   Segment 0: "Q1         (opening " + question text)
+    //   Segment 1: A1", "Q2    (answer + pair separator + next question)
+    //   Segment N: AN"         (last answer + closing ")
+    let currentQuestion = segments[0].replace(/^"/, '')
+
+    for (let i = 1; i < segments.length; i++) {
+      if (i < segments.length - 1) {
+        // Middle segment: ANSWER", "QUESTION
+        // Split on LAST '", "' to separate answer from next question.
+        // Using last occurrence handles answers containing ", " (e.g., multi-select values).
+        const seg = segments[i]
+        const lastSepIdx = seg.lastIndexOf('", "')
+
+        if (lastSepIdx === -1) {
+          // No separator found — answer may contain "user notes:" that absorbed the separator.
+          // Treat entire segment as the answer.
+          const extracted = extractNotes(seg.replace(/"$/, ''))
+          pairs.push({ question: currentQuestion, answer: extracted.answer })
+          if (extracted.notes) userNotes = extracted.notes
+          currentQuestion = ''
+        } else {
+          const rawAnswer = seg.slice(0, lastSepIdx)
+          const nextQuestion = seg.slice(lastSepIdx + 4) // Skip '", "'
+          const extracted = extractNotes(rawAnswer)
+          pairs.push({ question: currentQuestion, answer: extracted.answer })
+          if (extracted.notes) userNotes = extracted.notes
+          currentQuestion = nextQuestion
+        }
+      } else {
+        // Last segment: ANSWER"
+        const rawAnswer = segments[i].replace(/"$/, '')
+        const extracted = extractNotes(rawAnswer)
+        pairs.push({ question: currentQuestion, answer: extracted.answer })
+        if (extracted.notes) userNotes = extracted.notes
+      }
+    }
   }
 
   if (pairs.length === 0) return null

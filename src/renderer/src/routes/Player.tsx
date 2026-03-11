@@ -137,8 +137,6 @@ function SingleSessionPlayer({ handleOpenFile }: { handleOpenFile: () => Promise
 
   const steps = useNavigationStore((s) => s.steps)
   const currentStepIndex = useNavigationStore((s) => s.currentStepIndex)
-  const expandedSteps = useNavigationStore((s) => s.expandedSteps)
-  const toggleExpand = useNavigationStore((s) => s.toggleExpand)
   const nextStep = useNavigationStore((s) => s.nextStep)
   const prevStep = useNavigationStore((s) => s.prevStep)
   const initializeSteps = useNavigationStore((s) => s.initializeSteps)
@@ -219,7 +217,6 @@ function SingleSessionPlayer({ handleOpenFile }: { handleOpenFile: () => Promise
   }
 
   const currentStep = steps[currentStepIndex]
-  const expanded = expandedSteps[currentStepIndex] ?? { user: false, assistant: false }
 
   return (
     <div
@@ -241,8 +238,6 @@ function SingleSessionPlayer({ handleOpenFile }: { handleOpenFile: () => Promise
       >
         <StepView
           step={currentStep}
-          expandedState={expanded}
-          onToggleExpand={(role) => toggleExpand(currentStepIndex, role)}
           toolUseMap={toolUseMap}
         />
       </div>

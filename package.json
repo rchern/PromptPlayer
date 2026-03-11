@@ -1,6 +1,6 @@
 {
   "name": "prompt-player",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Walk your team through real Claude Code workflows step by step",
   "main": "./out/main/index.js",
   "author": "",

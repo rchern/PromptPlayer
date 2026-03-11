@@ -1,8 +1,24 @@
 import { MarkdownHooks } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeShiki from '@shikijs/rehype'
+import { getSingletonHighlighter } from 'shiki'
 import { isValidElement } from 'react'
 import { CodeBlock } from './CodeBlock'
+
+/**
+ * Languages to load for syntax highlighting.
+ * Without this, @shikijs/rehype defaults to ALL ~200 bundled grammars,
+ * causing an 8+ second initialization delay. This curated list covers
+ * languages commonly seen in Claude Code sessions.
+ */
+const SHIKI_LANGS = [
+  'typescript', 'javascript', 'tsx', 'jsx',
+  'json', 'html', 'xml', 'css', 'scss',
+  'bash', 'shell', 'powershell',
+  'python', 'sql', 'csharp',
+  'markdown', 'yaml', 'toml',
+  'diff', 'plaintext'
+]
 
 /**
  * Shiki dual-theme configuration.
@@ -14,8 +30,14 @@ const SHIKI_OPTIONS = {
   themes: {
     light: 'github-light',
     dark: 'github-dark'
-  }
+  },
+  langs: SHIKI_LANGS
 }
+
+// Pre-warm shiki singleton at module load time.
+// @shikijs/rehype uses the same getSingletonHighlighter internally,
+// so this ensures the WASM engine + themes + grammars are ready before first render.
+getSingletonHighlighter({ themes: ['github-light', 'github-dark'], langs: SHIKI_LANGS })
 
 /**
  * Remark plugins list -- stable reference to avoid re-processing.

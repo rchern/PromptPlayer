@@ -207,11 +207,25 @@ export function buildToolUseMap(
  * tool rejections) that should be folded into the previous step rather than
  * creating a new navigation step.
  */
+/** Check if a user message contains a tool rejection (user declined a tool use). */
+function isRejection(msg: ParsedMessage): boolean {
+  if (msg.role !== 'user') return false
+  return msg.contentBlocks.some(
+    (b) =>
+      b.type === 'tool_result' &&
+      typeof b.content === 'string' &&
+      b.content.startsWith("The user doesn't want to proceed with this tool use")
+  )
+}
+
 function isToolResultOnly(msg: ParsedMessage): boolean {
   if (msg.role !== 'user') return false
   // Must have at least one tool_result
   const hasToolResult = msg.contentBlocks.some((b) => b.type === 'tool_result')
   if (!hasToolResult) return false
+  // Tool rejections represent genuine user interaction — they should create
+  // visible "You" message steps, not be silently folded into followUpMessages
+  if (isRejection(msg)) return false
   // Check if there's any meaningful text content
   const hasText = msg.contentBlocks.some(
     (b) => b.type === 'text' && cleanUserText(b.text).trim().length > 0
@@ -245,6 +259,13 @@ export function buildNavigationSteps(visibleMessages: ParsedMessage[]): Navigati
         steps[steps.length - 1].followUpMessages.push(msg)
         i += 1
         continue
+      }
+
+      // Rejection messages create their own visible step (user said something),
+      // but also copy into the previous step's followUpMessages so the
+      // AskUserQuestion block can show "Declined" inline on the question.
+      if (steps.length > 0 && isRejection(msg)) {
+        steps[steps.length - 1].followUpMessages.push(msg)
       }
 
       // Check if next message is assistant
