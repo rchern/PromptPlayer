@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { createHashRouter, RouterProvider, Outlet, useNavigate } from 'react-router'
+import { createHashRouter, RouterProvider, Outlet, useNavigate, useRouteError, isRouteErrorResponse } from 'react-router'
 import { Titlebar } from './components/Titlebar/Titlebar'
 import { Home } from './routes/Home'
 import { Builder } from './routes/Builder'
@@ -147,10 +147,74 @@ function RootLayout(): React.JSX.Element {
   )
 }
 
+// ---------------------------------------------------------------------------
+// Route error boundary
+// ---------------------------------------------------------------------------
+
+const errorContainerStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100vh',
+  padding: 'var(--space-8)',
+  textAlign: 'center',
+  color: 'var(--color-text-primary)',
+  backgroundColor: 'var(--color-bg-primary)',
+}
+
+const errorHeadingStyle: React.CSSProperties = {
+  fontSize: 'var(--text-xl)',
+  fontWeight: 600,
+  marginBottom: 'var(--space-3)',
+}
+
+const errorDetailStyle: React.CSSProperties = {
+  fontSize: 'var(--text-sm)',
+  color: 'var(--color-text-muted)',
+  marginBottom: 'var(--space-6)',
+  maxWidth: 480,
+  whiteSpace: 'pre-wrap',
+  fontFamily: 'monospace',
+}
+
+const errorButtonStyle: React.CSSProperties = {
+  backgroundColor: 'var(--color-accent)',
+  color: 'white',
+  border: 'none',
+  borderRadius: 'var(--radius-md)',
+  padding: 'var(--space-2) var(--space-5)',
+  fontSize: 'var(--text-sm)',
+  fontWeight: 600,
+  cursor: 'pointer',
+}
+
+function RouteErrorBoundary(): React.JSX.Element {
+  const error = useRouteError()
+
+  let message = 'An unexpected error occurred.'
+  if (isRouteErrorResponse(error)) {
+    message = `${error.status} ${error.statusText}`
+  } else if (error instanceof Error) {
+    message = error.message
+  }
+
+  return (
+    <div style={errorContainerStyle}>
+      <div style={errorHeadingStyle}>Something went wrong</div>
+      <div style={errorDetailStyle}>{message}</div>
+      <button style={errorButtonStyle} onClick={() => window.location.assign('#/')}>
+        Back to Home
+      </button>
+    </div>
+  )
+}
+
 const router = createHashRouter([
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       {
         index: true,
@@ -158,11 +222,13 @@ const router = createHashRouter([
       },
       {
         path: 'builder',
-        element: <Builder />
+        element: <Builder />,
+        errorElement: <RouteErrorBoundary />
       },
       {
         path: 'player',
-        element: <Player />
+        element: <Player />,
+        errorElement: <RouteErrorBoundary />
       }
     ]
   }

@@ -1,14 +1,11 @@
 import React from 'react'
 import type { NavigationStep } from '../../types/pipeline'
-import { CollapsibleContent } from './CollapsibleContent'
 import { ElapsedTimeMarker } from './ElapsedTimeMarker'
 import { MessageBubble } from '../message/MessageBubble'
 import { computeElapsedMs } from '../../utils/formatElapsed'
 
 interface StepViewProps {
   step: NavigationStep
-  expandedState: { user: boolean; assistant: boolean }
-  onToggleExpand: (role: 'user' | 'assistant') => void
   toolUseMap: Map<string, { name: string; input: Record<string, unknown> }>
   /** Per-tool visibility map from presentation settings for granular tool rendering */
   toolVisibilityMap?: Map<string, boolean>
@@ -20,17 +17,14 @@ interface StepViewProps {
  * Renders a single navigation step as a vertical layout: user message on top,
  * assistant message below. This is the "slide" in the slideshow.
  *
- * Both user and assistant sections are wrapped in CollapsibleContent.
- * Claude's response starts collapsed by default (3-line preview).
- * User messages start collapsed with 2-line preview.
+ * Content renders at full height (no collapsing) — the scrollable container
+ * in PlaybackPlayer handles overflow.
  *
  * The .presentation-mode class enables 20px base font for screen-sharing
  * readability (per 03-03 decision).
  */
 export function StepView({
   step,
-  expandedState,
-  onToggleExpand,
   toolUseMap,
   toolVisibilityMap,
   elapsedMs,
@@ -49,19 +43,12 @@ export function StepView({
     >
       {/* User message section */}
       {step.userMessage && (
-        <CollapsibleContent
-          isExpanded={expandedState.user}
-          onToggle={() => onToggleExpand('user')}
-          previewLines={2}
-          role="user"
-        >
-          <MessageBubble
-            message={step.userMessage}
-            showPlumbing={false}
-            toolVisibilityMap={toolVisibilityMap}
-            toolUseMap={toolUseMap}
-          />
-        </CollapsibleContent>
+        <MessageBubble
+          message={step.userMessage}
+          showPlumbing={false}
+          toolVisibilityMap={toolVisibilityMap}
+          toolUseMap={toolUseMap}
+        />
       )}
 
       {/* Elapsed time marker */}
@@ -74,20 +61,13 @@ export function StepView({
 
       {/* Single assistant message (non-combined steps) */}
       {step.assistantMessage && !step.combinedAssistantMessages && (
-        <CollapsibleContent
-          isExpanded={expandedState.assistant}
-          onToggle={() => onToggleExpand('assistant')}
-          previewLines={3}
-          role="assistant"
-        >
-          <MessageBubble
-            message={step.assistantMessage}
-            showPlumbing={false}
-            toolVisibilityMap={toolVisibilityMap}
-            toolUseMap={toolUseMap}
-            followUpMessages={step.followUpMessages}
-          />
-        </CollapsibleContent>
+        <MessageBubble
+          message={step.assistantMessage}
+          showPlumbing={false}
+          toolVisibilityMap={toolVisibilityMap}
+          toolUseMap={toolUseMap}
+          followUpMessages={step.followUpMessages}
+        />
       )}
 
       {/* Combined assistant messages (filmstrip view for autonomous sequences) */}
@@ -102,30 +82,32 @@ export function StepView({
               {idx > 0 && showTimestamps && interElapsed != null && interElapsed >= 0 && (
                 <ElapsedTimeMarker elapsedMs={interElapsed} variant="between-responses" />
               )}
-              <CollapsibleContent
-                isExpanded={expandedState.assistant}
-                onToggle={() => onToggleExpand('assistant')}
-                previewLines={3}
-                role="assistant"
-              >
-                <MessageBubble
-                  message={msg}
-                  showPlumbing={false}
-                  toolVisibilityMap={toolVisibilityMap}
-                  toolUseMap={toolUseMap}
-                  followUpMessages={idx === 0 ? step.followUpMessages : []}
-                />
-              </CollapsibleContent>
+              <MessageBubble
+                message={msg}
+                showPlumbing={false}
+                toolVisibilityMap={toolVisibilityMap}
+                toolUseMap={toolUseMap}
+                followUpMessages={step.followUpMessages}
+              />
             </React.Fragment>
           )
         })}
 
-      {/* Follow-up messages — suppress results for specialized tool blocks (displayed inline) */}
+      {/* Follow-up messages — suppress results for specialized tool blocks (displayed inline)
+          and rejections (shown as their own step on the next slide) */}
       {step.followUpMessages.length > 0 &&
         step.followUpMessages
           .filter((msg) => {
             const toolResultBlocks = msg.contentBlocks.filter((b) => b.type === 'tool_result')
             if (toolResultBlocks.length === 0) return true
+            // Suppress rejections — they create their own visible step
+            const isRejection = toolResultBlocks.some(
+              (b) =>
+                b.type === 'tool_result' &&
+                typeof b.content === 'string' &&
+                b.content.startsWith("The user doesn't want to proceed with this tool use")
+            )
+            if (isRejection) return false
             const specializedTools = new Set(['AskUserQuestion', 'TaskCreate', 'TaskUpdate', 'TaskList'])
             const allSpecialized = toolResultBlocks.every((b) => {
               if (b.type !== 'tool_result') return false

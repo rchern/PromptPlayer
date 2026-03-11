@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { PanelLeftOpen } from 'lucide-react'
+import { Loader2, PanelLeftOpen } from 'lucide-react'
 import { usePlaybackStore } from '../../stores/playbackStore'
 import { usePlaybackKeyboardNavigation } from '../../hooks/usePlaybackKeyboardNavigation'
 import { PresentationOverview } from './PresentationOverview'
@@ -26,31 +26,36 @@ export function PlaybackPlayer(): React.JSX.Element {
   const presentation = usePlaybackStore((s) => s.presentation)
   const steps = usePlaybackStore((s) => s.steps)
   const currentStepIndex = usePlaybackStore((s) => s.currentStepIndex)
-  const expandedSteps = usePlaybackStore((s) => s.expandedSteps)
   const sidebarOpen = usePlaybackStore((s) => s.sidebarOpen)
   const sessions = usePlaybackStore((s) => s.sessions)
   const nextStep = usePlaybackStore((s) => s.nextStep)
   const prevStep = usePlaybackStore((s) => s.prevStep)
-  const toggleExpand = usePlaybackStore((s) => s.toggleExpand)
   const toggleSidebar = usePlaybackStore((s) => s.toggleSidebar)
 
   // Apply presentation theme with ephemeral toggle support
   const { isDark } = usePlayerTheme()
 
-  // Activate playback keyboard bindings (arrows, Home/End, S sidebar toggle)
-  usePlaybackKeyboardNavigation()
-
-  // Fade transition state
+  // Fade transition + loading gate state
   const [visible, setVisible] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [showSpinner, setShowSpinner] = useState(false)
   const prevIndexRef = useRef(currentStepIndex)
   const containerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+
+  // Loading ref for keyboard nav gating (ref avoids re-registering the listener)
+  const loadingRef = useRef(false)
+  loadingRef.current = loading
+
+  // Activate playback keyboard bindings (arrows, Home/End, S sidebar toggle)
+  usePlaybackKeyboardNavigation(loadingRef)
 
   // Fade transition and scroll reset on step change
   useEffect(() => {
     if (prevIndexRef.current !== currentStepIndex) {
       prevIndexRef.current = currentStepIndex
       setVisible(false)
+      setLoading(true)
       const timer = setTimeout(() => {
         setVisible(true)
         // Scroll container to top when arriving at a new step
@@ -62,6 +67,33 @@ export function PlaybackPlayer(): React.JSX.Element {
     }
     return undefined
   }, [currentStepIndex])
+
+  // Clear loading gate after content paints (double-RAF).
+  // Shiki is pre-warmed at module level (MarkdownRenderer.tsx), so async
+  // rendering is fast. Double-RAF is sufficient with pre-warming in place.
+  useEffect(() => {
+    if (visible && loading) {
+      let cancelled = false
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!cancelled) setLoading(false)
+        })
+      })
+      return () => { cancelled = true }
+    }
+    return undefined
+  }, [visible, loading])
+
+  // Delay spinner visibility to avoid flashing on fast transitions.
+  // Only show spinner if loading persists beyond 200ms.
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => setShowSpinner(true), 200)
+      return () => { clearTimeout(timer); setShowSpinner(false) }
+    }
+    setShowSpinner(false)
+    return undefined
+  }, [loading])
 
   // Build per-tool visibility map from presentation settings
   // This allows ContentBlockRenderer to show/hide individual plumbing tools
@@ -103,7 +135,6 @@ export function PlaybackPlayer(): React.JSX.Element {
   }
 
   const currentStep = steps[currentStepIndex]
-  const expanded = expandedSteps[currentStepIndex] ?? { user: false, assistant: false }
   const showTimestamps = presentation.settings.showTimestamps
 
   return (
@@ -188,8 +219,6 @@ export function PlaybackPlayer(): React.JSX.Element {
           {currentStep.type === 'navigation' && (
             <StepView
               step={currentStep.step}
-              expandedState={expanded}
-              onToggleExpand={(role) => toggleExpand(currentStepIndex, role)}
               toolUseMap={toolUseMap}
               toolVisibilityMap={toolVisibilityMap}
               elapsedMs={currentStep.elapsedMs}
@@ -197,6 +226,21 @@ export function PlaybackPlayer(): React.JSX.Element {
             />
           )}
         </div>
+
+        {/* Loading spinner — only appears if rendering takes >200ms */}
+        {showSpinner && (
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            zIndex: 10
+          }}>
+            <Loader2 size={32} style={{ animation: 'spin 1s linear infinite', color: 'var(--color-text-muted)', opacity: 0.6 }} />
+          </div>
+        )}
 
         {/* Navigation arrow buttons on viewport edges */}
         <NavigationControls

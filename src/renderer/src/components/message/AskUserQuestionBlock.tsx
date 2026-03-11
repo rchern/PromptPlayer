@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ChevronRight, CircleHelp } from 'lucide-react'
-import { parseUserAnswerPairs } from './cleanUserText'
+import { parseUserAnswerPairs, parseToolRejection } from './cleanUserText'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -122,6 +122,16 @@ const userNotesStyle: React.CSSProperties = {
   borderTop: '1px solid var(--color-border-subtle)'
 }
 
+const rejectionStyle: React.CSSProperties = {
+  fontSize: 'var(--text-sm)',
+  color: 'rgba(239, 68, 68, 0.8)',
+  fontStyle: 'italic',
+  padding: 'var(--space-2) var(--space-3)',
+  borderLeft: '2px solid rgba(239, 68, 68, 0.5)',
+  marginTop: 'var(--space-2)',
+  background: 'color-mix(in srgb, rgb(239, 68, 68) 5%, transparent)'
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -178,8 +188,11 @@ export function AskUserQuestionBlock({
   const questions = parseQuestions(input)
   if (!questions) return null
 
+  // Check if the question was rejected/declined by the user
+  const rejectionReason = answerText ? parseToolRejection(answerText) : null
+
   // Parse answer pairs from the tool_result content
-  const answerData = answerText ? parseUserAnswerPairs(answerText) : null
+  const answerData = answerText && !rejectionReason ? parseUserAnswerPairs(answerText) : null
 
   function toggleOption(key: string): void {
     setExpandedOptions((prev) => {
@@ -196,11 +209,26 @@ export function AskUserQuestionBlock({
   return (
     <div style={containerStyle}>
       {questions.map((q, qIndex) => {
-        // Find the matching answer for this question
-        const matchedPair = answerData?.pairs.find((p) => p.question === q.question)
-        const selectedAnswers = matchedPair
-          ? matchedPair.answer.split(',').map((a) => a.trim()).filter(Boolean)
-          : []
+        // Find the matching answer for this question.
+        // First try exact question text match; fall back to positional match
+        // when pair count equals question count (handles edge cases where
+        // question text in the tool_result doesn't match exactly).
+        const matchedPair =
+          answerData?.pairs.find((p) => p.question === q.question) ??
+          (answerData && answerData.pairs.length === questions.length
+            ? answerData.pairs[qIndex]
+            : undefined)
+        // Parse selected answers from the matched pair.
+        // Comma-splitting is ambiguous: "Yes, store it" is one answer, not two.
+        // Strategy: try comma-split first; if no options match, use the full string.
+        let selectedAnswers: string[] = []
+        if (matchedPair) {
+          const commaSplit = matchedPair.answer.split(',').map((a) => a.trim()).filter(Boolean)
+          const anyMatch = commaSplit.some(
+            (ans) => q.options.some((opt) => opt.label === ans)
+          )
+          selectedAnswers = anyMatch ? commaSplit : [matchedPair.answer]
+        }
 
         // Check if the answer is a free-text "other" answer (doesn't match any option)
         const hasFreeTextAnswer =
@@ -296,8 +324,16 @@ export function AskUserQuestionBlock({
         )
       })}
 
-      {/* User notes */}
-      {answerData?.userNotes && (
+      {/* Rejection notice */}
+      {rejectionReason && (
+        <div style={rejectionStyle}>
+          {rejectionReason === 'Declined' ? 'Declined' : rejectionReason}
+        </div>
+      )}
+
+      {/* User notes — suppress when identical to a free-text answer (protocol duplicates them) */}
+      {answerData?.userNotes &&
+        !answerData.pairs.some((p) => p.answer === answerData.userNotes) && (
         <div style={userNotesStyle}>
           Note: {answerData.userNotes}
         </div>
